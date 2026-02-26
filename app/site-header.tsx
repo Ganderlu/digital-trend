@@ -2,9 +2,36 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Menu, X } from "lucide-react";
+import GoogleTranslate from "@/components/google-translate";
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   const hiddenRoutes = [
     "/dashboard",
@@ -24,121 +51,166 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-white/5 bg-slate-950/80 backdrop-blur">
-      <div className="mx-auto max-w-6xl px-6 py-4">
-        <input
-          id="site-nav-toggle"
-          type="checkbox"
-          className="peer hidden md:hidden"
-        />
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+    <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+        <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400/10 ring-1 ring-emerald-400/40">
-              <span className="text-lg font-semibold text-emerald-300">FI</span>
+              <span className="text-lg font-bold text-emerald-300">FI</span>
             </div>
-            <div>
-              <div className="text-sm font-semibold tracking-wide text-slate-50">
-                FutureInvest
-              </div>
-              <div className="text-xs text-slate-400">
-                Wealth Management &amp; Advisory
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <label
-              htmlFor="site-nav-toggle"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-slate-900 text-slate-50 md:hidden"
-            >
-              <span className="sr-only">Toggle navigation</span>
-              <span className="space-y-1.5">
-                <span className="block h-0.5 w-5 rounded-full bg-slate-100" />
-                <span className="block h-0.5 w-5 rounded-full bg-slate-100" />
-                <span className="block h-0.5 w-5 rounded-full bg-slate-100" />
-              </span>
-            </label>
-            <nav className="hidden items-center gap-6 text-sm font-medium text-slate-200 md:flex">
-              <Link href="/about" className="transition hover:text-emerald-300">
-                About Us
-              </Link>
-              <Link
-                href="/what-we-do"
-                className="transition hover:text-emerald-300"
-              >
-                What We Do
-              </Link>
-              <Link href="/plans" className="transition hover:text-emerald-300">
-                Plans
-              </Link>
-              <Link href="/faqs" className="transition hover:text-emerald-300">
-                FAQs
-              </Link>
-              <Link
-                href="/contact"
-                className="transition hover:text-emerald-300"
-              >
-                Contact Us
-              </Link>
-              <Link
-                href="/login"
-                className="rounded-full border border-emerald-300/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-200 transition hover:border-emerald-300 hover:bg-emerald-400/10"
-              >
-                Account Login
-              </Link>
-              <Link
-                href="/register"
-                className="rounded-full bg-emerald-400 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-950 shadow-lg shadow-emerald-500/30 transition hover:bg-emerald-300"
-              >
-                Register
-              </Link>
-            </nav>
-          </div>
+            <span className="text-lg font-bold tracking-tight text-slate-100">
+              FutureInvest
+            </span>
+          </Link>
         </div>
-        <div className="mt-3 hidden flex-col gap-2 rounded-2xl border border-white/10 bg-slate-950/95 p-4 text-sm font-medium text-slate-200 peer-checked:flex md:hidden">
+
+        {/* Desktop Navigation */}
+        <nav className="hidden items-center gap-8 md:flex">
           <Link
             href="/about"
-            className="rounded-xl px-3 py-2 transition hover:bg-emerald-400/10 hover:text-emerald-200"
+            className="text-sm font-medium text-slate-300 transition hover:text-emerald-400"
           >
             About Us
           </Link>
           <Link
-            href="/what-we-do"
-            className="rounded-xl px-3 py-2 transition hover:bg-emerald-400/10 hover:text-emerald-200"
-          >
-            What We Do
-          </Link>
-          <Link
             href="/plans"
-            className="rounded-xl px-3 py-2 transition hover:bg-emerald-400/10 hover:text-emerald-200"
+            className="text-sm font-medium text-slate-300 transition hover:text-emerald-400"
           >
             Plans
           </Link>
           <Link
+            href="/what-we-do"
+            className="text-sm font-medium text-slate-300 transition hover:text-emerald-400"
+          >
+            What we do
+          </Link>
+          <Link
             href="/faqs"
-            className="rounded-xl px-3 py-2 transition hover:bg-emerald-400/10 hover:text-emerald-200"
+            className="text-sm font-medium text-slate-300 transition hover:text-emerald-400"
           >
             FAQs
           </Link>
           <Link
             href="/contact"
-            className="rounded-xl px-3 py-2 transition hover:bg-emerald-400/10 hover:text-emerald-200"
+            className="text-sm font-medium text-slate-300 transition hover:text-emerald-400"
           >
-            Contact Us
+            Contact
           </Link>
-          <Link
-            href="/login"
-            className="mt-1 rounded-full border border-emerald-300/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-200 transition hover:border-emerald-300 hover:bg-emerald-400/10"
+          <div className="relative z-50 flex min-w-[140px] items-center justify-center">
+            <GoogleTranslate id="google_translate_element_desktop" />
+          </div>
+          <div className="flex items-center gap-4 border-l border-white/10 pl-6">
+            <Link
+              href="/login"
+              className="text-sm font-semibold text-emerald-400 hover:text-emerald-300"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/register"
+              className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400"
+            >
+              Get Started
+            </Link>
+          </div>
+        </nav>
+
+        {/* Mobile Menu Button & Translate */}
+        <div className="flex items-center gap-3 md:hidden">
+          <div className="flex items-center">
+            <GoogleTranslate id="google_translate_element_mobile_navbar" />
+          </div>
+          <button
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 hover:bg-white/5 hover:text-slate-100"
+            onClick={() => setIsOpen(true)}
           >
-            Account Login
-          </Link>
-          <Link
-            href="/register"
-            className="mt-1 rounded-full bg-emerald-400 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-950 shadow-lg shadow-emerald-500/30 transition hover:bg-emerald-300"
-          >
-            Register
-          </Link>
+            <span className="sr-only">Open menu</span>
+            <Menu className="h-6 w-6" />
+          </button>
         </div>
       </div>
+
+      {/* Mobile Full Screen Menu */}
+      {isOpen &&
+        mounted &&
+        createPortal(
+          <div className="fixed inset-0 z-[100] flex flex-col bg-slate-950">
+            <div className="flex h-16 items-center justify-between border-b border-white/5 px-6">
+              <Link href="/" className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400/10 ring-1 ring-emerald-400/40">
+                  <span className="text-lg font-bold text-emerald-300">FI</span>
+                </div>
+                <span className="text-lg font-bold tracking-tight text-slate-100">
+                  FutureInvest
+                </span>
+              </Link>
+              <button
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 hover:bg-white/5 hover:text-slate-100"
+                onClick={() => setIsOpen(false)}
+              >
+                <span className="sr-only">Close menu</span>
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-6 py-8">
+              <nav className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4 border-b border-white/5 pb-6">
+                  <Link
+                    href="/about"
+                    className="text-lg font-medium text-slate-300 hover:text-emerald-400"
+                  >
+                    About Us
+                  </Link>
+                  <Link
+                    href="/plans"
+                    className="text-lg font-medium text-slate-300 hover:text-emerald-400"
+                  >
+                    Plans
+                  </Link>
+                  <Link
+                    href="/what-we-do"
+                    className="text-lg font-medium text-slate-300 hover:text-emerald-400"
+                  >
+                    What we do
+                  </Link>
+                  <Link
+                    href="/faqs"
+                    className="text-lg font-medium text-slate-300 hover:text-emerald-400"
+                  >
+                    FAQs
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="text-lg font-medium text-slate-300 hover:text-emerald-400"
+                  >
+                    Contact Us
+                  </Link>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <div className="py-2">
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
+                      Language
+                    </p>
+                    <GoogleTranslate id="google_translate_element_mobile" />
+                  </div>
+                  <Link
+                    href="/login"
+                    className="flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/5 py-3 text-base font-semibold text-slate-100 transition hover:bg-white/10"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="flex w-full items-center justify-center rounded-lg bg-emerald-500 py-3 text-base font-semibold text-slate-950 transition hover:bg-emerald-400"
+                  >
+                    Create Account
+                  </Link>
+                </div>
+              </nav>
+            </div>
+          </div>,
+          document.body,
+        )}
     </header>
   );
 }

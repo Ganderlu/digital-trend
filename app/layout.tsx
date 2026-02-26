@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteHeader } from "./site-header";
+import { SiteFooter } from "./site-footer";
+import { LiveChatWidget } from "@/components/live-chat-widget";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,17 +34,8 @@ export default function RootLayout({
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
           <main className="flex-1">{children}</main>
-          <footer className="border-t border-white/5 py-6 text-xs text-slate-500">
-            <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 sm:flex-row">
-              <p>
-                © {new Date().getFullYear()} FutureInvest. All rights reserved.
-              </p>
-              <div className="flex gap-4">
-                <span>Regulated investment advisory firm.</span>
-                <span>Disclosures available upon request.</span>
-              </div>
-            </div>
-          </footer>
+          <SiteFooter />
+          <LiveChatWidget />
         </div>
       </body>
     </html>

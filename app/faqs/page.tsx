@@ -1,6 +1,18 @@
 export default function FaqsPage() {
   return (
     <div className="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+      {/* Header Section */}
+      <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <h1 className="text-sm font-bold uppercase tracking-wider text-emerald-500">
+            FAQs
+          </h1>
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <span className="text-emerald-500">/</span>
+            <span className="text-slate-100">Faqs</span>
+          </div>
+        </div>
+      </div>
       <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
         <section className="rounded-3xl border border-white/5 bg-slate-950/70 p-6 sm:p-10">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">

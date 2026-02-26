@@ -352,56 +352,220 @@ export default function Home() {
         </section>
 
         <section
-          id="faqs"
-          className="rounded-3xl border border-white/5 bg-slate-950/60 p-6 sm:p-10"
+          id="community"
+          className="relative overflow-hidden rounded-3xl border border-white/5 bg-slate-950/60 p-8 sm:p-12"
         >
-          <h2 className="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
-            FAQs
-          </h2>
-          <p className="mt-2 text-sm text-slate-300 sm:text-base">
-            Quick answers to common questions about how FutureInvest works.
-          </p>
-          <div className="mt-6 space-y-5 divide-y divide-white/5">
-            <div className="pt-3 first:pt-0">
-              <p className="text-sm font-medium text-slate-100 sm:text-base">
-                Is my money safe with FutureInvest?
-              </p>
-              <p className="mt-2 text-sm text-slate-300">
-                Client assets are held with regulated custodians in segregated
-                accounts. We implement multi-layer security controls on your
-                online portal and never use your assets for proprietary trading.
-              </p>
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-800 lg:aspect-auto lg:h-full">
+              <img
+                src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1632&q=80"
+                alt="Community of investors collaborating"
+                className="h-full w-full object-cover transition duration-700 hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent" />
             </div>
-            <div className="pt-3">
-              <p className="text-sm font-medium text-slate-100 sm:text-base">
-                What fees do you charge?
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                </span>
+                Growing Fast
+              </div>
+              <h2 className="mt-6 text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
+                Join Our Global Community
+              </h2>
+              <p className="mt-4 text-lg leading-relaxed text-slate-300">
+                Connect with thousands of like-minded investors who are building
+                their financial future. Get exclusive insights, market updates,
+                and expert advice directly from our team.
               </p>
-              <p className="mt-2 text-sm text-slate-300">
-                Our pricing is a transparent, all-in advisory fee based on
-                assets under management. There are no trading commissions or
-                hidden platform charges. You see the fee impact on every report.
-              </p>
+              <div className="mt-8 grid gap-6 sm:grid-cols-2">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="h-5 w-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 5.472m0 0a9.09 9.09 0 00-3.246 1.583m0 0a9.091 9.091 0 018.315-7.512M12 12.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-50">
+                      Expert Network
+                    </h3>
+                    <p className="mt-1 text-sm text-slate-400">
+                      Access to verified financial advisors and market analysts.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="h-5 w-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-50">
+                      Live Discussions
+                    </h3>
+                    <p className="mt-1 text-sm text-slate-400">
+                      Weekly webinars and Q&A sessions with industry leaders.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-10">
+                <a
+                  href="#register"
+                  className="inline-flex items-center justify-center rounded-full bg-emerald-400 px-8 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 transition hover:bg-emerald-300 hover:shadow-emerald-500/60"
+                >
+                  Join the Community
+                </a>
+              </div>
             </div>
-            <div className="pt-3">
-              <p className="text-sm font-medium text-slate-100 sm:text-base">
-                Can I withdraw my money at any time?
+          </div>
+        </section>
+
+        <section
+          id="faqs"
+          className="rounded-3xl border border-white/5 bg-slate-950/60 p-8 sm:p-12"
+        >
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
+            <div className="order-2 lg:order-1">
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-50">
+                Frequently Asked Questions
+              </h2>
+              <p className="mt-4 text-lg text-slate-300">
+                Everything you need to know about investing with FutureInvest.
+                Can&apos;t find the answer you&apos;re looking for?{" "}
+                <a href="#contact" className="text-emerald-400 hover:underline">
+                  Contact our team
+                </a>
+                .
               </p>
-              <p className="mt-2 text-sm text-slate-300">
-                Yes. You can request withdrawals at any time, subject to
-                standard settlement periods for underlying securities. Your
-                advisor will help you plan liquidity so withdrawals align with
-                your goals.
-              </p>
+
+              <div className="mt-10 space-y-8">
+                <div>
+                  <h3 className="flex items-center gap-3 text-lg font-semibold text-slate-100">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs text-emerald-400">
+                      1
+                    </span>
+                    Is my money safe with FutureInvest?
+                  </h3>
+                  <p className="mt-3 text-base leading-relaxed text-slate-400 pl-9">
+                    Client assets are held with regulated custodians in segregated
+                    accounts. We implement multi-layer security controls on your
+                    online portal and never use your assets for proprietary
+                    trading.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="flex items-center gap-3 text-lg font-semibold text-slate-100">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs text-emerald-400">
+                      2
+                    </span>
+                    What fees do you charge?
+                  </h3>
+                  <p className="mt-3 text-base leading-relaxed text-slate-400 pl-9">
+                    Our pricing is a transparent, all-in advisory fee based on
+                    assets under management. There are no trading commissions or
+                    hidden platform charges. You see the fee impact on every
+                    report.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="flex items-center gap-3 text-lg font-semibold text-slate-100">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs text-emerald-400">
+                      3
+                    </span>
+                    Can I withdraw my money at any time?
+                  </h3>
+                  <p className="mt-3 text-base leading-relaxed text-slate-400 pl-9">
+                    Yes. You can request withdrawals at any time, subject to
+                    standard settlement periods for underlying securities. Your
+                    advisor will help you plan liquidity so withdrawals align with
+                    your goals.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="flex items-center gap-3 text-lg font-semibold text-slate-100">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs text-emerald-400">
+                      4
+                    </span>
+                    Do you offer socially responsible investing options?
+                  </h3>
+                  <p className="mt-3 text-base leading-relaxed text-slate-400 pl-9">
+                    We can design portfolios that reflect your ESG preferences,
+                    excluding sectors or emphasizing themes that matter to you
+                    while maintaining diversification.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="pt-3">
-              <p className="text-sm font-medium text-slate-100 sm:text-base">
-                Do you offer socially responsible investing options?
-              </p>
-              <p className="mt-2 text-sm text-slate-300">
-                We can design portfolios that reflect your ESG preferences,
-                excluding sectors or emphasizing themes that matter to you while
-                maintaining diversification.
-              </p>
+
+            <div className="order-1 lg:order-2">
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-slate-800 lg:aspect-auto lg:h-full">
+                <img
+                  src="https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=1374&q=80"
+                  alt="Customer support team"
+                  className="h-full w-full object-cover transition duration-700 hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <div className="rounded-xl border border-white/10 bg-slate-950/80 p-4 backdrop-blur-sm">
+                    <div className="flex items-center gap-4">
+                      <div className="flex -space-x-3">
+                        <img
+                          className="h-10 w-10 rounded-full border-2 border-slate-950"
+                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64"
+                          alt="User"
+                        />
+                        <img
+                          className="h-10 w-10 rounded-full border-2 border-slate-950"
+                          src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64"
+                          alt="User"
+                        />
+                        <img
+                          className="h-10 w-10 rounded-full border-2 border-slate-950"
+                          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=64&h=64"
+                          alt="User"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-white">
+                          Still have questions?
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          Our team is ready to help 24/7
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -517,198 +681,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section
-          id="login"
-          className="grid gap-8 rounded-3xl border border-white/5 bg-slate-950/70 p-6 sm:p-10 md:grid-cols-2"
-        >
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
-              Account Login
-            </h2>
-            <p className="mt-2 text-sm text-slate-300 sm:text-base">
-              Access your personalized dashboard to monitor performance, review
-              statements, and manage your funding preferences.
-            </p>
-          </div>
-          <div className="rounded-3xl border border-slate-600 bg-slate-900/80 p-6">
-            <form className="space-y-4">
-              <div>
-                <label
-                  htmlFor="login-email"
-                  className="text-xs font-medium text-slate-200"
-                >
-                  Email
-                </label>
-                <input
-                  id="login-email"
-                  type="email"
-                  placeholder="you@example.com"
-                  className="mt-1 w-full rounded-2xl border border-slate-600 bg-slate-950/60 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="login-password"
-                  className="text-xs font-medium text-slate-200"
-                >
-                  Password
-                </label>
-                <input
-                  id="login-password"
-                  type="password"
-                  placeholder="••••••••"
-                  className="mt-1 w-full rounded-2xl border border-slate-600 bg-slate-950/60 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
-                />
-              </div>
-              <div className="flex items-center justify-between text-xs text-slate-300">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="h-3.5 w-3.5 rounded border border-slate-600 bg-slate-900 text-emerald-400 focus:ring-0"
-                  />
-                  <span>Remember me</span>
-                </label>
-                <button
-                  type="button"
-                  className="font-medium text-emerald-300 hover:text-emerald-200"
-                >
-                  Forgot password?
-                </button>
-              </div>
-              <button
-                type="button"
-                className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 transition hover:bg-emerald-300"
-              >
-                Sign In
-              </button>
-            </form>
-          </div>
-        </section>
-
-        <section
-          id="register"
-          className="grid gap-8 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-slate-950/80 p-6 sm:p-10 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
-        >
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
-              Open Your Account
-            </h2>
-            <p className="mt-2 text-sm text-slate-200 sm:text-base">
-              Create a FutureInvest account in minutes. Answer a few questions
-              about your investment horizon and risk profile, and we will
-              propose a tailored portfolio.
-            </p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-100">
-              <li>Digital onboarding with secure identity verification</li>
-              <li>Connect your bank for seamless funding</li>
-              <li>Update preferences anytime from your dashboard</li>
-            </ul>
-          </div>
-          <div className="rounded-3xl border border-emerald-500/40 bg-slate-950/70 p-6">
-            <form className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label
-                    htmlFor="register-first-name"
-                    className="text-xs font-medium text-slate-200"
-                  >
-                    First Name
-                  </label>
-                  <input
-                    id="register-first-name"
-                    type="text"
-                    placeholder="Alex"
-                    className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="register-last-name"
-                    className="text-xs font-medium text-slate-200"
-                  >
-                    Last Name
-                  </label>
-                  <input
-                    id="register-last-name"
-                    type="text"
-                    placeholder="Morgan"
-                    className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="register-email"
-                  className="text-xs font-medium text-slate-200"
-                >
-                  Email
-                </label>
-                <input
-                  id="register-email"
-                  type="email"
-                  placeholder="you@example.com"
-                  className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
-                />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label
-                    htmlFor="register-password"
-                    className="text-xs font-medium text-slate-200"
-                  >
-                    Password
-                  </label>
-                  <input
-                    id="register-password"
-                    type="password"
-                    placeholder="Create a password"
-                    className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="register-goal"
-                    className="text-xs font-medium text-slate-200"
-                  >
-                    Investment Goal
-                  </label>
-                  <select
-                    id="register-goal"
-                    className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 focus:border-emerald-400 focus:ring-2"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Select an option
-                    </option>
-                    <option value="build-wealth">Build long-term wealth</option>
-                    <option value="retirement">Plan for retirement</option>
-                    <option value="income">Generate income</option>
-                    <option value="preserve-capital">
-                      Preserve capital with lower risk
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex items-start gap-2 text-[11px] text-slate-300">
-                <input
-                  id="terms"
-                  type="checkbox"
-                  className="mt-0.5 h-3.5 w-3.5 rounded border border-slate-600 bg-slate-900 text-emerald-400 focus:ring-0"
-                />
-                <label htmlFor="terms">
-                  I confirm that I have read and agree to the platform&apos;s
-                  terms, disclosures, and privacy policy.
-                </label>
-              </div>
-              <button
-                type="button"
-                className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 transition hover:bg-emerald-300"
-              >
-                Create Account
-              </button>
-            </form>
-          </div>
-        </section>
       </main>
     </div>
   );
