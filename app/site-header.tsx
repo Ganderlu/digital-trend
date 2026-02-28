@@ -96,9 +96,6 @@ export function SiteHeader() {
           >
             Contact
           </Link>
-          <div className="relative z-50 flex min-w-[140px] items-center justify-center">
-            <GoogleTranslate id="google_translate_element_desktop" />
-          </div>
           <div className="flex items-center gap-4 border-l border-white/10 pl-6">
             <Link
               href="/login"
@@ -115,11 +112,8 @@ export function SiteHeader() {
           </div>
         </nav>
 
-        {/* Mobile Menu Button & Translate */}
+        {/* Mobile Menu Button */}
         <div className="flex items-center gap-3 md:hidden">
-          <div className="flex items-center">
-            <GoogleTranslate id="google_translate_element_mobile_navbar" />
-          </div>
           <button
             className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 hover:bg-white/5 hover:text-slate-100"
             onClick={() => setIsOpen(true)}
@@ -186,13 +180,7 @@ export function SiteHeader() {
                     Contact Us
                   </Link>
                 </div>
-                <div className="flex flex-col gap-4">
-                  <div className="py-2">
-                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
-                      Language
-                    </p>
-                    <GoogleTranslate id="google_translate_element_mobile" />
-                  </div>
+                <div className="flex flex-col gap-4 pt-4">
                   <Link
                     href="/login"
                     className="flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/5 py-3 text-base font-semibold text-slate-100 transition hover:bg-white/10"

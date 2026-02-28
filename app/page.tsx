@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -352,15 +353,101 @@ export default function Home() {
         </section>
 
         <section
+          id="why-choose-us"
+          className="relative overflow-hidden rounded-3xl border border-white/5 bg-slate-950/40 py-16 sm:py-24"
+        >
+          <div className="mx-auto max-w-5xl px-6 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-base font-semibold leading-7 text-emerald-400">
+                Why Choose FutureInvest
+              </h2>
+              <p className="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">
+                Standard of Excellence in Wealth Management
+              </p>
+              <p className="mt-6 text-lg leading-8 text-slate-400">
+                We combine human expertise with advanced technology to deliver
+                unmatched investment outcomes for our global clients.
+              </p>
+            </div>
+
+            <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+              <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
+                <div className="flex flex-col">
+                  <dt className="text-base font-semibold leading-7 text-slate-100">
+                    <div className="relative mb-6 h-48 w-full overflow-hidden rounded-2xl bg-slate-800">
+                      <Image
+                        src="https://images.unsplash.com/photo-1454165833767-027ff33027ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Expert analysis and planning"
+                        fill
+                        className="object-cover transition duration-500 hover:scale-105"
+                      />
+                    </div>
+                    Expert Advisory Team
+                  </dt>
+                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-400">
+                    <p className="flex-auto">
+                      Our advisors are industry veterans with decades of
+                      experience navigating complex market cycles and economic
+                      shifts.
+                    </p>
+                  </dd>
+                </div>
+
+                <div className="flex flex-col">
+                  <dt className="text-base font-semibold leading-7 text-slate-100">
+                    <div className="relative mb-6 h-48 w-full overflow-hidden rounded-2xl bg-slate-800">
+                      <Image
+                        src="https://images.unsplash.com/photo-1551288049-bbda48658a7d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Advanced data analytics"
+                        fill
+                        className="object-cover transition duration-500 hover:scale-105"
+                      />
+                    </div>
+                    Data-Driven Insights
+                  </dt>
+                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-400">
+                    <p className="flex-auto">
+                      We leverage institutional-grade analytics and real-time
+                      market data to identify high-conviction opportunities.
+                    </p>
+                  </dd>
+                </div>
+
+                <div className="flex flex-col">
+                  <dt className="text-base font-semibold leading-7 text-slate-100">
+                    <div className="relative mb-6 h-48 w-full overflow-hidden rounded-2xl bg-slate-800">
+                      <Image
+                        src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Secure and global operations"
+                        fill
+                        className="object-cover transition duration-500 hover:scale-105"
+                      />
+                    </div>
+                    Global Security Standards
+                  </dt>
+                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-400">
+                    <p className="flex-auto">
+                      Your assets are protected by world-class security
+                      protocols and held with top-tier regulated custodians.
+                    </p>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </section>
+
+        <section
           id="community"
           className="relative overflow-hidden rounded-3xl border border-white/5 bg-slate-950/60 p-8 sm:p-12"
         >
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-800 lg:aspect-auto lg:h-full">
-              <img
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-800 lg:aspect-auto lg:h-full min-h-[300px]">
+              <Image
                 src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1632&q=80"
                 alt="Community of investors collaborating"
-                className="h-full w-full object-cover transition duration-700 hover:scale-105"
+                fill
+                className="object-cover transition duration-700 hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent" />
             </div>
@@ -473,10 +560,10 @@ export default function Home() {
                     Is my money safe with FutureInvest?
                   </h3>
                   <p className="mt-3 text-base leading-relaxed text-slate-400 pl-9">
-                    Client assets are held with regulated custodians in segregated
-                    accounts. We implement multi-layer security controls on your
-                    online portal and never use your assets for proprietary
-                    trading.
+                    Client assets are held with regulated custodians in
+                    segregated accounts. We implement multi-layer security
+                    controls on your online portal and never use your assets for
+                    proprietary trading.
                   </p>
                 </div>
 
@@ -505,8 +592,8 @@ export default function Home() {
                   <p className="mt-3 text-base leading-relaxed text-slate-400 pl-9">
                     Yes. You can request withdrawals at any time, subject to
                     standard settlement periods for underlying securities. Your
-                    advisor will help you plan liquidity so withdrawals align with
-                    your goals.
+                    advisor will help you plan liquidity so withdrawals align
+                    with your goals.
                   </p>
                 </div>
 
@@ -527,10 +614,11 @@ export default function Home() {
             </div>
 
             <div className="order-1 lg:order-2">
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-slate-800 lg:aspect-auto lg:h-full">
-                <img
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-slate-800 lg:aspect-auto lg:h-full min-h-[400px]">
+                <Image
                   src="https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=1374&q=80"
                   alt="Customer support team"
+                  fill
                   className="h-full w-full object-cover transition duration-700 hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
@@ -538,21 +626,30 @@ export default function Home() {
                   <div className="rounded-xl border border-white/10 bg-slate-950/80 p-4 backdrop-blur-sm">
                     <div className="flex items-center gap-4">
                       <div className="flex -space-x-3">
-                        <img
-                          className="h-10 w-10 rounded-full border-2 border-slate-950"
-                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64"
-                          alt="User"
-                        />
-                        <img
-                          className="h-10 w-10 rounded-full border-2 border-slate-950"
-                          src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64"
-                          alt="User"
-                        />
-                        <img
-                          className="h-10 w-10 rounded-full border-2 border-slate-950"
-                          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=64&h=64"
-                          alt="User"
-                        />
+                        <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-slate-950">
+                          <Image
+                            fill
+                            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64"
+                            alt="User"
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-slate-950">
+                          <Image
+                            fill
+                            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64"
+                            alt="User"
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-slate-950">
+                          <Image
+                            fill
+                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=64&h=64"
+                            alt="User"
+                            className="object-cover"
+                          />
+                        </div>
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-white">
@@ -680,7 +777,6 @@ export default function Home() {
             </p>
           </div>
         </section>
-
       </main>
     </div>
   );

@@ -317,12 +317,12 @@ export default function DashboardLayout({
           </button>
           <div className="hidden md:block"></div> {/* Spacer */}
           <div className="flex items-center gap-4">
-            <Link
+            {/* <Link
               href="/about"
               className="hidden rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 sm:block"
             >
               About Us
-            </Link>
+            </Link> */}
             <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900 px-3 py-1.5 hover:bg-slate-800">
               <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-slate-700 text-slate-300">
                 {profile?.photoURL ? (

@@ -25,7 +25,11 @@ import {
   ArrowDownLeft,
   Clock,
   TrendingUp,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+
+const ITEMS_PER_PAGE = 5;
 
 type UserProfile = {
   firstName?: string;
@@ -33,6 +37,7 @@ type UserProfile = {
   email?: string;
   username?: string;
   joinedDate?: Timestamp | Date;
+  createdAt?: Timestamp | Date;
   lastAccess?: Timestamp | Date;
   balance?: number;
   totalEarnings?: number;
@@ -42,26 +47,27 @@ type UserProfile = {
   totalWithdrawals?: number;
   pendingWithdrawals?: number;
   lastWithdrawal?: number;
+  referralEarnings?: number;
 };
 
 type Transaction = {
   id: string;
-  type: "deposit" | "withdrawal" | "investment";
+  type: "deposit" | "withdrawal" | "investment" | "earning";
   amount: number;
   currency?: string;
   planName?: string;
   status: string;
   createdAt: Timestamp;
   method?: string;
+  description?: string;
 };
 
 export default function DashboardPage() {
   const router = useRouter();
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [recentTransactions, setRecentTransactions] = useState<Transaction[]>(
-    [],
-  );
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const app = getFirebaseApp();
@@ -85,32 +91,31 @@ export default function DashboardPage() {
         });
       }
 
-      // Fetch Recent Transactions
+      // Fetch All Transactions
       try {
         const depositsQuery = query(
           collection(db, "deposits"),
           where("userId", "==", currentUser.uid),
-          orderBy("createdAt", "desc"),
-          limit(5),
         );
         const withdrawalsQuery = query(
           collection(db, "withdrawals"),
           where("userId", "==", currentUser.uid),
-          orderBy("createdAt", "desc"),
-          limit(5),
         );
         const investmentsQuery = query(
           collection(db, "investments"),
           where("userId", "==", currentUser.uid),
-          orderBy("createdAt", "desc"),
-          limit(5),
+        );
+        const earningsQuery = query(
+          collection(db, "earnings"),
+          where("userId", "==", currentUser.uid),
         );
 
-        const [depositsSnap, withdrawalsSnap, investmentsSnap] =
+        const [depositsSnap, withdrawalsSnap, investmentsSnap, earningsSnap] =
           await Promise.all([
             getDocs(depositsQuery),
             getDocs(withdrawalsQuery),
             getDocs(investmentsQuery),
+            getDocs(earningsQuery),
           ]);
 
         const deposits = depositsSnap.docs.map((doc) => ({
@@ -131,11 +136,97 @@ export default function DashboardPage() {
           ...doc.data(),
         })) as Transaction[];
 
-        const all = [...deposits, ...withdrawals, ...investments]
-          .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
-          .slice(0, 10);
+        const earnings = earningsSnap.docs.map((doc) => ({
+          id: doc.id,
+          type: "earning" as const,
+          ...doc.data(),
+        })) as Transaction[];
 
-        setRecentTransactions(all);
+        // Calculate Withdrawal Stats
+        const totalWithdrawalsAmount = withdrawals
+          .filter((tx) => tx.status === "approved" || tx.status === "completed")
+          .reduce((sum, tx) => sum + (tx.amount || 0), 0);
+
+        const pendingWithdrawalsAmount = withdrawals
+          .filter((tx) => tx.status === "pending")
+          .reduce((sum, tx) => sum + (tx.amount || 0), 0);
+
+        const lastWithdrawalAmount =
+          withdrawals.filter(
+            (tx) => tx.status === "approved" || tx.status === "completed",
+          ).length > 0
+            ? withdrawals
+                .filter(
+                  (tx) => tx.status === "approved" || tx.status === "completed",
+                )
+                .sort(
+                  (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis(),
+                )[0].amount
+            : 0;
+
+        // Calculate Deposit Stats
+        const totalDepositsAmount = deposits
+          .filter((tx) => tx.status === "approved" || tx.status === "completed")
+          .reduce((sum, tx) => sum + (tx.amount || 0), 0);
+
+        const activeDepositsAmount = investments
+          .filter((tx) => tx.status === "active" || tx.status === "approved")
+          .reduce((sum, tx) => sum + (tx.amount || 0), 0);
+
+        const lastDepositAmount =
+          deposits.filter(
+            (tx) => tx.status === "approved" || tx.status === "completed",
+          ).length > 0
+            ? deposits
+                .filter(
+                  (tx) => tx.status === "approved" || tx.status === "completed",
+                )
+                .sort(
+                  (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis(),
+                )[0].amount
+            : 0;
+
+        // Calculate Earnings Stats
+        const totalEarningsAmount = earnings
+          .filter((tx) => tx.status === "approved" || tx.status === "completed")
+          .reduce((sum, tx) => sum + (tx.amount || 0), 0);
+
+        setProfile((prev) => {
+          if (!prev) return null;
+          const referralComm = prev.referralEarnings || 0;
+          return {
+            ...prev,
+            totalWithdrawals: totalWithdrawalsAmount,
+            pendingWithdrawals: pendingWithdrawalsAmount,
+            lastWithdrawal: lastWithdrawalAmount,
+            totalDeposits: totalDepositsAmount,
+            activeDeposits: activeDepositsAmount,
+            lastDeposit: lastDepositAmount,
+            totalEarnings: totalEarningsAmount + referralComm,
+          };
+        });
+
+        const all = [...deposits, ...withdrawals, ...investments, ...earnings];
+
+        // If user has referral earnings, we add a "virtual" transaction to show in history
+        if (userDoc.exists() && (userDoc.data().referralEarnings || 0) > 0) {
+          all.push({
+            id: "referral-earnings-total",
+            type: "earning",
+            amount: userDoc.data().referralEarnings,
+            status: "approved",
+            createdAt: userDoc.data().joinedDate || Timestamp.now(),
+            description: "Total Referral Commission",
+          });
+        }
+
+        all.sort((a, b) => {
+          const timeA = a.createdAt?.toMillis?.() || 0;
+          const timeB = b.createdAt?.toMillis?.() || 0;
+          return timeB - timeA;
+        });
+
+        setAllTransactions(all);
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
@@ -186,6 +277,25 @@ export default function DashboardPage() {
     }).format(amount || 0);
   };
 
+  // Pagination Logic
+  const totalPages = Math.ceil(allTransactions.length / ITEMS_PER_PAGE);
+  const currentTransactions = allTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="mx-auto max-w-7xl p-6 lg:p-8">
@@ -219,7 +329,7 @@ export default function DashboardPage() {
                   Joined Date
                 </p>
                 <p className="mt-1 text-sm font-semibold">
-                  {formatDate(profile?.joinedDate)}
+                  {formatDate(profile?.createdAt || profile?.joinedDate)}
                 </p>
               </div>
               <div>
@@ -319,7 +429,7 @@ export default function DashboardPage() {
                         {formatCurrency(profile?.activeDeposits)}
                       </p>
                       <p className="text-xs font-medium text-slate-500">
-                        Active Deposits
+                        Active Investment
                       </p>
                     </div>
                     <ArrowDownLeft className="h-5 w-5 text-slate-400" />
@@ -393,29 +503,26 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Recent Account History */}
+        {/* All Account History */}
         <div className="mt-8 rounded-3xl border border-white/5 bg-slate-900 p-6 lg:p-8">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 border-l-4 border-emerald-500 pl-3">
               <h3 className="text-lg font-bold text-slate-50">
-                Recent Account History
+                All Account History
               </h3>
             </div>
-            <button
-              onClick={() => router.push("/account-history")}
-              className="text-xs font-medium text-emerald-500 hover:text-emerald-400"
-            >
-              View All
-            </button>
+            <div className="text-xs font-medium text-slate-500">
+              {allTransactions.length} Transactions
+            </div>
           </div>
 
-          <div className="space-y-3">
-            {recentTransactions.length === 0 ? (
+          <div className="max-h-[600px] overflow-y-auto pr-2 custom-scrollbar space-y-3">
+            {allTransactions.length === 0 ? (
               <div className="py-8 text-center text-sm text-slate-500">
-                No recent transactions found
+                No transactions found
               </div>
             ) : (
-              recentTransactions.map((tx) => (
+              currentTransactions.map((tx) => (
                 <div
                   key={tx.id}
                   className="flex items-center justify-between rounded-xl bg-slate-950/50 p-4 transition-colors hover:bg-slate-950"
@@ -427,20 +534,24 @@ export default function DashboardPage() {
                           ? "bg-emerald-500/10 text-emerald-500"
                           : tx.type === "withdrawal"
                             ? "bg-amber-500/10 text-amber-500"
-                            : "bg-blue-500/10 text-blue-500"
+                            : tx.type === "earning"
+                              ? "bg-emerald-500/10 text-emerald-500"
+                              : "bg-blue-500/10 text-blue-500"
                       }`}
                     >
                       {tx.type === "deposit" ? (
                         <ArrowDownLeft className="h-5 w-5" />
                       ) : tx.type === "withdrawal" ? (
                         <ArrowUpRight className="h-5 w-5" />
+                      ) : tx.type === "earning" ? (
+                        <TrendingUp className="h-5 w-5" />
                       ) : (
                         <TrendingUp className="h-5 w-5" />
                       )}
                     </div>
                     <div>
                       <p className="font-semibold text-slate-50 capitalize">
-                        {tx.type}
+                        {tx.type === "earning" ? "Profit/Earning" : tx.type}
                       </p>
                       <div className="flex items-center gap-2 text-xs text-slate-500">
                         <Clock className="h-3 w-3" />
@@ -465,20 +576,76 @@ export default function DashboardPage() {
                   <div className="text-right">
                     <p
                       className={`font-bold ${
-                        tx.type === "deposit"
+                        tx.type === "deposit" || tx.type === "earning"
                           ? "text-emerald-500"
-                          : "text-slate-50"
+                          : tx.type === "withdrawal"
+                            ? "text-red-400"
+                            : "text-blue-400"
                       }`}
                     >
-                      {tx.type === "deposit" ? "+" : "-"}
+                      {tx.type === "deposit" || tx.type === "earning"
+                        ? "+"
+                        : "-"}
                       {formatCurrency(tx.amount)}
                     </p>
                     <p className="text-xs text-slate-500">
-                      {tx.method || "Wallet"}
+                      {tx.type === "investment"
+                        ? tx.planName
+                        : tx.type === "earning"
+                          ? tx.description || "Profit Distribution"
+                          : tx.type === "deposit"
+                            ? tx.currency
+                            : tx.method || "Wallet"}
                     </p>
                   </div>
                 </div>
               ))
+            )}
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-6 sm:flex-row">
+            <div className="text-xs text-slate-500">
+              Showing {currentTransactions.length} of {allTransactions.length}{" "}
+              transactions
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={goToPreviousPage}
+                  disabled={currentPage === 1}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-800 text-slate-400 transition-all hover:bg-slate-700 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+
+                <div className="flex items-center gap-1.5">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`h-9 min-w-[36px] rounded-xl px-2 text-xs font-bold transition-all ${
+                          currentPage === page
+                            ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-500/50"
+                            : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ),
+                  )}
+                </div>
+
+                <button
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-800 text-slate-400 transition-all hover:bg-slate-700 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
             )}
           </div>
         </div>

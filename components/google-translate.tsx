@@ -9,7 +9,11 @@ declare global {
   }
 }
 
-export default function GoogleTranslate({ id = "google_translate_element" }: { id?: string }) {
+export default function GoogleTranslate({
+  id = "google_translate_element",
+}: {
+  id?: string;
+}) {
   const initialized = useRef(false);
 
   useEffect(() => {
@@ -31,7 +35,7 @@ export default function GoogleTranslate({ id = "google_translate_element" }: { i
                 0,
               autoDisplay: false,
             },
-            id
+            id,
           );
           initialized.current = true;
         } catch (e) {
@@ -41,17 +45,23 @@ export default function GoogleTranslate({ id = "google_translate_element" }: { i
     };
 
     const checkAndInit = () => {
-        if (window.google && window.google.translate) {
-            initWidget();
-        }
+      if (
+        window.google &&
+        window.google.translate &&
+        window.google.translate.TranslateElement
+      ) {
+        initWidget();
+      }
     };
 
-    let script = document.querySelector("#google-translate-script") as HTMLScriptElement;
+    const scriptId = "google-translate-script";
+    let script = document.getElementById(scriptId) as HTMLScriptElement;
 
     if (!script) {
       script = document.createElement("script");
-      script.id = "google-translate-script";
-      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.id = scriptId;
+      script.src =
+        "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
       script.async = true;
       document.body.appendChild(script);
 
@@ -59,14 +69,20 @@ export default function GoogleTranslate({ id = "google_translate_element" }: { i
         window.dispatchEvent(new Event("google-translate-ready"));
       };
     } else {
-        checkAndInit();
+      checkAndInit();
     }
 
-    const handleReady = () => checkAndInit();
+    const handleReady = () => {
+      // Add a small delay to ensure DOM is ready
+      setTimeout(checkAndInit, 100);
+    };
     window.addEventListener("google-translate-ready", handleReady);
 
-    // Fallback polling in case event is missed
-    const intervalId = setInterval(checkAndInit, 1000);
+    // Polling as a backup for cases where events might be missed or for delayed script execution
+    const intervalId = setInterval(checkAndInit, 500);
+
+    // Initial check immediately on mount (if script is already loaded)
+    checkAndInit();
 
     return () => {
       window.removeEventListener("google-translate-ready", handleReady);
