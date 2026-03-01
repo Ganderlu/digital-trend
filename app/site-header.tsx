@@ -112,8 +112,20 @@ export function SiteHeader() {
           </div>
         </nav>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button & Quick Actions */}
         <div className="flex items-center gap-3 md:hidden">
+          <Link
+            href="/login"
+            className="text-xs font-semibold text-emerald-400 transition hover:text-emerald-300"
+          >
+            Log in
+          </Link>
+          <Link
+            href="/register"
+            className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-400 ring-1 ring-emerald-500/40 transition hover:bg-emerald-500 hover:text-slate-950"
+          >
+            Register
+          </Link>
           <button
             className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 hover:bg-white/5 hover:text-slate-100"
             onClick={() => setIsOpen(true)}

@@ -323,7 +323,7 @@ export default function DashboardLayout({
             >
               About Us
             </Link> */}
-            <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900 px-3 py-1.5 hover:bg-slate-800">
+            {/* <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900 px-3 py-1.5 hover:bg-slate-800">
               <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-slate-700 text-slate-300">
                 {profile?.photoURL ? (
                   <img
@@ -336,7 +336,7 @@ export default function DashboardLayout({
                 )}
               </div>
               <ChevronDown className="h-4 w-4 text-slate-500" />
-            </div>
+            </div> */}
           </div>
         </header>
 

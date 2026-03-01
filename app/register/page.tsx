@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, type FormEvent, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
 
 function RegisterForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -65,8 +66,11 @@ function RegisterForm() {
         balance: 0,
       });
 
-      setSuccess("Account created successfully. You can now log in.");
+      setSuccess("Account created successfully! Redirecting to login...");
       setPassword("");
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
     } catch (registrationError: unknown) {
       if (
         typeof registrationError === "object" &&
@@ -219,13 +223,22 @@ function RegisterForm() {
                   {success}
                 </p>
               ) : null}
-              <button
-                type="submit"
-                disabled={submitting}
-                className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {submitting ? "Creating Account..." : "Create Account"}
-              </button>
+              {submitting ? (
+                <div className="flex flex-col items-center justify-center space-y-2 py-4">
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></div>
+                  <p className="text-xs font-medium text-emerald-300">
+                    Creating your secure account...
+                  </p>
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  Create Account
+                </button>
+              )}
             </form>
             <p className="mt-3 text-[11px] text-slate-400">
               This page is a visual prototype. In a production environment, this

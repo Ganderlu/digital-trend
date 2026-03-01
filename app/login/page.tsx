@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirebaseApp } from "@/lib/firebaseClient";
 
@@ -135,7 +136,18 @@ export default function LoginPage() {
                 {submitting ? "Signing In..." : "Sign In"}
               </button>
             </form>
-            <p className="mt-3 text-[11px] text-slate-400">
+            <div className="mt-6 border-t border-slate-700/50 pt-4 text-center">
+              <p className="text-sm text-slate-400">
+                If you haven&apos;t registered...{" "}
+                <Link
+                  href="/register"
+                  className="font-bold text-emerald-400 transition hover:text-emerald-300"
+                >
+                  Register Now
+                </Link>
+              </p>
+            </div>
+            <p className="mt-6 text-[11px] text-slate-400">
               For demonstration purposes, this page uses Firebase Authentication
               with email and password.
             </p>
