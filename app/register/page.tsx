@@ -43,6 +43,24 @@ function RegisterForm() {
 
     setSubmitting(true);
     try {
+      // Fetch geolocation data
+      let locationData = {};
+      try {
+        const response = await fetch("https://ipapi.co/json/");
+        if (response.ok) {
+          const data = await response.json();
+          locationData = {
+            ip: data.ip,
+            city: data.city,
+            region: data.region,
+            country: data.country_name,
+            provider: data.org,
+          };
+        }
+      } catch (geoError) {
+        console.error("Geolocation fetch failed:", geoError);
+      }
+
       const app = getFirebaseApp();
       const auth = getAuth(app);
       const db = getFirebaseFirestore();
@@ -64,6 +82,7 @@ function RegisterForm() {
         totalInvested: 0,
         referralEarnings: 0,
         balance: 0,
+        registrationLocation: locationData,
       });
 
       setSuccess("Account created successfully! Redirecting to login...");

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { LiveChatWidget } from "@/components/live-chat-widget";
+import { TawkChat } from "@/components/tawk-chat";
 import { FloatingTranslate } from "@/components/floating-translate";
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <SiteFooter />
           <LiveChatWidget />
+          <TawkChat />
           <FloatingTranslate />
         </div>
       </body>

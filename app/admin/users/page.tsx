@@ -23,6 +23,7 @@ import {
   CheckCircle,
   Mail,
   Calendar,
+  MapPin,
 } from "lucide-react";
 
 type UserData = {
@@ -34,6 +35,13 @@ type UserData = {
   createdAt?: Timestamp | any;
   balance?: number;
   status?: "active" | "banned";
+  registrationLocation?: {
+    ip?: string;
+    city?: string;
+    region?: string;
+    country?: string;
+    provider?: string;
+  };
 };
 
 export default function AdminUsersPage() {
@@ -179,6 +187,9 @@ export default function AdminUsersPage() {
                     Joined
                   </th>
                   <th scope="col" className="px-6 py-4 font-medium">
+                    Location
+                  </th>
+                  <th scope="col" className="px-6 py-4 font-medium">
                     Status
                   </th>
                   <th scope="col" className="px-6 py-4 font-medium text-right">
@@ -226,6 +237,24 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         {formatDate(user.createdAt)}
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4">
+                        {user.registrationLocation ? (
+                          <div className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-1 text-xs text-slate-200">
+                              <MapPin className="h-3 w-3 text-emerald-500" />
+                              {user.registrationLocation.city || "Unknown"},{" "}
+                              {user.registrationLocation.country || "Unknown"}
+                            </div>
+                            <p className="text-[10px] text-slate-500">
+                              IP: {user.registrationLocation.ip || "N/A"}
+                            </p>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-600 italic">
+                            No location data
+                          </span>
+                        )}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <span

@@ -101,7 +101,7 @@ export function SiteHeader() {
               href="/login"
               className="text-sm font-semibold text-emerald-400 hover:text-emerald-300"
             >
-              Log in
+              Login
             </Link>
             <Link
               href="/register"
@@ -113,12 +113,12 @@ export function SiteHeader() {
         </nav>
 
         {/* Mobile Menu Button & Quick Actions */}
-        <div className="flex items-center gap-3 md:hidden">
+        <div className="ml-auto flex items-center gap-3 md:hidden">
           <Link
             href="/login"
             className="text-xs font-semibold text-emerald-400 transition hover:text-emerald-300"
           >
-            Log in
+            Login
           </Link>
           <Link
             href="/register"
@@ -197,7 +197,7 @@ export function SiteHeader() {
                     href="/login"
                     className="flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/5 py-3 text-base font-semibold text-slate-100 transition hover:bg-white/10"
                   >
-                    Log in
+                    Login
                   </Link>
                   <Link
                     href="/register"
