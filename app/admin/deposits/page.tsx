@@ -15,6 +15,9 @@ import {
   runTransaction,
   getDoc,
   increment,
+  type DocumentData,
+  type DocumentReference,
+  type DocumentSnapshot,
 } from "firebase/firestore";
 import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
 import AdminLayout from "@/components/admin-layout";
@@ -131,8 +134,8 @@ export default function AdminDepositsPage() {
         }
 
         const userData = userDocSnapshot.data();
-        let referrerRef = null;
-        let referrerDoc: any = null;
+        let referrerRef: DocumentReference<DocumentData> | null = null;
+        let referrerDoc: DocumentSnapshot<DocumentData> | null = null;
 
         // Prepare referrer update if applicable (Reads must be before Writes)
         if (
@@ -157,7 +160,7 @@ export default function AdminDepositsPage() {
           });
 
           // Apply Referral Bonus
-          if (referrerDoc && referrerDoc.exists() && referrerRef) {
+          if (referrerRef && referrerDoc?.exists()) {
             const bonus = deposit.amount * 0.1; // 10% bonus
             transaction.update(referrerRef, {
               balance: increment(bonus),
