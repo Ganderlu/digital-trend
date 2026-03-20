@@ -23,6 +23,7 @@ import {
   ArrowRight,
   Bitcoin,
   DollarSign,
+  Coins,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -45,7 +46,7 @@ export default function DepositPage() {
   // Form State
   const [amount, setAmount] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState<
-    "BTC" | "ETH" | "USDT"
+    "BTC" | "ETH" | "USDT" | "XRP"
   >("BTC");
   const [step, setStep] = useState<1 | 2 | 3>(1); // 1: Amount, 2: Payment, 3: Success
   const [txHash, setTxHash] = useState("");
@@ -57,6 +58,7 @@ export default function DepositPage() {
     BTC: "",
     ETH: "",
     USDT: "",
+    XRP: "",
   });
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export default function DepositPage() {
                 BTC: data.walletBTC || "",
                 ETH: data.walletETH || "",
                 USDT: data.walletUSDT || "",
+                XRP: data.walletXRP || "",
               });
             } else {
               // Fallback if settings not initialized
@@ -83,6 +86,7 @@ export default function DepositPage() {
                 BTC: "1J1RpsaG7BoQu6pmxQ2j2WC5H6zni6eUKh",
                 ETH: "0x031d48c14d06470edd37b8c23df4d179a855f48c",
                 USDT: "TAGehSxJe15bB81JmP7gnuHLJTwZGaWZ2K",
+                XRP: "rLNaS6mXj5f6X9X5X5X5X5X5X5X5X5X5X5",
               });
             }
           },
@@ -260,11 +264,12 @@ export default function DepositPage() {
                 <label className="mb-4 block text-sm font-medium text-slate-300">
                   Select Currency
                 </label>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {[
                     { id: "BTC", name: "Bitcoin", icon: Bitcoin },
                     { id: "ETH", name: "Ethereum", icon: Wallet }, // Using generic wallet icon for ETH if no specific one
                     { id: "USDT", name: "Tether (TRC20)", icon: DollarSign },
+                    { id: "XRP", name: "XRP", icon: Coins },
                   ].map((currency) => (
                     <button
                       key={currency.id}

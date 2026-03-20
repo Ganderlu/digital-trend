@@ -34,190 +34,162 @@ export function SiteFooter() {
   }
 
   return (
-    <footer className="border-t border-white/5 bg-slate-950 pt-16 pb-8">
+    <footer className="bg-[#f0f9f4] pt-16 pb-8 transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Brand and Newsletter */}
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-4">
+          {/* Brand Info */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/10 ring-1 ring-emerald-400/40">
-                <span className="text-lg font-bold text-emerald-300">FI</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 shadow-lg shadow-emerald-600/20">
+                <span className="text-lg font-bold text-white">DT</span>
               </div>
-              <span className="text-xl font-bold tracking-tight text-slate-100">
-                FutureInvest
+              <span className="text-xl font-bold tracking-tight text-slate-900">
+                Digital-trend
               </span>
             </Link>
-            <p className="mt-4 text-sm leading-relaxed text-slate-400">
-              Empowering investors with professional tools, expert insights, and
-              secure portfolio management strategies for long-term growth.
+            <p className="mt-6 text-sm leading-relaxed text-slate-600">
+              Your trusted partner in institutional-grade wealth management. We combine data-driven insights with human expertise to build resilient portfolios for the future.
             </p>
-            <div className="mt-6">
-              <h3 className="text-sm font-semibold text-slate-100">
-                Subscribe to our newsletter
-              </h3>
-              <p className="mt-1 text-xs text-slate-400">
-                Get the latest market updates and investment tips.
-              </p>
-              <form className="mt-3 flex max-w-sm gap-2">
+            <div className="mt-8 flex gap-4">
+              <Link
+                href="#"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-sm transition-all hover:bg-emerald-600 hover:text-white"
+              >
+                <Facebook size={18} />
+              </Link>
+              <Link
+                href="#"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-sm transition-all hover:bg-emerald-600 hover:text-white"
+              >
+                <Twitter size={18} />
+              </Link>
+              <Link
+                href="#"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-sm transition-all hover:bg-emerald-600 hover:text-white"
+              >
+                <Instagram size={18} />
+              </Link>
+              <Link
+                href="#"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-sm transition-all hover:bg-emerald-600 hover:text-white"
+              >
+                <Linkedin size={18} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Company Links */}
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+              Company
+            </h3>
+            <ul className="mt-6 space-y-4">
+              <li>
+                <Link
+                  href="/about"
+                  className="text-sm text-slate-600 transition-colors hover:text-emerald-600 flex items-center gap-2 group"
+                >
+                  <ArrowRight size={14} className="opacity-0 -ml-4 transition-all group-hover:opacity-100 group-hover:ml-0" />
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/what-we-do"
+                  className="text-sm text-slate-600 transition-colors hover:text-emerald-600 flex items-center gap-2 group"
+                >
+                  <ArrowRight size={14} className="opacity-0 -ml-4 transition-all group-hover:opacity-100 group-hover:ml-0" />
+                  What We Do
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/plans"
+                  className="text-sm text-slate-600 transition-colors hover:text-emerald-600 flex items-center gap-2 group"
+                >
+                  <ArrowRight size={14} className="opacity-0 -ml-4 transition-all group-hover:opacity-100 group-hover:ml-0" />
+                  Investment Plans
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/faqs"
+                  className="text-sm text-slate-600 transition-colors hover:text-emerald-600 flex items-center gap-2 group"
+                >
+                  <ArrowRight size={14} className="opacity-0 -ml-4 transition-all group-hover:opacity-100 group-hover:ml-0" />
+                  Common FAQs
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+              Contact
+            </h3>
+            <ul className="mt-6 space-y-4">
+              <li className="flex items-start gap-3 text-sm text-slate-600">
+                <MapPin size={18} className="text-emerald-600 shrink-0 mt-0.5" />
+                <span>Financial District, New York, NY 10005, USA</span>
+              </li>
+              <li className="flex items-center gap-3 text-sm text-slate-600">
+                <Mail size={18} className="text-emerald-600 shrink-0" />
+                <a href="mailto:advisors@Digital-trend.com" className="hover:text-emerald-600 transition-colors">
+                  advisors@Digital-trend.com
+                </a>
+              </li>
+              <li className="flex items-center gap-3 text-sm text-slate-600">
+                <Phone size={18} className="text-emerald-600 shrink-0" />
+                <span>+1 (555) 012-9876</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+              Newsletter
+            </h3>
+            <p className="mt-6 text-sm text-slate-600">
+              Get the latest market updates and investment insights.
+            </p>
+            <form className="mt-4">
+              <div className="relative">
                 <input
                   type="email"
-                  placeholder="Enter your email"
-                  className="w-full min-w-0 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20"
+                  placeholder="Your email address"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
                 />
                 <button
                   type="submit"
-                  className="flex items-center justify-center rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+                  className="absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-white transition-colors hover:bg-emerald-700"
                 >
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight size={18} />
                 </button>
-              </form>
-            </div>
-          </div>
-
-          {/* Links Section */}
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-2">
-            <div>
-              <h3 className="text-sm font-semibold text-slate-100">Company</h3>
-              <ul className="mt-4 space-y-3 text-sm text-slate-400">
-                <li>
-                  <Link
-                    href="/about"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/what-we-do"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    What We Do
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/plans"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Investment Plans
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/contact"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-slate-100">
-                Resources
-              </h3>
-              <ul className="mt-4 space-y-3 text-sm text-slate-400">
-                <li>
-                  <Link
-                    href="/faqs"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    FAQs
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Market Insights
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Privacy Policy
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div className="col-span-2 sm:col-span-1">
-              <h3 className="text-sm font-semibold text-slate-100">Contact</h3>
-              <ul className="mt-4 space-y-3 text-sm text-slate-400">
-                <li className="flex items-start gap-2">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                  <span>21st Floor, Financial District, New York, NY</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 shrink-0 text-emerald-500" />
-                  <span>+1 (555) 012-9876</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 shrink-0 text-emerald-500" />
-                  <a
-                    href="mailto:support@futureinvest.com"
-                    className="hover:text-emerald-400"
-                  >
-                    support@futureinvest.com
-                  </a>
-                </li>
-              </ul>
-            </div>
+              </div>
+            </form>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/5 pt-8">
-          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-            <p className="text-xs text-slate-500">
-              &copy; {new Date().getFullYear()} FutureInvest. All rights
-              reserved.
-            </p>
-            <div className="flex gap-4">
-              <Link
-                href="#"
-                className="text-slate-400 hover:text-emerald-400 transition-colors"
-              >
-                <span className="sr-only">Facebook</span>
-                <Facebook className="h-5 w-5" />
-              </Link>
-              <Link
-                href="#"
-                className="text-slate-400 hover:text-emerald-400 transition-colors"
-              >
-                <span className="sr-only">Twitter</span>
-                <Twitter className="h-5 w-5" />
-              </Link>
-              <Link
-                href="#"
-                className="text-slate-400 hover:text-emerald-400 transition-colors"
-              >
-                <span className="sr-only">Instagram</span>
-                <Instagram className="h-5 w-5" />
-              </Link>
-              <Link
-                href="#"
-                className="text-slate-400 hover:text-emerald-400 transition-colors"
-              >
-                <span className="sr-only">LinkedIn</span>
-                <Linkedin className="h-5 w-5" />
-              </Link>
-            </div>
-          </div>
-          <div className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-slate-600">
-            <p>Regulated investment advisory firm.</p>
-            <p>Disclosures available upon request.</p>
-            <p>Past performance does not guarantee future results.</p>
+        {/* Bottom Bar */}
+        <div className="mt-16 border-t border-slate-200 pt-8 flex flex-col items-center justify-between gap-6 sm:flex-row">
+          <p className="text-xs text-slate-500 font-medium">
+            &copy; {new Date().getFullYear()} Digital-trend Investment. All rights reserved.
+          </p>
+          <div className="flex gap-8">
+            <Link
+              href="/privacy"
+              className="text-xs font-semibold text-slate-500 hover:text-emerald-600 transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-xs font-semibold text-slate-500 hover:text-emerald-600 transition-colors"
+            >
+              Terms of Service
+            </Link>
           </div>
         </div>
       </div>

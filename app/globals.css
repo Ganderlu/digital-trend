@@ -12,13 +12,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -53,10 +46,10 @@ body {
   margin: 0 !important;
   width: auto !important;
   min-width: 100px !important;
-  color: white !important;
+  color: #171717 !important;
   font-weight: 700 !important;
   font-size: 14px !important;
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") !important;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23171717'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") !important;
   box-shadow: none !important;
 }
 
@@ -74,7 +67,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
 
@@ -91,9 +84,9 @@ body {
 }
 
 .goog-te-gadget .goog-te-combo {
-  background-color: #0f172a !important; /* Dark background (slate-900) */
-  color: #e2e8f0 !important; /* Light text (slate-200) */
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background-color: #ffffff !important; /* White background */
+  color: #171717 !important; /* Dark text */
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
   border-radius: 9999px !important; /* Rounded full */
   padding: 6px 12px !important;
   padding-right: 32px !important; /* Space for custom arrow */

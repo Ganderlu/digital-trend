@@ -1,55 +1,46 @@
-import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
-import { getAnalytics, type Analytics } from "firebase/analytics";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAnalytics, isSupported } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDOf5vKxqxg5i9qyoT1BD4NCdW4oCy72vw",
-  authDomain: "rollingfsq.firebaseapp.com",
-  projectId: "rollingfsq",
-  storageBucket: "rollingfsq.firebasestorage.app",
-  messagingSenderId: "702805252974",
-  appId: "1:702805252974:web:8e0dab936e37a26f69ff7f",
-  measurementId: "G-7FYHD4M291",
-} as const;
+  apiKey: "AIzaSyBrFprbdluy5EkgVKncUlkhIetBH3x9kK8",
+  authDomain: "digital-trend-4334a.firebaseapp.com",
+  projectId: "digital-trend-4334a",
+  storageBucket: "digital-trend-4334a.firebasestorage.app",
+  messagingSenderId: "378757629214",
+  appId: "1:378757629214:web:48f7fbe770cefbaec8b50f",
+  measurementId: "G-7KHE4REE65",
+};
 
-let app: FirebaseApp | undefined;
-let analytics: Analytics | undefined;
+// Initialize Firebase
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-function initFirebaseApp() {
-  if (!app) {
-    app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-  }
+// Analytics is only supported in browser
+let analytics: any = null;
+if (typeof window !== "undefined") {
+  isSupported().then((yes) => {
+    if (yes) {
+      analytics = getAnalytics(app);
+    }
+  });
+}
+
+// Helpers for backward compatibility with existing code
+export function getFirebaseApp() {
   return app;
 }
-
-export function getFirebaseApp() {
-  return initFirebaseApp();
+export function getFirebaseAuth() {
+  return auth;
 }
-
-import { getStorage } from "firebase/storage";
-import { getFirestore, type Firestore } from "firebase/firestore";
-
-export function getFirebaseStorage() {
-  const app = initFirebaseApp();
-  return getStorage(app);
-}
-
-let firestore: Firestore | undefined;
-
 export function getFirebaseFirestore() {
-  const app = initFirebaseApp();
-  if (!firestore) {
-    firestore = getFirestore(app);
-  }
-  return firestore;
+  return db;
 }
-
-export function getFirebaseAnalytics() {
-  if (typeof window === "undefined") {
-    return undefined;
-  }
-  if (!analytics) {
-    const initializedApp = initFirebaseApp();
-    analytics = getAnalytics(initializedApp);
-  }
-  return analytics;
+export function getFirebaseStorage() {
+  return storage;
 }
+export { app, auth, db, storage, analytics };

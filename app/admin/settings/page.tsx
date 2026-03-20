@@ -21,6 +21,7 @@ type GlobalSettings = {
   walletBTC: string;
   walletETH: string;
   walletUSDT: string;
+  walletXRP: string;
   supportEmail: string;
   siteName: string;
 };
@@ -38,8 +39,9 @@ export default function AdminSettingsPage() {
     walletBTC: "",
     walletETH: "",
     walletUSDT: "",
+    walletXRP: "",
     supportEmail: "",
-    siteName: "FutureInvest",
+    siteName: "Digital-trend",
   });
 
   useEffect(() => {
@@ -101,8 +103,9 @@ export default function AdminSettingsPage() {
             walletBTC: "1J1RpsaG7BoQu6pmxQ2j2WC5H6zni6eUKh",
             walletETH: "0x031d48c14d06470edd37b8c23df4d179a855f48c",
             walletUSDT: "TAGehSxJe15bB81JmP7gnuHLJTwZGaWZ2K",
-            supportEmail: "support@futureinvest.com",
-            siteName: "FutureInvest",
+            walletXRP: "rLNaS6mXj5f6X9X5X5X5X5X5X5X5X5X5X5",
+            supportEmail: "support@Digital-trend.com",
+            siteName: "Digital-trend",
           };
           setSettings(defaultSettings);
           // Optionally save these defaults to DB immediately or wait for user save
@@ -224,7 +227,7 @@ export default function AdminSettingsPage() {
                   />
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-300">
                     USDT (TRC20) Address
                   </label>
@@ -234,6 +237,19 @@ export default function AdminSettingsPage() {
                     onChange={(e) => handleChange("walletUSDT", e.target.value)}
                     className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50"
                     placeholder="Enter USDT wallet address"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-300">
+                    XRP Address
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.walletXRP}
+                    onChange={(e) => handleChange("walletXRP", e.target.value)}
+                    className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50"
+                    placeholder="Enter XRP wallet address"
                   />
                 </div>
               </div>

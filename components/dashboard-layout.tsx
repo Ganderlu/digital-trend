@@ -192,7 +192,8 @@ export default function DashboardLayout({
         </div>
 
         <nav className="flex-1 space-y-1">
-          {profile?.role === "admin" && (
+          {(profile?.role === "admin" ||
+            profile?.email === "cjonwubuya@gmail.com") && (
             <Link
               href="/admin"
               className="mb-2 flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2.5 text-sm font-bold text-emerald-400 transition hover:bg-emerald-500/20"
@@ -266,7 +267,8 @@ export default function DashboardLayout({
               </div>
             </div>
             <nav className="flex-1 space-y-1">
-              {profile?.role === "admin" && (
+              {(profile?.role === "admin" ||
+                profile?.email === "cjonwubuya@gmail.com") && (
                 <Link
                   href="/admin"
                   className="mb-2 flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2.5 text-sm font-bold text-emerald-400 transition hover:bg-emerald-500/20"

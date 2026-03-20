@@ -301,12 +301,12 @@ export default function DashboardPage() {
       <div className="mx-auto max-w-7xl p-6 lg:p-8">
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Left Column: Profile Card */}
-          <div className="rounded-3xl bg-slate-50 p-8 text-center text-slate-900 lg:col-span-1 dark:bg-slate-900 dark:text-slate-50 border border-white/5">
-            <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-slate-800 text-slate-400 ring-4 ring-slate-700">
+          <div className="rounded-3xl bg-white p-8 text-center text-slate-900 lg:col-span-1 border border-slate-200">
+            <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-slate-100 text-slate-400 ring-4 ring-slate-50">
               <User className="h-12 w-12" />
             </div>
             <h2 className="text-2xl font-bold">{fullName}</h2>
-            <p className="mt-1 text-sm text-slate-400">{username}</p>
+            <p className="mt-1 text-sm text-slate-500">{username}</p>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
@@ -317,13 +317,13 @@ export default function DashboardPage() {
               </button>
               <button
                 onClick={() => router.push("/withdraw")}
-                className="rounded-lg bg-slate-800 py-2.5 text-sm font-semibold text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                className="rounded-lg bg-slate-100 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-colors"
               >
                 Withdraw
               </button>
             </div>
 
-            <div className="mt-8 grid grid-cols-3 gap-4 border-t border-white/10 pt-6 text-center">
+            <div className="mt-8 grid grid-cols-3 gap-4 border-t border-slate-100 pt-6 text-center">
               <div>
                 <p className="text-xs font-medium text-slate-500">
                   Joined Date
@@ -352,20 +352,20 @@ export default function DashboardPage() {
             {/* Stats Row */}
             <div className="grid gap-6 sm:grid-cols-2">
               {/* Balance Card */}
-              <div className="rounded-3xl border border-white/5 bg-slate-900 p-6 shadow-sm">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-slate-400">
+                    <p className="text-sm font-semibold text-slate-500">
                       Balance
                     </p>
-                    <h3 className="mt-2 text-3xl font-bold text-slate-50">
+                    <h3 className="mt-2 text-3xl font-bold text-slate-900">
                       {formatCurrency(profile?.balance)}
                     </h3>
-                    <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                    <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-400">
                       <History className="h-3.5 w-3.5" />
                       <span>Updated: now</span>
                     </div>
-                    <p className="mt-4 text-xs font-medium text-slate-400">
+                    <p className="mt-4 text-xs font-medium text-slate-500">
                       Your account balance
                     </p>
                   </div>
@@ -376,20 +376,20 @@ export default function DashboardPage() {
               </div>
 
               {/* Total Earnings Card */}
-              <div className="rounded-3xl border border-white/5 bg-slate-900 p-6 shadow-sm">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-slate-400">
+                    <p className="text-sm font-semibold text-slate-500">
                       Total Earnings
                     </p>
-                    <h3 className="mt-2 text-3xl font-bold text-slate-50">
+                    <h3 className="mt-2 text-3xl font-bold text-slate-900">
                       {formatCurrency(profile?.totalEarnings)}
                     </h3>
-                    <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                    <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-400">
                       <History className="h-3.5 w-3.5" />
                       <span>Updated: now</span>
                     </div>
-                    <p className="mt-4 text-xs font-medium text-slate-400">
+                    <p className="mt-4 text-xs font-medium text-slate-500">
                       Your total Earnings
                     </p>
                   </div>
@@ -403,17 +403,17 @@ export default function DashboardPage() {
             {/* History Row */}
             <div className="grid gap-6 sm:grid-cols-2">
               {/* Deposit History */}
-              <div className="rounded-3xl border border-white/5 bg-slate-900 p-6">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="mb-4 flex items-center gap-2 border-l-4 border-amber-500 pl-3">
-                  <h3 className="text-lg font-bold text-slate-50">
+                  <h3 className="text-lg font-bold text-slate-900">
                     Deposit History
                   </h3>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between rounded-xl bg-slate-950/50 p-4">
+                  <div className="flex items-center justify-between rounded-xl bg-slate-50 p-4">
                     <div>
-                      <p className="text-xl font-bold text-slate-50">
+                      <p className="text-xl font-bold text-slate-900">
                         {formatCurrency(profile?.totalDeposits)}
                       </p>
                       <p className="text-xs font-medium text-slate-500">
@@ -423,9 +423,9 @@ export default function DashboardPage() {
                     <ArrowDownLeft className="h-5 w-5 text-slate-400" />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-slate-950/50 p-4">
+                  <div className="flex items-center justify-between rounded-xl bg-slate-50 p-4">
                     <div>
-                      <p className="text-xl font-bold text-slate-50">
+                      <p className="text-xl font-bold text-slate-900">
                         {formatCurrency(profile?.activeDeposits)}
                       </p>
                       <p className="text-xs font-medium text-slate-500">
@@ -435,9 +435,9 @@ export default function DashboardPage() {
                     <ArrowDownLeft className="h-5 w-5 text-slate-400" />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-slate-950/50 p-4">
+                  <div className="flex items-center justify-between rounded-xl bg-slate-50 p-4">
                     <div>
-                      <p className="text-xl font-bold text-slate-50">
+                      <p className="text-xl font-bold text-slate-900">
                         {profile?.lastDeposit
                           ? formatCurrency(profile.lastDeposit)
                           : "$n/a"}
@@ -452,17 +452,17 @@ export default function DashboardPage() {
               </div>
 
               {/* Withdrawal History */}
-              <div className="rounded-3xl border border-white/5 bg-slate-900 p-6">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="mb-4 flex items-center gap-2 border-l-4 border-amber-500 pl-3">
-                  <h3 className="text-lg font-bold text-slate-50">
+                  <h3 className="text-lg font-bold text-slate-900">
                     Withdrawal History
                   </h3>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between rounded-xl bg-slate-950/50 p-4">
+                  <div className="flex items-center justify-between rounded-xl bg-slate-50 p-4">
                     <div>
-                      <p className="text-xl font-bold text-slate-50">
+                      <p className="text-xl font-bold text-slate-900">
                         {formatCurrency(profile?.totalWithdrawals)}
                       </p>
                       <p className="text-xs font-medium text-slate-500">
@@ -472,9 +472,9 @@ export default function DashboardPage() {
                     <ArrowUpRight className="h-5 w-5 text-slate-400" />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-slate-950/50 p-4">
+                  <div className="flex items-center justify-between rounded-xl bg-slate-50 p-4">
                     <div>
-                      <p className="text-xl font-bold text-slate-50">
+                      <p className="text-xl font-bold text-slate-900">
                         {formatCurrency(profile?.pendingWithdrawals)}
                       </p>
                       <p className="text-xs font-medium text-slate-500">
@@ -484,9 +484,9 @@ export default function DashboardPage() {
                     <ArrowUpRight className="h-5 w-5 text-slate-400" />
                   </div>
 
-                  <div className="flex items-center justify-between rounded-xl bg-slate-950/50 p-4">
+                  <div className="flex items-center justify-between rounded-xl bg-slate-50 p-4">
                     <div>
-                      <p className="text-xl font-bold text-slate-50">
+                      <p className="text-xl font-bold text-slate-900">
                         {profile?.lastWithdrawal
                           ? formatCurrency(profile.lastWithdrawal)
                           : "$n/a"}
@@ -504,10 +504,10 @@ export default function DashboardPage() {
         </div>
 
         {/* All Account History */}
-        <div className="mt-8 rounded-3xl border border-white/5 bg-slate-900 p-6 lg:p-8">
+        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 lg:p-8 shadow-sm">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2 border-l-4 border-emerald-500 pl-3">
-              <h3 className="text-lg font-bold text-slate-50">
+              <h3 className="text-lg font-bold text-slate-900">
                 All Account History
               </h3>
             </div>
@@ -525,7 +525,7 @@ export default function DashboardPage() {
               currentTransactions.map((tx) => (
                 <div
                   key={tx.id}
-                  className="flex items-center justify-between rounded-xl bg-slate-950/50 p-4 transition-colors hover:bg-slate-950"
+                  className="flex items-center justify-between rounded-xl bg-slate-50 p-4 transition-colors hover:bg-slate-100"
                 >
                   <div className="flex items-center gap-4">
                     <div
@@ -550,7 +550,7 @@ export default function DashboardPage() {
                       )}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-50 capitalize">
+                      <p className="font-semibold text-slate-900 capitalize">
                         {tx.type === "earning" ? "Profit/Earning" : tx.type}
                       </p>
                       <div className="flex items-center gap-2 text-xs text-slate-500">
@@ -579,8 +579,8 @@ export default function DashboardPage() {
                         tx.type === "deposit" || tx.type === "earning"
                           ? "text-emerald-500"
                           : tx.type === "withdrawal"
-                            ? "text-red-400"
-                            : "text-blue-400"
+                            ? "text-red-600"
+                            : "text-blue-600"
                       }`}
                     >
                       {tx.type === "deposit" || tx.type === "earning"
@@ -604,7 +604,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Pagination Controls */}
-          <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-6 sm:flex-row">
+          <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-6 sm:flex-row">
             <div className="text-xs text-slate-500">
               Showing {currentTransactions.length} of {allTransactions.length}{" "}
               transactions
@@ -615,7 +615,7 @@ export default function DashboardPage() {
                 <button
                   onClick={goToPreviousPage}
                   disabled={currentPage === 1}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-800 text-slate-400 transition-all hover:bg-slate-700 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-400 transition-all hover:bg-slate-200 hover:text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </button>
@@ -628,8 +628,8 @@ export default function DashboardPage() {
                         onClick={() => setCurrentPage(page)}
                         className={`h-9 min-w-[36px] rounded-xl px-2 text-xs font-bold transition-all ${
                           currentPage === page
-                            ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-500/50"
-                            : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
+                            ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-500/50"
+                            : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
                         }`}
                       >
                         {page}
@@ -641,7 +641,7 @@ export default function DashboardPage() {
                 <button
                   onClick={goToNextPage}
                   disabled={currentPage === totalPages}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-800 text-slate-400 transition-all hover:bg-slate-700 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-400 transition-all hover:bg-slate-200 hover:text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>

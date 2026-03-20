@@ -132,7 +132,7 @@ export default function AdminDepositsPage() {
 
         const userData = userDocSnapshot.data();
         let referrerRef = null;
-        let referrerDoc = null;
+        let referrerDoc: any = null;
 
         // Prepare referrer update if applicable (Reads must be before Writes)
         if (

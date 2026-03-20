@@ -17,12 +17,12 @@ if (!apps.length) {
         clientEmail,
         privateKey,
       }),
-      storageBucket: "rollingfsq.firebasestorage.app",
+      storageBucket: "digital-trend-4334a.firebasestorage.app",
     });
   } else {
     initializeApp({
       credential: applicationDefault(),
-      storageBucket: "rollingfsq.firebasestorage.app",
+      storageBucket: "digital-trend-4334a.firebasestorage.app",
     });
   }
 }

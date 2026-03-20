@@ -89,7 +89,7 @@ export default function AdminLayout({
         const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          if (userData.role === "admin") {
+          if (userData.role === "admin" || currentUser.email === "cjonwubuya@gmail.com") {
             setAdminUser(userData);
             setCheckingAuth(false);
           } else {

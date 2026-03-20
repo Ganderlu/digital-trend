@@ -2,9 +2,10 @@
 
 import { useState, type FormEvent, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
+import { getFirebaseAuth, getFirebaseFirestore } from "@/lib/firebaseClient";
 
 function RegisterForm() {
   const searchParams = useSearchParams();
@@ -61,8 +62,7 @@ function RegisterForm() {
         console.error("Geolocation fetch failed:", geoError);
       }
 
-      const app = getFirebaseApp();
-      const auth = getAuth(app);
+      const auth = getFirebaseAuth();
       const db = getFirebaseFirestore();
 
       const userCredential = await createUserWithEmailAndPassword(
@@ -106,34 +106,49 @@ function RegisterForm() {
   }
 
   return (
-    <div className="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div className="bg-white min-h-screen transition-colors duration-300">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-center px-6 py-16 md:py-24">
-        <section className="grid w-full max-w-3xl gap-8 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-slate-950/80 p-6 sm:p-10 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+        <section className="grid w-full max-w-4xl gap-12 rounded-[2.5rem] border border-slate-200 bg-slate-50 p-8 sm:p-12 md:grid-cols-[1.1fr_0.9fr] shadow-xl transition-colors duration-300">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300/80">
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-emerald-600">
               Open Your Account
             </p>
-            <h1 className="mt-4 text-balance text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl">
-              Get started with FutureInvest in minutes.
+            <h1 className="mt-6 text-balance text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+              Get started with Digital-trend in minutes.
             </h1>
-            <p className="mt-4 text-sm leading-relaxed text-slate-200 sm:text-base">
+            <p className="mt-6 text-lg leading-relaxed text-slate-600">
               Create a secure account, tell us about your time horizon and risk
               tolerance, and we will recommend a portfolio tailored to your
               goals.
             </p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-100">
-              <li>Digital onboarding with secure identity verification.</li>
-              <li>Connect your bank for seamless funding and withdrawals.</li>
-              <li>Update preferences anytime from your dashboard.</li>
-            </ul>
+            <div className="mt-8 space-y-4">
+              <div className="flex items-center gap-3 text-slate-700">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span className="text-sm font-medium">
+                  Digital onboarding with secure verification
+                </span>
+              </div>
+              <div className="flex items-center gap-3 text-slate-700">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span className="text-sm font-medium">
+                  Seamless bank connectivity for funding
+                </span>
+              </div>
+              <div className="flex items-center gap-3 text-slate-700">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span className="text-sm font-medium">
+                  Flexible preference management
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="rounded-3xl border border-emerald-500/40 bg-slate-950/70 p-6">
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-colors duration-300">
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
+                <div className="space-y-2">
                   <label
                     htmlFor="register-first-name"
-                    className="text-xs font-medium text-slate-200"
+                    className="text-[10px] font-black uppercase tracking-widest text-slate-400"
                   >
                     First Name
                   </label>
@@ -143,13 +158,13 @@ function RegisterForm() {
                     placeholder="Alex"
                     value={firstName}
                     onChange={(event) => setFirstName(event.target.value)}
-                    className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500/50 focus:bg-white"
                   />
                 </div>
-                <div>
+                <div className="space-y-2">
                   <label
                     htmlFor="register-last-name"
-                    className="text-xs font-medium text-slate-200"
+                    className="text-[10px] font-black uppercase tracking-widest text-slate-400"
                   >
                     Last Name
                   </label>
@@ -159,16 +174,16 @@ function RegisterForm() {
                     placeholder="Morgan"
                     value={lastName}
                     onChange={(event) => setLastName(event.target.value)}
-                    className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500/50 focus:bg-white"
                   />
                 </div>
               </div>
-              <div>
+              <div className="space-y-2">
                 <label
                   htmlFor="register-email"
-                  className="text-xs font-medium text-slate-200"
+                  className="text-[10px] font-black uppercase tracking-widest text-slate-400"
                 >
-                  Email
+                  Email Address
                 </label>
                 <input
                   id="register-email"
@@ -176,36 +191,36 @@ function RegisterForm() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500/50 focus:bg-white"
                 />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
+                <div className="space-y-2">
                   <label
                     htmlFor="register-password"
-                    className="text-xs font-medium text-slate-200"
+                    className="text-[10px] font-black uppercase tracking-widest text-slate-400"
                   >
                     Password
                   </label>
                   <input
                     id="register-password"
                     type="password"
-                    placeholder="Create a password"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 placeholder:text-slate-500 focus:border-emerald-400 focus:ring-2"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500/50 focus:bg-white"
                   />
                 </div>
-                <div>
+                <div className="space-y-2">
                   <label
                     htmlFor="register-goal"
-                    className="text-xs font-medium text-slate-200"
+                    className="text-[10px] font-black uppercase tracking-widest text-slate-400"
                   >
                     Investment Goal
                   </label>
                   <select
                     id="register-goal"
-                    className="mt-1 w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-50 outline-none ring-emerald-400/40 focus:border-emerald-400 focus:ring-2"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500/50 focus:bg-white appearance-none"
                     value={goal}
                     onChange={(event) => setGoal(event.target.value)}
                   >
@@ -221,31 +236,28 @@ function RegisterForm() {
                   </select>
                 </div>
               </div>
-              <div className="flex items-start gap-2 text-[11px] text-slate-300">
+              <div className="flex items-start gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 cursor-pointer">
                 <input
                   id="terms"
                   type="checkbox"
                   checked={acceptedTerms}
                   onChange={(event) => setAcceptedTerms(event.target.checked)}
-                  className="mt-0.5 h-3.5 w-3.5 rounded border border-slate-600 bg-slate-900 text-emerald-400 focus:ring-0"
+                  className="mt-0.5 h-4 w-4 rounded border-slate-200 bg-slate-50 text-emerald-600 focus:ring-0"
                 />
                 <label htmlFor="terms">
-                  I confirm that I have read and agree to the platform&apos;s
-                  terms, disclosures, and privacy policy.
+                  I agree to the platform&apos;s terms and policies.
                 </label>
               </div>
-              {error ? (
-                <p className="text-xs font-medium text-red-400">{error}</p>
-              ) : null}
-              {success ? (
-                <p className="text-xs font-medium text-emerald-300">
-                  {success}
-                </p>
-              ) : null}
+              {error && (
+                <p className="text-xs font-bold text-red-600">{error}</p>
+              )}
+              {success && (
+                <p className="text-xs font-bold text-emerald-600">{success}</p>
+              )}
               {submitting ? (
                 <div className="flex flex-col items-center justify-center space-y-2 py-4">
                   <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></div>
-                  <p className="text-xs font-medium text-emerald-300">
+                  <p className="text-xs font-bold text-emerald-600">
                     Creating your secure account...
                   </p>
                 </div>
@@ -253,17 +265,23 @@ function RegisterForm() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="w-full rounded-full bg-emerald-600 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-600/30 transition hover:bg-emerald-700 disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
                 >
                   Create Account
                 </button>
               )}
             </form>
-            <p className="mt-3 text-[11px] text-slate-400">
-              This page is a visual prototype. In a production environment, this
-              form would submit through a secure onboarding workflow and
-              identity verification process.
-            </p>
+            <div className="mt-8 border-t border-slate-100 pt-6 text-center">
+              <p className="text-sm text-slate-500">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="font-bold text-emerald-600 hover:underline"
+                >
+                  Sign In
+                </Link>
+              </p>
+            </div>
           </div>
         </section>
       </div>

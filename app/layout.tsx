@@ -1,21 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
-import { LiveChatWidget } from "@/components/live-chat-widget";
-import { TawkChat } from "@/components/tawk-chat";
 import { FloatingTranslate } from "@/components/floating-translate";
+import { InvestmentNotification } from "@/components/investment-notification";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Premium Investment Platform",
@@ -31,15 +19,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950 text-slate-50`}
+        className="antialiased bg-white text-slate-900"
+        suppressHydrationWarning
       >
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
-          <main className="flex-1">{children}</main>
+          <div className="flex-1">{children}</div>
           <SiteFooter />
-          <LiveChatWidget />
-          <TawkChat />
           <FloatingTranslate />
+          <InvestmentNotification />
         </div>
       </body>
     </html>
