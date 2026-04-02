@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminFromRequest } from "@/lib/requestAuth";
-import { adminDb } from "@/lib/firebaseAdmin";
+import { getAdminDb } from "@/lib/firebaseAdmin";
 import { sendEmail } from "@/lib/email";
 
 function escapeHtml(input: string) {
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Missing withdrawalId/status" }, { status: 400 });
     }
 
-    const snap = await adminDb.collection("withdrawals").doc(body.withdrawalId).get();
+    const snap = await getAdminDb().collection("withdrawals").doc(body.withdrawalId).get();
     if (!snap.exists) {
       return NextResponse.json({ ok: false, error: "Withdrawal not found" }, { status: 404 });
     }

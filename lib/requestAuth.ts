@@ -1,4 +1,4 @@
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+import { getAdminAuth, getAdminDb } from "@/lib/firebaseAdmin";
 
 export async function requireUserFromRequest(request: Request) {
   const header = request.headers.get("authorization") || "";
@@ -8,7 +8,7 @@ export async function requireUserFromRequest(request: Request) {
   }
 
   const token = match[1];
-  const decoded = await adminAuth.verifyIdToken(token);
+  const decoded = await getAdminAuth().verifyIdToken(token);
   return decoded;
 }
 
@@ -20,7 +20,7 @@ export async function requireAdminFromRequest(request: Request) {
     return decoded;
   }
 
-  const userDoc = await adminDb.collection("users").doc(decoded.uid).get();
+  const userDoc = await getAdminDb().collection("users").doc(decoded.uid).get();
   if (userDoc.exists && userDoc.data()?.role === "admin") {
     return decoded;
   }

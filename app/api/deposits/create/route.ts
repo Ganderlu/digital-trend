@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { requireUserFromRequest } from "@/lib/requestAuth";
-import { adminDb } from "@/lib/firebaseAdmin";
+import { getAdminDb } from "@/lib/firebaseAdmin";
 
 const allowedCurrencies = new Set(["BTC", "ETH", "USDT", "XRP"]);
 
@@ -26,6 +26,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Invalid amount" }, { status: 400 });
     }
 
+    const adminDb = getAdminDb();
     const settingsSnap = await adminDb.collection("settings").doc("global").get();
     const settings = settingsSnap.data() || {};
     const walletByCurrency: Record<string, string> = {
