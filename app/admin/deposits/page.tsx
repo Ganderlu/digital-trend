@@ -176,6 +176,25 @@ export default function AdminDepositsPage() {
           d.id === deposit.id ? { ...d, status: newStatus } : d,
         ),
       );
+
+      try {
+        const app = getFirebaseApp();
+        const auth = getAuth(app);
+        const token = await auth.currentUser?.getIdToken();
+        if (token) {
+          await fetch("/api/notifications/deposit-status", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              depositId: deposit.id,
+              status: newStatus,
+            }),
+          });
+        }
+      } catch {}
     } catch (error) {
       console.error("Error updating deposit:", error);
       alert("Failed to update deposit status: " + error);

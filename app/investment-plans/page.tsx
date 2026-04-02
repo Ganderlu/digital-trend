@@ -40,6 +40,7 @@ type InvestmentPlan = {
   duration: string;
   features: string[];
   color: string;
+  referral:string;
   icon: any;
   popular?: boolean;
 };
@@ -47,40 +48,55 @@ type InvestmentPlan = {
 const PLANS: InvestmentPlan[] = [
   {
     id: "starter",
-    name: "Starter Plan",
-    minAmount: 50,
-    maxAmount: 999,
-    roi: "5% Daily",
-    duration: "7 Days",
+    name: "Basic Plan",
+    minAmount: 100,
+    maxAmount: 5000,
+    roi: "8% Daily",
+    duration: "1 Days",
+    referral:"4%",
     features: ["24/7 Support", "Secure Investment", "Instant Withdrawal"],
     color: "emerald",
     icon: Zap,
   },
   {
     id: "premium",
-    name: "Premium Plan",
-    minAmount: 1000,
-    maxAmount: 4999,
-    roi: "10% Daily",
-    duration: "14 Days",
+    name: "Silver Plan",
+    minAmount: 5000,
+    maxAmount: 20000,
+    roi: "18% Daily",
+    duration: "2 Days",
     features: [
       "Priority Support",
       "Advanced Analytics",
       "Compounding Available",
     ],
     color: "amber",
+      referral:"4%",
     icon: TrendingUp,
     popular: true,
   },
   {
     id: "business",
-    name: "Business Plan",
-    minAmount: 5000,
-    maxAmount: 50000,
-    roi: "20% Daily",
-    duration: "30 Days",
+    name: "Enterprise Plan",
+    minAmount: 10000,
+    maxAmount: 30000,
+    roi: "25% Daily",
+    duration: "4 Days",
     features: ["Dedicated Manager", "VIP Access", "Capital Protection"],
     color: "violet",
+    referral:"4%",
+    icon: ShieldCheck,
+  },
+  {
+    id: "exclusive",
+    name: "Vip Plan",
+    minAmount: 25000,
+    maxAmount: 200000,
+    roi: "40% Daily",
+    duration: "6 Days",
+    features: ["Dedicated Manager", "VIP Access", "Capital Protection"],
+    color: "amber",
+    referral:"4%",
     icon: ShieldCheck,
   },
 ];

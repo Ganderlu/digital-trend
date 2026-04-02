@@ -3,15 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  serverTimestamp,
-  Timestamp,
-} from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
 import DashboardLayout from "@/components/dashboard-layout";
 import {
@@ -47,7 +39,7 @@ export default function DepositPage() {
   const [amount, setAmount] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState<
     "BTC" | "ETH" | "USDT" | "XRP"
-  >("BTC");
+  >("XRP");
   const [step, setStep] = useState<1 | 2 | 3>(1); // 1: Amount, 2: Payment, 3: Success
   const [txHash, setTxHash] = useState("");
   const [error, setError] = useState("");
@@ -83,10 +75,10 @@ export default function DepositPage() {
               // Fallback if settings not initialized
               console.warn("Global settings not found, using defaults");
               setWalletAddresses({
-                BTC: "1J1RpsaG7BoQu6pmxQ2j2WC5H6zni6eUKh",
-                ETH: "0x031d48c14d06470edd37b8c23df4d179a855f48c",
-                USDT: "TAGehSxJe15bB81JmP7gnuHLJTwZGaWZ2K",
-                XRP: "rLNaS6mXj5f6X9X5X5X5X5X5X5X5X5X5X5",
+                BTC: "bc1qs9zg58ghyqhdzrps26frxtna5axn6vp2sy7nsp",
+                ETH: "0x04234ab108a7A96Fcb8FEfB9BF912Bb7BeF77288",
+                USDT: "TDRMaEmUL65rkx2Ms9oC4SDaxD5pqbVo8v",
+                XRP: "rfjh4WfCbEmvVUAEp4D9FxYaZEpmS3fy4",
               });
             }
           },
@@ -144,28 +136,37 @@ export default function DepositPage() {
     setSubmitting(true);
 
     try {
-      const db = getFirebaseFirestore();
-
-      // Create deposit record
-      await addDoc(collection(db, "deposits"), {
-        userId: user.uid,
-        userEmail: user.email,
-        amount: parseFloat(amount),
-        currency: selectedCurrency,
-        status: "pending",
-        walletAddress: walletAddresses[selectedCurrency],
-        transactionHash: txHash || "Not provided",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+      const token = await user.getIdToken();
+      const response = await fetch("/api/deposits/create", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: parseFloat(amount),
+          currency: selectedCurrency,
+          transactionHash: txHash || "Not provided",
+        }),
       });
 
-      // Update user stats (optional - usually done by backend/admin upon approval)
-      // For now we just record the request
+      const result = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+      };
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || "Failed to submit deposit request");
+      }
 
       setStep(3);
     } catch (err) {
       console.error("Error creating deposit:", err);
-      setError("Failed to submit deposit request. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to submit deposit request. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -266,10 +267,10 @@ export default function DepositPage() {
                 </label>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {[
+                    { id: "XRP", name: "XRP", icon: Coins },
                     { id: "BTC", name: "Bitcoin", icon: Bitcoin },
                     { id: "ETH", name: "Ethereum", icon: Wallet }, // Using generic wallet icon for ETH if no specific one
                     { id: "USDT", name: "Tether (TRC20)", icon: DollarSign },
-                    { id: "XRP", name: "XRP", icon: Coins },
                   ].map((currency) => (
                     <button
                       key={currency.id}

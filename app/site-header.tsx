@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -54,8 +55,15 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/40">
-              <span className="text-lg font-bold text-emerald-600">DT</span>
+            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-white ring-1 ring-emerald-500/40">
+              <Image
+                src="/images/trend.jpeg"
+                alt="Digital-trend"
+                width={36}
+                height={36}
+                className="h-9 w-9 object-cover"
+                priority
+              />
             </div>
             <span className="text-lg font-bold tracking-tight text-slate-900">
               Digital-trend
@@ -130,8 +138,15 @@ export function SiteHeader() {
           <div className="fixed inset-0 z-[100] flex flex-col bg-white">
             <div className="flex h-16 items-center justify-between border-b border-slate-200 px-6">
               <Link href="/" className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/40">
-                  <span className="text-lg font-bold text-emerald-600">DT</span>
+                <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-white ring-1 ring-emerald-500/40">
+                  <Image
+                    src="/images/trend.jpeg"
+                    alt="Digital-trend"
+                    width={36}
+                    height={36}
+                    className="h-9 w-9 object-cover"
+                    priority
+                  />
                 </div>
                 <span className="text-lg font-bold tracking-tight text-slate-900">
                   Digital-trend

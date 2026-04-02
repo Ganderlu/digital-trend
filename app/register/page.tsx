@@ -3,7 +3,7 @@
 import { useState, type FormEvent, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseFirestore } from "@/lib/firebaseClient";
 
@@ -84,6 +84,16 @@ function RegisterForm() {
         balance: 0,
         registrationLocation: locationData,
       });
+
+      try {
+        const token = await userCredential.user.getIdToken();
+        await fetch("/api/notifications/welcome", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch {}
 
       setSuccess("Account created successfully! Redirecting to login...");
       setPassword("");

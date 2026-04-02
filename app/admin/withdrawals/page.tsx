@@ -159,6 +159,25 @@ export default function AdminWithdrawalsPage() {
           w.id === withdrawal.id ? { ...w, status: newStatus } : w,
         ),
       );
+
+      try {
+        const app = getFirebaseApp();
+        const auth = getAuth(app);
+        const token = await auth.currentUser?.getIdToken();
+        if (token) {
+          await fetch("/api/notifications/withdrawal-status", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              withdrawalId: withdrawal.id,
+              status: newStatus,
+            }),
+          });
+        }
+      } catch {}
     } catch (error) {
       console.error("Error updating withdrawal:", error);
       alert("Failed to update withdrawal status: " + error);

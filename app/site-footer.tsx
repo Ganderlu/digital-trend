@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Facebook,
@@ -40,8 +41,14 @@ export function SiteFooter() {
           {/* Brand Info */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 shadow-lg shadow-emerald-600/20">
-                <span className="text-lg font-bold text-white">DT</span>
+              <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white shadow-lg shadow-emerald-600/20 ring-1 ring-emerald-600/20">
+                <Image
+                  src="/images/trend.jpeg"
+                  alt="Digital-trend"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 object-cover"
+                />
               </div>
               <span className="text-xl font-bold tracking-tight text-slate-900">
                 Digital-trend

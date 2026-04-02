@@ -18,7 +18,7 @@ export default function Home() {
             playsInline
             className="h-full w-full object-cover"
           >
-            <source src="/videos/Voltsq.mp4" type="video/mp4" />
+            <source src="/videos/digital.mp4" type="video/mp4" />
           </video>
           {/* Subtle light overlay for cinematic feel that blends into white below */}
           <div className="absolute inset-0 bg-slate-950/40" />
@@ -379,32 +379,44 @@ export default function Home() {
             <div className="group flex flex-col rounded-[2.5rem] border border-slate-200 bg-white p-8 transition-all hover:border-emerald-200 hover:shadow-xl hover:-translate-y-2">
               <div className="mb-8">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                  Entry Level
+                  Basic Plan
                 </p>
                 <h3 className="text-2xl font-bold text-slate-900">
-                  Starter Edge
+                  Basic Plan
                 </h3>
               </div>
               <div className="mb-8">
                 <div className="text-3xl font-black text-emerald-600">
-                  5&ndash;7%
+                  8% Daily
                 </div>
                 <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">
-                  Target Annual Return
+                  Duration: 1 Day
+                </p>
+              </div>
+              <div className="mb-8 space-y-2">
+                <p className="text-sm font-bold text-slate-900">
+                  $100 &ndash; $5,000
+                </p>
+                <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">
+                  Investment Range
                 </p>
               </div>
               <ul className="flex-1 space-y-4 mb-10 text-sm text-slate-600">
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Diversified ETFs
+                  24/7 Support
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Quarterly Reports
+                  Secure Investment
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Standard Support
+                  Instant Withdrawal
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Referral Bonus: 4%
                 </li>
               </ul>
               <Link
@@ -422,32 +434,44 @@ export default function Home() {
               </div>
               <div className="mb-8 pt-2">
                 <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">
-                  Growth Tier
+                  Silver Plan
                 </p>
                 <h3 className="text-2xl font-bold text-slate-900">
-                  Elite Growth
+                  Silver Plan
                 </h3>
               </div>
               <div className="mb-8">
                 <div className="text-3xl font-black text-emerald-600">
-                  8&ndash;12%
+                  18% Daily
                 </div>
                 <p className="text-xs text-emerald-600/70 uppercase tracking-widest font-bold mt-1">
-                  Target Annual Return
+                  Duration: 2 Days
+                </p>
+              </div>
+              <div className="mb-8 space-y-2">
+                <p className="text-sm font-bold text-slate-900">
+                  $5,000 &ndash; $20,000
+                </p>
+                <p className="text-xs text-emerald-600/50 uppercase tracking-widest font-bold">
+                  Investment Range
                 </p>
               </div>
               <ul className="flex-1 space-y-4 mb-10 text-sm text-slate-700">
+                <li className="flex items-center gap-3">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Priority Support
+                </li>
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                   Advanced Analytics
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Monthly Rebalancing
+                  Compounding Available
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Priority Support
+                  Referral Bonus: 4%
                 </li>
               </ul>
               <Link
@@ -462,39 +486,51 @@ export default function Home() {
             <div className="group flex flex-col rounded-[2.5rem] border border-slate-200 bg-white p-8 transition-all hover:border-emerald-200 hover:shadow-xl hover:-translate-y-2">
               <div className="mb-8">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                  Advanced
+                  Enterprise Plan
                 </p>
                 <h3 className="text-2xl font-bold text-slate-900">
-                  Strategic Wealth
+                  Enterprise Plan
                 </h3>
               </div>
               <div className="mb-8">
                 <div className="text-3xl font-black text-emerald-600">
-                  12&ndash;18%
+                  25% Daily
                 </div>
                 <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">
-                  Target Annual Return
+                  Duration: 4 Days
+                </p>
+              </div>
+              <div className="mb-8 space-y-2">
+                <p className="text-sm font-bold text-slate-900">
+                  $10,000 &ndash; $30,000
+                </p>
+                <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">
+                  Investment Range
                 </p>
               </div>
               <ul className="flex-1 space-y-4 mb-10 text-sm text-slate-600">
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Custom Portfolios
+                  Dedicated Manager
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Direct Advisory
+                  VIP Access
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  24/7 Access
+                  Capital Protection
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Referral Bonus: 4%
                 </li>
               </ul>
               <Link
                 href="/register"
                 className="w-full inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 py-4 text-sm font-bold text-slate-900 transition hover:bg-emerald-600 hover:text-white hover:border-emerald-600"
               >
-                Select Wealth
+                Select Plan
               </Link>
             </div>
 
@@ -502,30 +538,44 @@ export default function Home() {
             <div className="group flex flex-col rounded-[2.5rem] border border-slate-200 bg-white p-8 transition-all hover:border-emerald-200 hover:shadow-xl hover:-translate-y-2">
               <div className="mb-8">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                  Institutional
+                  VIP Plan
                 </p>
                 <h3 className="text-2xl font-bold text-slate-900">
-                  Legacy Alpha
+                  Vip Plan
                 </h3>
               </div>
               <div className="mb-8">
-                <div className="text-3xl font-black text-emerald-600">20%+</div>
+                <div className="text-3xl font-black text-emerald-600">
+                  40% Daily
+                </div>
                 <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">
-                  Target Annual Return
+                  Duration: 6 Days
+                </p>
+              </div>
+              <div className="mb-8 space-y-2">
+                <p className="text-sm font-bold text-slate-900">
+                  $25,000 &ndash; $200,000
+                </p>
+                <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">
+                  Investment Range
                 </p>
               </div>
               <ul className="flex-1 space-y-4 mb-10 text-sm text-slate-600">
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Institutional Grade
+                  Dedicated Manager
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Bespoke Strategies
+                  VIP Access
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Concierge Support
+                  Capital Protection
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Referral Bonus: 4%
                 </li>
               </ul>
               <Link
@@ -540,7 +590,7 @@ export default function Home() {
           <div className="flex justify-center pt-8">
             <p className="text-xs text-slate-400 font-medium">
               Minimum capital requirement:{" "}
-              <span className="text-slate-900 font-bold">$5,000 USD</span>
+              <span className="text-slate-900 font-bold">$100 USD</span>
             </p>
           </div>
         </section>
