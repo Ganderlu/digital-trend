@@ -104,7 +104,7 @@ export default function AdminSettingsPage() {
             walletETH: "0x031d48c14d06470edd37b8c23df4d179a855f48c",
             walletUSDT: "TAGehSxJe15bB81JmP7gnuHLJTwZGaWZ2K",
             walletXRP: "rLNaS6mXj5f6X9X5X5X5X5X5X5X5X5X5X5",
-            supportEmail: "support@Digital-trend.com",
+            supportEmail: "helpdigitaltrend@gmail.com",
             siteName: "Digital-trend",
           };
           setSettings(defaultSettings);

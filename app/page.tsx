@@ -944,10 +944,10 @@ export default function Home() {
                     Email
                   </p>
                   <a
-                    href="mailto:advisors@Digital-trend.com"
+                    href="mailto:helpdigitaltrend@gmail.com"
                     className="text-slate-900 font-bold hover:text-emerald-600 transition-colors"
                   >
-                    advisors@Digital-trend.com
+                    helpdigitaltrend@gmail.com
                   </a>
                 </div>
               </div>

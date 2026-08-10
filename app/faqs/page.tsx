@@ -1,42 +1,55 @@
 "use client";
 
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 import { HelpCircle, Mail, MessageSquare, Phone } from "lucide-react";
 import Link from "next/link";
 
 const faqs = [
   {
     question: "Is my money safe with Digital-trend?",
-    answer: "Client assets are held with regulated third-party custodians in segregated accounts in your name. Digital-trend does not commingle assets and does not use your holdings for proprietary trading. We implement multi-factor authentication, encryption, and other controls to protect your online access."
+    answer:
+      "Client assets are held with regulated third-party custodians in segregated accounts in your name. Digital-trend does not commingle assets and does not use your holdings for proprietary trading. We implement multi-factor authentication, encryption, and other controls to protect your online access.",
   },
   {
     question: "What fees do you charge?",
-    answer: "Our pricing is a transparent, all-in advisory fee based on assets under management. There are no trading commissions or hidden platform charges. You see the impact of fees on every performance report, and your advisor will review the structure with you before you fund your account."
+    answer:
+      "Our pricing is a transparent, all-in advisory fee based on assets under management. There are no trading commissions or hidden platform charges. You see the impact of fees on every performance report, and your advisor will review the structure with you before you fund your account.",
   },
   {
     question: "Can I withdraw my money at any time?",
-    answer: "Yes. You can request withdrawals at any time, subject to standard settlement periods for the underlying securities. Your advisor will help you plan liquidity so that withdrawal requests align with your portfolio strategy and tax considerations."
+    answer:
+      "Yes. You can request withdrawals at any time, subject to standard settlement periods for the underlying securities. Your advisor will help you plan liquidity so that withdrawal requests align with your portfolio strategy and tax considerations.",
   },
   {
     question: "Do you offer socially responsible or ESG investing options?",
-    answer: "Yes. We can incorporate environmental, social, and governance preferences directly into your portfolio design, including exclusions, tilts, and thematic allocations. We work with you to balance those preferences with diversification and risk management."
+    answer:
+      "Yes. We can incorporate environmental, social, and governance preferences directly into your portfolio design, including exclusions, tilts, and thematic allocations. We work with you to balance those preferences with diversification and risk management.",
   },
   {
     question: "What is the minimum to get started?",
-    answer: "Our standard minimum is $5,000, though institutional or bespoke mandates may require higher balances. Regardless of starting size, every client receives the same disciplined process and transparent reporting."
+    answer:
+      "Our standard minimum is $5,000, though institutional or bespoke mandates may require higher balances. Regardless of starting size, every client receives the same disciplined process and transparent reporting.",
   },
   {
     question: "How often will I hear from my advisor?",
-    answer: "At minimum, we conduct a formal review at least annually, with additional check-ins during market changes or major life events. You can also schedule time with your advisor or send secure messages through the portal whenever questions arise."
+    answer:
+      "At minimum, we conduct a formal review at least annually, with additional check-ins during market changes or major life events. You can also schedule time with your advisor or send secure messages through the portal whenever questions arise.",
   },
   {
     question: "How do I reset my password?",
-    answer: "You can reset your password by clicking the 'Forgot Password' link on the login page. We'll send a secure reset link to your registered email address."
+    answer:
+      "You can reset your password by clicking the 'Forgot Password' link on the login page. We'll send a secure reset link to your registered email address.",
   },
   {
     question: "How can I contact support?",
-    answer: "Our support team is available 24/7. You can reach us via live chat on our website, email at support@digital-trend.com, or by calling our dedicated support line."
-  }
+    answer:
+      "Our support team is available 24/7. You can reach us via live chat on our website, email at helpdigitaltrend@gmail.com, or by calling our dedicated support line.",
+  },
 ];
 
 export default function FaqsPage() {
@@ -52,7 +65,8 @@ export default function FaqsPage() {
             Frequently Asked Questions
           </h2>
           <p className="max-w-2xl mx-auto text-lg text-slate-600">
-            Find answers to common questions about how Digital-trend works. If you don't find what you're looking for, our team is here to help.
+            Find answers to common questions about how Digital-trend works. If
+            you don't find what you're looking for, our team is here to help.
           </p>
         </div>
       </div>
@@ -61,7 +75,13 @@ export default function FaqsPage() {
         {/* Search/Category Bar (Placeholder for visual completeness) */}
         <div className="bg-white rounded-2xl border border-slate-200 p-2 shadow-xl shadow-slate-200/50 mb-12">
           <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 p-2">
-            {["General", "Account", "Security", "Investments", "Withdrawals"].map((cat) => (
+            {[
+              "General",
+              "Account",
+              "Security",
+              "Investments",
+              "Withdrawals",
+            ].map((cat) => (
               <button
                 key={cat}
                 className="px-4 py-2 text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors text-slate-600 hover:text-emerald-600"
@@ -77,7 +97,11 @@ export default function FaqsPage() {
           <div className="p-8 md:p-12">
             <Accordion className="space-y-2">
               {faqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="border-slate-100 last:border-0">
+                <AccordionItem
+                  key={index}
+                  value={`item-${index}`}
+                  className="border-slate-100 last:border-0"
+                >
                   <AccordionTrigger className="text-lg font-semibold text-slate-900 py-6">
                     {faq.question}
                   </AccordionTrigger>
@@ -97,36 +121,57 @@ export default function FaqsPage() {
               <MessageSquare className="w-6 h-6 text-emerald-600" />
             </div>
             <h3 className="font-bold text-slate-900 mb-2">Live Chat</h3>
-            <p className="text-sm text-slate-500 mb-4">Chat with our team for immediate assistance.</p>
-            <button className="text-emerald-600 text-sm font-bold hover:underline">Start Chat</button>
+            <p className="text-sm text-slate-500 mb-4">
+              Chat with our team for immediate assistance.
+            </p>
+            <button className="text-emerald-600 text-sm font-bold hover:underline">
+              Start Chat
+            </button>
           </div>
           <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center hover:border-emerald-200 transition-colors group">
             <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
               <Mail className="w-6 h-6 text-emerald-600" />
             </div>
             <h3 className="font-bold text-slate-900 mb-2">Email Support</h3>
-            <p className="text-sm text-slate-500 mb-4">Get a response within 24 hours.</p>
-            <Link href="mailto:support@digital-trend.com" className="text-emerald-600 text-sm font-bold hover:underline">Send Email</Link>
+            <p className="text-sm text-slate-500 mb-4">
+              Get a response within 24 hours.
+            </p>
+            <Link
+              href="mailto:helpdigitaltrend@gmail.com"
+              className="text-emerald-600 text-sm font-bold hover:underline"
+            >
+              Send Email
+            </Link>
           </div>
           <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center hover:border-emerald-200 transition-colors group">
             <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
               <Phone className="w-6 h-6 text-emerald-600" />
             </div>
             <h3 className="font-bold text-slate-900 mb-2">Call Center</h3>
-            <p className="text-sm text-slate-500 mb-4">Available Mon-Fri, 9am - 5pm EST.</p>
-            <Link href="tel:+1234567890" className="text-emerald-600 text-sm font-bold hover:underline">Call Us</Link>
+            <p className="text-sm text-slate-500 mb-4">
+              Available Mon-Fri, 9am - 5pm EST.
+            </p>
+            <Link
+              href="tel:+1234567890"
+              className="text-emerald-600 text-sm font-bold hover:underline"
+            >
+              Call Us
+            </Link>
           </div>
         </div>
 
         {/* Call to Action */}
         <div className="mt-20 bg-emerald-900 rounded-3xl p-8 md:p-12 text-center text-white relative overflow-hidden">
           <div className="relative z-10">
-            <h2 className="text-3xl font-bold mb-4">Ready to start your journey?</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              Ready to start your journey?
+            </h2>
             <p className="text-emerald-100 mb-8 max-w-xl mx-auto">
-              Join thousands of investors who trust Digital-trend to manage their wealth and secure their financial future.
+              Join thousands of investors who trust Digital-trend to manage
+              their wealth and secure their financial future.
             </p>
-            <Link 
-              href="/register" 
+            <Link
+              href="/register"
               className="inline-block bg-white text-emerald-900 px-8 py-4 rounded-xl font-bold hover:bg-emerald-50 transition-colors shadow-lg"
             >
               Get Started Now

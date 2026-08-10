@@ -19,6 +19,7 @@ import {
   ShieldAlert,
   ChevronDown,
   ArrowLeft,
+  Mail,
 } from "lucide-react";
 
 const adminNavItems = [
@@ -58,6 +59,12 @@ const adminNavItems = [
     icon: Settings,
     href: "/admin/settings",
   },
+  {
+    key: "newsletter",
+    label: "Newsletters",
+    icon: Mail,
+    href: "/admin/newsletter",
+  },
   { key: "exit", label: "Logout", icon: LogOut, action: "logout" },
 ];
 
@@ -89,7 +96,10 @@ export default function AdminLayout({
         const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          if (userData.role === "admin" || currentUser.email === "cjonwubuya@gmail.com") {
+          if (
+            userData.role === "admin" ||
+            currentUser.email === "cjonwubuya@gmail.com"
+          ) {
             setAdminUser(userData);
             setCheckingAuth(false);
           } else {

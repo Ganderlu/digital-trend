@@ -142,8 +142,8 @@ export function SiteFooter() {
               </li>
               <li className="flex items-center gap-3 text-sm text-slate-600">
                 <Mail size={18} className="text-emerald-600 shrink-0" />
-                <a href="mailto:advisors@Digital-trend.com" className="hover:text-emerald-600 transition-colors">
-                  advisors@Digital-trend.com
+                <a href="mailto:helpdigitaltrend@gmail.com" className="hover:text-emerald-600 transition-colors">
+                  helpdigitaltrend@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm text-slate-600">
