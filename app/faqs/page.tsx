@@ -11,9 +11,9 @@ import Link from "next/link";
 
 const faqs = [
   {
-    question: "Is my money safe with Digital-trend?",
+    question: "Is my money safe with TeveXtra?",
     answer:
-      "Client assets are held with regulated third-party custodians in segregated accounts in your name. Digital-trend does not commingle assets and does not use your holdings for proprietary trading. We implement multi-factor authentication, encryption, and other controls to protect your online access.",
+      "Client assets are held with regulated third-party custodians in segregated accounts in your name. TeveXtra does not commingle assets and does not use your holdings for proprietary trading. We implement multi-factor authentication, encryption, and other controls to protect your online access.",
   },
   {
     question: "What fees do you charge?",
@@ -54,26 +54,38 @@ const faqs = [
 
 export default function FaqsPage() {
   return (
-    <div className="bg-slate-50 min-h-screen pb-20">
+    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased overflow-x-hidden transition-colors duration-300">
       {/* Hero Section */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="mx-auto max-w-7xl px-6 py-12 md:py-20 text-center">
-          <h1 className="text-sm font-bold uppercase tracking-widest text-emerald-600 mb-4">
+      <section className="relative border-b border-white/5 bg-slate-900/40">
+        <div className="absolute inset-0 -z-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.15),_transparent_55%),radial-gradient(ellipse_at_bottom,_rgba(99,102,241,0.12),_transparent_50%)]" />
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(148,163,184,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.5) 1px, transparent 1px)",
+              backgroundSize: "44px 44px",
+            }}
+          />
+        </div>
+        <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-24 text-center">
+          <h1 className="text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-4">
             Support Center
           </h1>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">
             Frequently Asked Questions
           </h2>
-          <p className="max-w-2xl mx-auto text-lg text-slate-600">
-            Find answers to common questions about how Digital-trend works. If
-            you don't find what you're looking for, our team is here to help.
+          <p className="max-w-2xl mx-auto text-lg text-slate-400 leading-relaxed">
+            Find answers to common questions about how TeveXtra works. If you
+            don&apos;t find what you&apos;re looking for, our team is here to
+            help.
           </p>
         </div>
-      </div>
+      </section>
 
-      <div className="mx-auto max-w-4xl px-6 -mt-8">
-        {/* Search/Category Bar (Placeholder for visual completeness) */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-2 shadow-xl shadow-slate-200/50 mb-12">
+      <div className="mx-auto max-w-4xl px-6 -mt-8 pb-24">
+        {/* Search/Category Bar */}
+        <div className="bg-slate-900/70 backdrop-blur rounded-2xl border border-white/10 p-2 shadow-xl shadow-black/30 mb-12">
           <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 p-2">
             {[
               "General",
@@ -84,7 +96,7 @@ export default function FaqsPage() {
             ].map((cat) => (
               <button
                 key={cat}
-                className="px-4 py-2 text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors text-slate-600 hover:text-emerald-600"
+                className="px-4 py-2 text-xs font-semibold rounded-xl transition-colors text-slate-400 hover:text-emerald-400 hover:bg-white/5"
               >
                 {cat}
               </button>
@@ -93,19 +105,33 @@ export default function FaqsPage() {
         </div>
 
         {/* FAQ Accordion */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-slate-900/60 backdrop-blur rounded-3xl border border-white/10 shadow-[0_20px_60px_-25px_rgba(0,0,0,0.4)] overflow-hidden">
           <div className="p-8 md:p-12">
-            <Accordion className="space-y-2">
+            <div className="flex items-center gap-3 mb-8 pb-6 border-b border-white/10">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                <HelpCircle className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">
+                  Everything you need to know
+                </h3>
+                <p className="text-xs text-slate-400 font-medium">
+                  Click any question to expand the answer
+                </p>
+              </div>
+            </div>
+
+            <Accordion className="space-y-1">
               {faqs.map((faq, index) => (
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
-                  className="border-slate-100 last:border-0"
+                  className="py-2"
                 >
-                  <AccordionTrigger className="text-lg font-semibold text-slate-900 py-6">
+                  <AccordionTrigger className="text-[15px] font-bold text-white py-5">
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="text-slate-600 leading-relaxed text-base">
+                  <AccordionContent className="text-slate-400 leading-relaxed text-[14px]">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>
@@ -116,69 +142,67 @@ export default function FaqsPage() {
 
         {/* Support Section */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center hover:border-emerald-200 transition-colors group">
-            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-              <MessageSquare className="w-6 h-6 text-emerald-600" />
-            </div>
-            <h3 className="font-bold text-slate-900 mb-2">Live Chat</h3>
-            <p className="text-sm text-slate-500 mb-4">
-              Chat with our team for immediate assistance.
-            </p>
-            <button className="text-emerald-600 text-sm font-bold hover:underline">
-              Start Chat
-            </button>
-          </div>
-          <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center hover:border-emerald-200 transition-colors group">
-            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-              <Mail className="w-6 h-6 text-emerald-600" />
-            </div>
-            <h3 className="font-bold text-slate-900 mb-2">Email Support</h3>
-            <p className="text-sm text-slate-500 mb-4">
-              Get a response within 24 hours.
-            </p>
+          {[
+            {
+              icon: MessageSquare,
+              title: "Live Chat",
+              p: "Chat with our team for immediate assistance.",
+              cta: "Start Chat",
+            },
+            {
+              icon: Mail,
+              title: "Email Support",
+              p: "Get a response within 24 hours.",
+              cta: "Send Email",
+              href: "mailto:helpdigitaltrend@gmail.com",
+            },
+            {
+              icon: Phone,
+              title: "Call Center",
+              p: "Available Mon-Fri, 9am - 5pm EST.",
+              cta: "Call Us",
+              href: "tel:+1234567890",
+            },
+          ].map((card) => (
             <Link
-              href="mailto:helpdigitaltrend@gmail.com"
-              className="text-emerald-600 text-sm font-bold hover:underline"
+              key={card.title}
+              href={card.href || "#"}
+              className="group bg-slate-900/60 backdrop-blur p-8 rounded-3xl border border-white/10 text-center transition-all duration-300 hover:border-emerald-500/30 hover:bg-slate-900 hover:-translate-y-1"
             >
-              Send Email
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-110 transition-transform">
+                <card.icon className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-white mb-2">{card.title}</h3>
+              <p className="text-sm text-slate-400 mb-5 leading-relaxed">
+                {card.p}
+              </p>
+              <span className="text-emerald-400 text-xs font-black uppercase tracking-[0.2em] hover:underline">
+                {card.cta}
+              </span>
             </Link>
-          </div>
-          <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center hover:border-emerald-200 transition-colors group">
-            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-              <Phone className="w-6 h-6 text-emerald-600" />
-            </div>
-            <h3 className="font-bold text-slate-900 mb-2">Call Center</h3>
-            <p className="text-sm text-slate-500 mb-4">
-              Available Mon-Fri, 9am - 5pm EST.
-            </p>
-            <Link
-              href="tel:+1234567890"
-              className="text-emerald-600 text-sm font-bold hover:underline"
-            >
-              Call Us
-            </Link>
-          </div>
+          ))}
         </div>
 
         {/* Call to Action */}
-        <div className="mt-20 bg-emerald-900 rounded-3xl p-8 md:p-12 text-center text-white relative overflow-hidden">
+        <div className="mt-20 relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 p-8 md:p-12 text-center text-white shadow-[0_30px_80px_-30px_rgba(0,0,0,0.5)]">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.2),_transparent_55%)]" />
+          <div className="absolute top-0 right-0 -mr-12 -mt-12 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl opacity-60" />
+          <div className="absolute bottom-0 left-0 -ml-12 -mb-12 w-64 h-64 bg-indigo-500/15 rounded-full blur-3xl opacity-60" />
           <div className="relative z-10">
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl font-black mb-4">
               Ready to start your journey?
             </h2>
-            <p className="text-emerald-100 mb-8 max-w-xl mx-auto">
-              Join thousands of investors who trust Digital-trend to manage
-              their wealth and secure their financial future.
+            <p className="text-slate-400 mb-8 max-w-xl mx-auto leading-relaxed">
+              Join thousands of investors who trust TeveXtra to manage their
+              wealth and secure their financial future.
             </p>
             <Link
               href="/register"
-              className="inline-block bg-white text-emerald-900 px-8 py-4 rounded-xl font-bold hover:bg-emerald-50 transition-colors shadow-lg"
+              className="inline-block bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-8 py-4 rounded-full font-bold text-sm hover:brightness-110 transition-all shadow-xl shadow-emerald-500/30"
             >
               Get Started Now
             </Link>
           </div>
-          <div className="absolute top-0 right-0 -mr-12 -mt-12 w-64 h-64 bg-emerald-800 rounded-full opacity-50 blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 -ml-12 -mb-12 w-64 h-64 bg-emerald-800 rounded-full opacity-50 blur-3xl"></div>
         </div>
       </div>
     </div>

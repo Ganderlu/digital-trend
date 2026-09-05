@@ -45,6 +45,27 @@ function parseServiceAccount(raw: string) {
 let initDone = false;
 let initError: Error | null = null;
 
+function resolveStorageBucket(projectId?: string): string {
+  const validBucket = (candidate: string | undefined | null): string | null => {
+    if (!candidate) return null;
+    const cleaned = stripQuotes(candidate).trim();
+    if (!cleaned) return null;
+    if (cleaned.endsWith(".firebasestorage.app")) {
+      return cleaned.replace(/\.firebasestorage\.app$/, ".appspot.com");
+    }
+    return cleaned;
+  };
+
+  const candidates = [
+    validBucket(process.env.FIREBASE_STORAGE_BUCKET),
+    validBucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET),
+    projectId ? `${projectId}.appspot.com` : null,
+    "digital-trend-4334a.appspot.com",
+  ].filter(Boolean) as string[];
+
+  return candidates[0];
+}
+
 function ensureAdminInitialized() {
   if (initDone) return;
   if (getApps().length > 0) {
@@ -56,11 +77,6 @@ function ensureAdminInitialized() {
   }
   initDone = true;
 
-  const storageBucket =
-    process.env.FIREBASE_STORAGE_BUCKET ||
-    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
-    "digital-trend-4334a.firebasestorage.app";
-
   const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   const serviceAccount = serviceAccountRaw
     ? parseServiceAccount(serviceAccountRaw)
@@ -70,6 +86,9 @@ function ensureAdminInitialized() {
     serviceAccount?.project_id ||
     process.env.FIREBASE_PROJECT_ID ||
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+
+  const storageBucket = resolveStorageBucket(projectId);
+  console.log("[firebaseAdmin] Resolved storage bucket:", storageBucket);
 
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");

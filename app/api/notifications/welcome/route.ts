@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   try {
     const decoded = await requireUserFromRequest(request);
 
-    const appName = process.env.APP_NAME || "Digital-trend";
+    const appName = process.env.APP_NAME || "TeveXtra";
     const appUrl = process.env.APP_URL || "";
     const email = decoded.email || "";
 

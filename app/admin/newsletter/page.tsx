@@ -3,15 +3,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
-import {
-  collection,
-  getDocs,
-  orderBy,
-  limit,
-  query,
-  where,
-} from "firebase/firestore";
-import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
+import { getFirebaseApp } from "@/lib/firebaseClient";
 import AdminLayout from "@/components/admin-layout";
 import {
   Mail,
@@ -66,14 +58,12 @@ const TEMPLATES: {
     name: "Monthly Performance Update",
     description: "Share portfolio highlights, returns, and market commentary.",
     subject: "Your Monthly Portfolio Update is Here",
-    preheader:
-      "See how your Digital-trend investments performed this month.",
+    preheader: "See how your TeveXtra investments performed this month.",
     intro:
-      "We hope this message finds you well. Each month, our team puts together a snapshot of what's happening in the markets and how it impacts your portfolio. Thank you for the continued trust you place in Digital-trend.",
-    body:
-      "· Portfolio performance for the month exceeded benchmark by +1.4%\n· Tech and sustainable equities sectors led the rally\n· The Digital-trend Wealth team has been rebalancing portfolios to lock in gains\n· Our 2026 outlook report will be published next week — stay tuned\n\nIf you'd like to discuss your strategy, reply to this email or schedule a call directly from your dashboard.",
+      "We hope this message finds you well. Each month, our team puts together a snapshot of what's happening in the markets and how it impacts your portfolio. Thank you for the continued trust you place in TeveXtra.",
+    body: "· Portfolio performance for the month exceeded benchmark by +1.4%\n· Tech and sustainable equities sectors led the rally\n· The TeveXtra Wealth team has been rebalancing portfolios to lock in gains\n· Our 2026 outlook report will be published next week — stay tuned\n\nIf you'd like to discuss your strategy, reply to this email or schedule a call directly from your dashboard.",
     ctaLabel: "Review My Portfolio",
-    ctaUrl: "https://digital-trend.example.com/dashboard",
+    ctaUrl: "https://tevextra.example.com/dashboard",
     outro:
       "As a reminder, your dedicated advisor is always available. There's no question too big or too small — we're here to help.",
   },
@@ -81,15 +71,13 @@ const TEMPLATES: {
     id: "new-plan",
     name: "New Investment Plan Launch",
     description: "Announce a new plan or feature to your members.",
-    subject: "Introducing the Digital-trend Global Income Plan",
-    preheader:
-      "A new way to generate steady, diversified monthly income.",
+    subject: "Introducing the TeveXtra Global Income Plan",
+    preheader: "A new way to generate steady, diversified monthly income.",
     intro:
-      "Great news — after months of research and portfolio construction, we're officially launching the new Digital-trend Global Income Plan.",
-    body:
-      "Built for investors who want a steady stream of income alongside long-term growth, the Global Income Plan targets 48 diversified holdings across equities, bonds, REITs, and covered calls.\n\nKey features:\n· Estimated 5.2% annual yield with monthly distributions\n· Global sector diversification\n· Historically lower volatility vs. pure growth portfolios\n· Minimum investment: $2,500\n\nMembers can upgrade or open a new position directly from the dashboard.",
+      "Great news — after months of research and portfolio construction, we're officially launching the new TeveXtra Global Income Plan.",
+    body: "Built for investors who want a steady stream of income alongside long-term growth, the Global Income Plan targets 48 diversified holdings across equities, bonds, REITs, and covered calls.\n\nKey features:\n· Estimated 5.2% annual yield with monthly distributions\n· Global sector diversification\n· Historically lower volatility vs. pure growth portfolios\n· Minimum investment: $2,500\n\nMembers can upgrade or open a new position directly from the dashboard.",
     ctaLabel: "Learn About the New Plan",
-    ctaUrl: "https://digital-trend.example.com/investment-plans",
+    ctaUrl: "https://tevextra.example.com/investment-plans",
     outro:
       "If you'd like to know whether the Global Income Plan fits your goals, simply reply and we'll schedule a complimentary review.",
   },
@@ -98,32 +86,28 @@ const TEMPLATES: {
     name: "Market Insight & Guidance",
     description: "Quick-read market commentary during volatility.",
     subject: "Market Volatility: What it Means for Your Portfolio",
-    preheader:
-      "A quick perspective from the Digital-trend investment team.",
+    preheader: "A quick perspective from the TeveXtra investment team.",
     intro:
       "You've probably seen the headlines — markets have been moving quickly this week. Here's our perspective in plain language.",
-    body:
-      "The recent pullback is primarily driven by inflation data and sector rotation. Importantly, the diversified portfolios we build for Digital-trend members are designed to weather exactly these kinds of storms.\n\nWhat we're watching:\n· Inflation trends and central bank commentary\n· Earnings quality across the holdings in your portfolio\n· Rebalancing opportunities where overweights have emerged\n\nThis is not a time for emotional decisions. Stick to the plan we built together — that's how long-term wealth is created.",
+    body: "The recent pullback is primarily driven by inflation data and sector rotation. Importantly, the diversified portfolios we build for TeveXtra members are designed to weather exactly these kinds of storms.\n\nWhat we're watching:\n· Inflation trends and central bank commentary\n· Earnings quality across the holdings in your portfolio\n· Rebalancing opportunities where overweights have emerged\n\nThis is not a time for emotional decisions. Stick to the plan we built together — that's how long-term wealth is created.",
     ctaLabel: "Book an Advisor Call",
-    ctaUrl: "https://digital-trend.example.com/contact",
+    ctaUrl: "https://tevextra.example.com/contact",
     outro:
       "If you're feeling uneasy, you're not alone. We're here. A quick 15-minute call with your advisor can often provide the clarity you need.",
   },
   {
     id: "referral",
     name: "Referral Program Reminder",
-    description: "Encourage members to share Digital-trend with friends.",
-    subject: "Know someone who'd love Digital-trend?",
-    preheader:
-      "Invite a friend, and you both earn a bonus — it's that simple.",
+    description: "Encourage members to share TeveXtra with friends.",
+    subject: "Know someone who'd love TeveXtra?",
+    preheader: "Invite a friend, and you both earn a bonus — it's that simple.",
     intro:
-      "The best compliment we can receive is a referral from a member like you. Thank you to everyone who has already shared Digital-trend with friends and family.",
-    body:
-      "Here's how the referral program works:\n1. Share your unique referral link (available on the Referrals page)\n2. Your friend signs up and makes their first qualifying deposit\n3. You both receive a $100 bonus added to your account balance\n\nThere's no limit on referrals — refer as many people as you'd like.",
+      "The best compliment we can receive is a referral from a member like you. Thank you to everyone who has already shared TeveXtra with friends and family.",
+    body: "Here's how the referral program works:\n1. Share your unique referral link (available on the Referrals page)\n2. Your friend signs up and makes their first qualifying deposit\n3. You both receive a $100 bonus added to your account balance\n\nThere's no limit on referrals — refer as many people as you'd like.",
     ctaLabel: "Get My Referral Link",
-    ctaUrl: "https://digital-trend.example.com/referrals",
+    ctaUrl: "https://tevextra.example.com/referrals",
     outro:
-      "If you know someone who's been looking for a smarter way to invest, this could be the perfect nudge. Thank you, sincerely, for being part of the Digital-trend community.",
+      "If you know someone who's been looking for a smarter way to invest, this could be the perfect nudge. Thank you, sincerely, for being part of the TeveXtra community.",
   },
   {
     id: "blank",
@@ -206,7 +190,6 @@ export default function AdminNewsletterPage() {
   useEffect(() => {
     const app = getFirebaseApp();
     const auth = getAuth(app);
-    const db = getFirebaseFirestore();
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -217,78 +200,32 @@ export default function AdminNewsletterPage() {
         const token = await getIdToken(currentUser, true);
         setIdToken(token);
 
-        const usersSnap = await getDocs(collection(db, "users"));
-        const totalUsers = usersSnap.size;
-
-        let activeInvestors = 0;
-        try {
-          const invSnap = await getDocs(
-            query(
-              collection(db, "investments"),
-              where("status", "==", "active"),
-            ),
-          );
-          const uids = new Set<string>();
-          invSnap.forEach((d) => {
-            const uid =
-              (d.data().userId as string) || (d.data().uid as string);
-            if (uid) uids.add(uid);
-          });
-          activeInvestors = uids.size;
-        } catch {
-          activeInvestors = 0;
-        }
-
-        let newslettersSent = 0;
-        let lastSentAt: Date | null = null;
-        const historyItems: NewsletterHistoryItem[] = [];
-        try {
-          const nlSnap = await getDocs(
-            query(
-              collection(db, "newsletters"),
-              orderBy("createdAt", "desc"),
-              limit(10),
-            ),
-          );
-          newslettersSent = nlSnap.size;
-          nlSnap.forEach((doc) => {
-            const d = doc.data();
-            const created = d.createdAt?.toDate
-              ? d.createdAt.toDate()
-              : d.createdAt instanceof Date
-                ? d.createdAt
-                : new Date(d.createdAt);
-            if (!lastSentAt) lastSentAt = created;
-            historyItems.push({
-              newsletterId: d.newsletterId || doc.id,
-              subject: d.subject || "(No subject)",
-              audience: d.audience || "all",
-              totalRecipients: Number(d.totalRecipients || 0),
-              sentCount: Number(d.sentCount || 0),
-              failedCount: Number(d.failedCount || 0),
-              sentBy: d.sentBy,
-              createdAt: created,
-              preview: {
-                intro: typeof d.intro === "string" ? d.intro : "",
-                body: typeof d.body === "string" ? d.body : "",
-                ctaLabel: typeof d.ctaLabel === "string" ? d.ctaLabel : "",
-                ctaUrl: typeof d.ctaUrl === "string" ? d.ctaUrl : "",
-                outro: typeof d.outro === "string" ? d.outro : "",
-                preheader: typeof d.preheader === "string" ? d.preheader : "",
-              },
-            });
-          });
-        } catch {
-          newslettersSent = 0;
-        }
-
-        setStats({
-          totalUsers,
-          activeInvestors,
-          newslettersSent,
-          lastSentAt,
+        const res = await fetch("/api/admin/newsletter/stats", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
-        setHistory(historyItems);
+        const data = await res.json();
+        if (data.success) {
+          const rawStats = data.stats;
+          setStats({
+            totalUsers: rawStats.totalUsers || 0,
+            activeInvestors: rawStats.activeInvestors || 0,
+            newslettersSent: rawStats.newslettersSent || 0,
+            lastSentAt: rawStats.lastSentAt
+              ? new Date(rawStats.lastSentAt)
+              : null,
+          });
+          const rawHistory = data.history || [];
+          setHistory(
+            rawHistory.map((h: any) => ({
+              ...h,
+              createdAt: h.createdAt ? new Date(h.createdAt) : null,
+            })),
+          );
+        } else {
+          console.error("Failed to fetch newsletter stats:", data.error);
+        }
       } catch (err) {
         console.error("Newsletter page init error:", err);
       } finally {
@@ -413,7 +350,7 @@ export default function AdminNewsletterPage() {
       outro ||
       "The optional closing/reminder text (if any) will display here before the signature.";
 
-    const appName = "Digital-trend";
+    const appName = "TeveXtra";
     const year = new Date().getFullYear();
     const dateStr = new Date().toLocaleDateString("en-US", {
       weekday: "long",
@@ -690,9 +627,7 @@ export default function AdminNewsletterPage() {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-bold text-slate-100">
-                      {t.name}
-                    </p>
+                    <p className="text-sm font-bold text-slate-100">{t.name}</p>
                     {selectedTemplateId === t.id && (
                       <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                     )}
@@ -706,7 +641,10 @@ export default function AdminNewsletterPage() {
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 grid gap-8 lg:grid-cols-5">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 grid gap-8 lg:grid-cols-5"
+        >
           {/* Compose */}
           <div className="lg:col-span-3 space-y-6">
             <div className="rounded-2xl border border-white/5 bg-slate-900 p-6 sm:p-8">
@@ -1000,8 +938,8 @@ export default function AdminNewsletterPage() {
                       className="mt-2 w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none ring-emerald-500/20 placeholder:text-slate-600 focus:border-emerald-500/40 focus:ring-2"
                     />
                     <p className="mt-2 text-[11px] text-slate-500 leading-relaxed">
-                      Tip: Send a test to yourself first to see how the
-                      template renders in your inbox.
+                      Tip: Send a test to yourself first to see how the template
+                      renders in your inbox.
                     </p>
                   </div>
                 )}

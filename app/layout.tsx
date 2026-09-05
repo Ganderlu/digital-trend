@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "./site-header";
-import { SiteFooter } from "./site-footer";
-import { FloatingTranslate } from "@/components/floating-translate";
+import { Poppins } from "next/font/google";
+import { PublicChrome } from "@/components/public-chrome";
 import { InvestmentNotification } from "@/components/investment-notification";
+import { LanguageProvider } from "@/components/language-provider";
 import "./globals.css";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Premium Investment Platform",
@@ -17,18 +24,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                document.documentElement.setAttribute('data-theme', 'dark');
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
-        className="antialiased bg-white text-slate-900"
+        className={`${poppins.variable} antialiased transition-colors duration-300`}
+        style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
         suppressHydrationWarning
       >
-        <div className="flex min-h-screen flex-col">
-          <SiteHeader />
-          <div className="flex-1">{children}</div>
-          <SiteFooter />
-          <FloatingTranslate />
-          <InvestmentNotification />
-        </div>
+        <LanguageProvider />
+        <PublicChrome>{children}</PublicChrome>
+        <InvestmentNotification />
       </body>
     </html>
   );

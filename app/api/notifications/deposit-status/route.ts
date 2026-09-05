@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Missing userEmail on deposit" }, { status: 400 });
     }
 
-    const appName = process.env.APP_NAME || "Digital-trend";
+    const appName = process.env.APP_NAME || "TeveXtra";
     const amount = Number(data.amount || 0);
     const currency = String(data.currency || "USD");
     const statusLabel = body.status === "approved" ? "approved" : "rejected";

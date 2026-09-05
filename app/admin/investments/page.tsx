@@ -2,17 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  Timestamp,
-  doc,
-  getDoc,
-} from "firebase/firestore";
-import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
+import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
+import { Timestamp } from "firebase/firestore";
+import { getFirebaseApp } from "@/lib/firebaseClient";
 import AdminLayout from "@/components/admin-layout";
 import {
   TrendingUp,
@@ -45,7 +37,6 @@ export default function AdminInvestmentsPage() {
   useEffect(() => {
     const app = getFirebaseApp();
     const auth = getAuth(app);
-    const db = getFirebaseFirestore();
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -54,37 +45,18 @@ export default function AdminInvestmentsPage() {
       }
 
       try {
-        const investmentsQuery = query(
-          collection(db, "investments"),
-          orderBy("startDate", "desc"),
-        );
-        const snapshot = await getDocs(investmentsQuery);
-
-        const investmentsData = await Promise.all(
-          snapshot.docs.map(async (invDoc) => {
-            const data = invDoc.data();
-            let userEmail = "Unknown";
-
-            if (data.userId) {
-              try {
-                const userDoc = await getDoc(doc(db, "users", data.userId));
-                if (userDoc.exists()) {
-                  userEmail = userDoc.data().email;
-                }
-              } catch (e) {
-                console.error("Error fetching user email", e);
-              }
-            }
-
-            return {
-              id: invDoc.id,
-              ...data,
-              userEmail,
-            } as Investment;
-          }),
-        );
-
-        setInvestments(investmentsData);
+        const idToken = await getIdToken(currentUser, true);
+        const res = await fetch("/api/admin/investments", {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        });
+        const data = await res.json();
+        if (data.success && data.investments) {
+          setInvestments(data.investments as Investment[]);
+        } else {
+          console.error("Failed to fetch investments:", data.error);
+        }
       } catch (error) {
         console.error("Error fetching investments:", error);
       } finally {
@@ -102,12 +74,30 @@ export default function AdminInvestmentsPage() {
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return "N/A";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-    }).format(date);
+    let date: Date | null = null;
+    try {
+      if (typeof timestamp.toDate === "function") {
+        date = timestamp.toDate();
+      } else if (
+        timestamp &&
+        typeof timestamp === "object" &&
+        typeof timestamp._seconds === "number"
+      ) {
+        date = new Date(
+          timestamp._seconds * 1000 + (timestamp._nanoseconds || 0) / 1000000,
+        );
+      } else {
+        date = new Date(timestamp);
+      }
+      if (!date || isNaN(date.getTime())) return "N/A";
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      }).format(date);
+    } catch {
+      return "N/A";
+    }
   };
 
   const formatCurrency = (amount: number) => {

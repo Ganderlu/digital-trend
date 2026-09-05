@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
+import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
+import { getFirebaseApp } from "@/lib/firebaseClient";
 import AdminLayout from "@/components/admin-layout";
 import {
   Users,
@@ -31,7 +30,6 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const app = getFirebaseApp();
     const auth = getAuth(app);
-    const db = getFirebaseFirestore();
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -40,58 +38,18 @@ export default function AdminDashboardPage() {
       }
 
       try {
-        // Fetch Users
-        const usersSnapshot = await getDocs(collection(db, "users"));
-        const totalUsers = usersSnapshot.size;
-
-        // Fetch Deposits
-        const depositsSnapshot = await getDocs(collection(db, "deposits"));
-        let totalDeposits = 0;
-        let pendingDeposits = 0;
-        depositsSnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.status === "approved" || data.status === "completed") {
-            totalDeposits += data.amount || 0;
-          } else if (data.status === "pending") {
-            pendingDeposits++;
-          }
+        const idToken = await getIdToken(currentUser, true);
+        const res = await fetch("/api/admin/stats", {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
         });
-
-        // Fetch Withdrawals
-        const withdrawalsSnapshot = await getDocs(
-          collection(db, "withdrawals"),
-        );
-        let totalWithdrawals = 0;
-        let pendingWithdrawals = 0;
-        withdrawalsSnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.status === "approved" || data.status === "completed") {
-            totalWithdrawals += data.amount || 0;
-          } else if (data.status === "pending") {
-            pendingWithdrawals++;
-          }
-        });
-
-        // Fetch Investments
-        const investmentsSnapshot = await getDocs(
-          collection(db, "investments"),
-        );
-        let activeInvestments = 0;
-        investmentsSnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.status === "active") {
-            activeInvestments++;
-          }
-        });
-
-        setStats({
-          totalUsers,
-          totalDeposits,
-          totalWithdrawals,
-          activeInvestments,
-          pendingDeposits,
-          pendingWithdrawals,
-        });
+        const data = await res.json();
+        if (data.success && data.stats) {
+          setStats(data.stats);
+        } else {
+          console.error("Failed to fetch admin stats:", data.error);
+        }
       } catch (error) {
         console.error("Error fetching admin stats:", error);
       } finally {

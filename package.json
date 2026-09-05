@@ -9,10 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "cloudinary": "^2.11.0",
+    "countries-states-cities": "^1.0.6",
     "firebase": "^12.9.0",
     "firebase-admin": "^13.6.1",
+    "hls.js": "^1.7.2",
     "lucide-react": "^0.575.0",
     "next": "16.1.6",
+    "next-cloudinary": "^6.18.8",
     "qrcode.react": "^4.0.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",

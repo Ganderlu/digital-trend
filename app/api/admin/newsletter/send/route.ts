@@ -169,7 +169,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const appName = process.env.APP_NAME || "Digital-trend";
+    const appName = process.env.APP_NAME || "TeveXtra";
     const appUrl = (
       process.env.APP_URL ||
       process.env.NEXT_PUBLIC_APP_URL ||

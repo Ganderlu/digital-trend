@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, getIdToken } from "firebase/auth";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
 import AdminLayout from "@/components/admin-layout";
@@ -15,6 +15,10 @@ import {
   AlertCircle,
   Globe,
   Mail,
+  ShieldCheck,
+  LogOut,
+  Copy,
+  KeyRound,
 } from "lucide-react";
 
 type GlobalSettings = {
@@ -34,6 +38,12 @@ export default function AdminSettingsPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [claimSetupRunning, setClaimSetupRunning] = useState(false);
+  const [claimStatus, setClaimStatus] = useState<null | {
+    type: "success" | "error";
+    text: string;
+    needsSignOut?: boolean;
+  }>(null);
 
   const [settings, setSettings] = useState<GlobalSettings>({
     walletBTC: "",
@@ -41,8 +51,57 @@ export default function AdminSettingsPage() {
     walletUSDT: "",
     walletXRP: "",
     supportEmail: "",
-    siteName: "Digital-trend",
+    siteName: "TeveXtra",
   });
+
+  const handleGrantAdminClaim = async () => {
+    try {
+      setClaimSetupRunning(true);
+      setClaimStatus(null);
+      const app = getFirebaseApp();
+      const auth = getAuth(app);
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("No signed in user. Please sign in again.");
+      }
+      const idToken = await getIdToken(currentUser, true);
+      const response = await fetch("/api/admin/setup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || `HTTP ${response.status}`);
+      }
+      setClaimStatus({
+        type: "success",
+        text:
+          result.message ||
+          "Admin custom claims set. Please sign out and back in.",
+        needsSignOut: !!result.mustSignOutAndBackIn,
+      });
+    } catch (err: any) {
+      console.error("handleGrantAdminClaim failed:", err);
+      setClaimStatus({
+        type: "error",
+        text:
+          err?.message ||
+          "Could not grant admin claim. Check the console for details.",
+      });
+    } finally {
+      setClaimSetupRunning(false);
+    }
+  };
+
+  const handleSignOutNow = async () => {
+    const app = getFirebaseApp();
+    const auth = getAuth(app);
+    await auth.signOut();
+    router.push("/login");
+  };
 
   useEffect(() => {
     const app = getFirebaseApp();
@@ -105,7 +164,7 @@ export default function AdminSettingsPage() {
             walletUSDT: "TAGehSxJe15bB81JmP7gnuHLJTwZGaWZ2K",
             walletXRP: "rLNaS6mXj5f6X9X5X5X5X5X5X5X5X5X5X5",
             supportEmail: "helpdigitaltrend@gmail.com",
-            siteName: "Digital-trend",
+            siteName: "TeveXtra",
           };
           setSettings(defaultSettings);
           // Optionally save these defaults to DB immediately or wait for user save
@@ -127,15 +186,80 @@ export default function AdminSettingsPage() {
     setMessage(null);
 
     try {
+      const app = getFirebaseApp();
+      const auth = getAuth(app);
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error(
+          "Session expired. Please sign out, sign back in, then try again.",
+        );
+      }
+
       const db = getFirebaseFirestore();
-      await setDoc(doc(db, "settings", "global"), settings, { merge: true });
+      const settingsRef = doc(db, "settings", "global");
+
+      // Pre-clean + trim string fields to avoid any whitespace issues
+      const cleaned: GlobalSettings = {
+        walletBTC: (settings.walletBTC || "").trim(),
+        walletETH: (settings.walletETH || "").trim(),
+        walletUSDT: (settings.walletUSDT || "").trim(),
+        walletXRP: (settings.walletXRP || "").trim(),
+        supportEmail: (settings.supportEmail || "").trim(),
+        siteName: (settings.siteName || "TeveXtra").trim(),
+      };
+
+      try {
+        // Try upsert via setDoc with merge (works for existing OR new docs)
+        await setDoc(settingsRef, cleaned, { merge: true });
+      } catch (setErr: unknown) {
+        // Fallback: try updateDoc if setDoc's create-vs-update semantics get stuck
+        const code = (setErr as any)?.code || (setErr as any)?.status || "";
+        if (
+          code === "permission-denied" ||
+          code === "not-found" ||
+          code === 7 ||
+          code === 5
+        ) {
+          try {
+            await updateDoc(settingsRef, { ...cleaned });
+          } catch {
+            throw setErr;
+          }
+        } else {
+          throw setErr;
+        }
+      }
+
       setMessage({ type: "success", text: "Settings saved successfully." });
 
       // Clear message after 3 seconds
       setTimeout(() => setMessage(null), 3000);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error saving settings:", error);
-      setMessage({ type: "error", text: "Failed to save settings." });
+
+      const code = (error as any)?.code || (error as any)?.status || "";
+      let text = "Failed to save settings.";
+
+      if (code === "permission-denied" || code === 7) {
+        text =
+          "Firebase Rules denied this write. Make sure you have pasted + published the updated Firestore Rules from the instructions. Also refresh the page + sign back in as admin.";
+      } else if (
+        code === "unauthenticated" ||
+        code === 16 ||
+        (error instanceof Error && error.message.includes("Session"))
+      ) {
+        text =
+          error instanceof Error
+            ? error.message
+            : "You are not signed in. Please sign in as admin again.";
+      } else if (code === "unavailable" || code === 14) {
+        text =
+          "Firestore is temporarily unavailable. Check your network and try again.";
+      } else if (error instanceof Error && error.message.trim().length > 0) {
+        text = `Failed to save settings — ${error.message}`;
+      }
+
+      setMessage({ type: "error", text });
     } finally {
       setSaving(false);
     }
@@ -183,6 +307,93 @@ export default function AdminSettingsPage() {
         )}
 
         <form onSubmit={handleSave} className="space-y-8">
+          {/* Admin Claim Setup (Bootstrap) */}
+          <div className="rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 via-slate-900 to-slate-900 p-6 shadow-sm">
+            <div className="mb-6 flex items-center gap-3 border-b border-white/5 pb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                <KeyRound className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-slate-50">
+                  Admin Token Setup
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Grants a permanent Firebase Auth Custom Claim on your sign-in
+                  token. This removes the 10-document Firestore limit and fixes
+                  &quot;Missing or insufficient permissions&quot; on Admin
+                  Overview.
+                </p>
+              </div>
+              <div className="text-[11px] uppercase tracking-wider text-emerald-400/80 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Required
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {claimStatus && (
+                <div
+                  className={`flex items-start gap-3 rounded-xl border p-4 text-sm ${
+                    claimStatus.type === "success"
+                      ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
+                      : "border-red-500/20 bg-red-500/10 text-red-300"
+                  }`}
+                >
+                  {claimStatus.type === "success" ? (
+                    <CheckCircle className="mt-0.5 h-5 w-5 shrink-0" />
+                  ) : (
+                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+                  )}
+                  <div className="flex-1 space-y-2">
+                    <p className="font-medium">{claimStatus.text}</p>
+                    {claimStatus.needsSignOut && (
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          onClick={handleSignOutNow}
+                          className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-600 transition"
+                        >
+                          <LogOut className="h-3.5 w-3.5" />
+                          Sign Out Now (then sign back in)
+                        </button>
+                        <span className="text-xs text-slate-400">
+                          The new token with admin claim activates only after
+                          re-authenticating.
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleGrantAdminClaim}
+                  disabled={claimSetupRunning}
+                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-600 disabled:opacity-50"
+                >
+                  {claimSetupRunning ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Granting admin claim...
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="h-4 w-4" />
+                      Grant Admin Claim to My Account
+                    </>
+                  )}
+                </button>
+                <div className="text-xs text-slate-400 max-w-lg">
+                  Safe to run multiple times. Authorizes: super-admin email (
+                  <code className="text-slate-200 bg-slate-800 px-1.5 py-0.5 rounded text-[11px] border border-white/5">
+                    cjonwubuya@gmail.com
+                  </code>
+                  ), any user with Firestore role=admin, or the very first user.
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Wallet Configuration */}
           <div className="rounded-3xl border border-white/5 bg-slate-900 p-6 shadow-sm">
             <div className="mb-6 flex items-center gap-3 border-b border-white/5 pb-4">

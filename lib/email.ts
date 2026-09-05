@@ -20,7 +20,7 @@ export async function sendEmail(payload: EmailPayload) {
 
   if (!from) {
     throw new Error(
-      "Resend sender is not configured: set RESEND_FROM in your environment variables (e.g. 'Digital-trend <help@yourdomain.com>').",
+      "Resend sender is not configured: set RESEND_FROM in your environment variables (e.g. 'TeveXtra <help@yourdomain.com>').",
     );
   }
 

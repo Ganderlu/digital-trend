@@ -43,12 +43,21 @@ export function Accordion({ children, className }: AccordionProps) {
   );
 }
 
-export function AccordionItem({ children, className, value }: AccordionItemProps) {
+export function AccordionItem({
+  children,
+  className,
+  value,
+}: AccordionItemProps) {
   return (
-    <div className={`border-b border-slate-200 ${className}`} data-state={value}>
+    <div
+      className={`border-b border-white/10 last:border-0 ${className}`}
+      data-state={value}
+    >
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child as React.ReactElement<any>, { value });
+          return React.cloneElement(child as React.ReactElement<any>, {
+            value,
+          });
         }
         return child;
       })}
@@ -56,9 +65,14 @@ export function AccordionItem({ children, className, value }: AccordionItemProps
   );
 }
 
-export function AccordionTrigger({ children, className, value }: AccordionTriggerProps & { value?: string }) {
+export function AccordionTrigger({
+  children,
+  className,
+  value,
+}: AccordionTriggerProps & { value?: string }) {
   const context = React.useContext(AccordionContext);
-  if (!context) throw new Error("AccordionTrigger must be used within Accordion");
+  if (!context)
+    throw new Error("AccordionTrigger must be used within Accordion");
 
   const isOpen = context.openItem === value;
 
@@ -66,7 +80,7 @@ export function AccordionTrigger({ children, className, value }: AccordionTrigge
     <button
       type="button"
       onClick={() => value && context.toggleItem(value)}
-      className={`flex w-full items-center justify-between py-4 text-left font-medium transition-all hover:text-emerald-600 ${className}`}
+      className={`flex w-full items-center justify-between py-4 text-left font-semibold transition-all hover:text-emerald-400 ${className}`}
     >
       {children}
       <ChevronDown
@@ -78,9 +92,14 @@ export function AccordionTrigger({ children, className, value }: AccordionTrigge
   );
 }
 
-export function AccordionContent({ children, className, value }: AccordionContentProps & { value?: string }) {
+export function AccordionContent({
+  children,
+  className,
+  value,
+}: AccordionContentProps & { value?: string }) {
   const context = React.useContext(AccordionContext);
-  if (!context) throw new Error("AccordionContent must be used within Accordion");
+  if (!context)
+    throw new Error("AccordionContent must be used within Accordion");
 
   const isOpen = context.openItem === value;
 

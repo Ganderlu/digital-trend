@@ -2,18 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  Timestamp,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
+import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
+import { Timestamp, updateDoc, doc } from "firebase/firestore";
 import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
 import AdminLayout from "@/components/admin-layout";
+import ProfileAvatar from "@/components/profile-avatar";
 import {
   Users,
   Search,
@@ -35,6 +28,8 @@ type UserData = {
   createdAt?: Timestamp | any;
   balance?: number;
   status?: "active" | "banned";
+  photoURL?: string;
+  photoPublicId?: string;
   registrationLocation?: {
     ip?: string;
     city?: string;
@@ -54,7 +49,6 @@ export default function AdminUsersPage() {
   useEffect(() => {
     const app = getFirebaseApp();
     const auth = getAuth(app);
-    const db = getFirebaseFirestore();
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -63,16 +57,20 @@ export default function AdminUsersPage() {
       }
 
       try {
-        const usersQuery = query(collection(db, "users"));
-        const snapshot = await getDocs(usersQuery);
-
-        const fetchedUsers = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as UserData[];
-
-        setUsers(fetchedUsers);
-        setFilteredUsers(fetchedUsers);
+        const idToken = await getIdToken(currentUser, true);
+        const res = await fetch("/api/admin/users", {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        });
+        const data = await res.json();
+        if (data.success && data.users) {
+          const fetchedUsers = data.users as UserData[];
+          setUsers(fetchedUsers);
+          setFilteredUsers(fetchedUsers);
+        } else {
+          console.error("Failed to fetch users:", data.error);
+        }
       } catch (error) {
         console.error("Error fetching users:", error);
       } finally {
@@ -119,12 +117,30 @@ export default function AdminUsersPage() {
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return "N/A";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-    }).format(date);
+    let date: Date | null = null;
+    try {
+      if (typeof timestamp.toDate === "function") {
+        date = timestamp.toDate();
+      } else if (
+        timestamp &&
+        typeof timestamp === "object" &&
+        typeof timestamp._seconds === "number"
+      ) {
+        date = new Date(
+          timestamp._seconds * 1000 + (timestamp._nanoseconds || 0) / 1000000,
+        );
+      } else {
+        date = new Date(timestamp);
+      }
+      if (!date || isNaN(date.getTime())) return "N/A";
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      }).format(date);
+    } catch {
+      return "N/A";
+    }
   };
 
   const formatCurrency = (amount?: number) => {
@@ -206,9 +222,13 @@ export default function AdminUsersPage() {
                     >
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-slate-400 font-bold uppercase">
-                            {user.firstName?.[0] || user.email?.[0]}
-                          </div>
+                          <ProfileAvatar
+                            src={user.photoURL}
+                            alt={`${user.firstName || ""} ${user.lastName || ""}`}
+                            fallbackInitials={`${user.firstName || ""} ${user.lastName || user.email || ""}`}
+                            size="h-8 w-8"
+                            iconSize={14}
+                          />
                           <div>
                             <p className="font-medium text-slate-200">
                               {user.firstName
@@ -243,7 +263,8 @@ export default function AdminUsersPage() {
                           <div className="flex flex-col gap-0.5">
                             <div className="flex items-center gap-1 text-xs text-slate-200">
                               <MapPin className="h-3 w-3 text-emerald-500" />
-                              {user.registrationLocation.city || "Unknown"},{" "}
+                              {user.registrationLocation.city ||
+                                "Unknown"},{" "}
                               {user.registrationLocation.country || "Unknown"}
                             </div>
                             <p className="text-[10px] text-slate-500">

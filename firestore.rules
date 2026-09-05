@@ -1,0 +1,325 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwnDoc(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // PREFERRED: Firebase Auth Custom Claim (zero get() calls, works on ANY
+    // collection size query). Set via Admin SDK or /api/admin/setup route.
+    function hasAdminClaim() {
+      return isSignedIn() && (
+        request.auth.token.role == 'admin' ||
+        request.auth.token.admin == true ||
+        request.auth.token.isAdmin == true
+      );
+    }
+
+    // FALLBACK: check role in /users/{uid} Firestore doc.
+    // WARNING: uses 1 get() PER DOC evaluated. Single-document reads work fine,
+    // but collection queries with >10 matching docs will hit the Firestore
+    // evaluation limit and be denied. Use hasAdminClaim() (custom claims) for
+    // reliable admin collection queries. Run /api/admin/setup + sign out/in.
+    function hasFirestoreAdminRole() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'ADMIN'];
+    }
+
+    function isAdmin() {
+      return hasAdminClaim() || hasFirestoreAdminRole();
+    }
+
+    function belongsToUser(field) {
+      return isSignedIn() && request.auth.uid == resource.data[field];
+    }
+
+    function belongsToUserOrIsAdmin(field) {
+      return belongsToUser(field) || isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // users
+    //   create  : anyone with auth (signup)
+    //   read    : own profile + admin (full list) + referrals lookup by own referredBy
+    //   write   : own profile (profile fields only) + admin (full)
+    //   role    : NEVER writeable by non-admin client side
+    // -------------------------------------------------------------------------
+    match /users/{userId} {
+      allow create: if isSignedIn()
+        && request.auth.uid == userId
+        && request.resource.data.role is string == false
+        && !(request.resource.data.keys().hasAny(['role']));
+
+      allow read: if
+        isOwnDoc(userId) ||
+        isAdmin() ||
+        (
+          resource.data.referredBy is string
+          && request.auth.uid == resource.data.referredBy
+        );
+
+      allow update: if
+        (
+          isOwnDoc(userId)
+          && !(request.resource.data.keys().hasAny(['role']))
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly([
+              'firstName','lastName','username','usernameDisplay','fullName',
+              'phone','phoneNumber','email',
+              'country','state','city','address','zipCode','postalCode',
+              'timezone','language',
+              'investmentGoal','profilePhoto','twoFactorEnabled',
+              'notificationEmail','notificationSms','passwordLastChanged',
+              'walletAddressBTC','walletAddressETH','walletAddressUSDT',
+              'walletAddressXRP','bio',
+              'photoURL','photoPublicId','profileImageUploaded','updatedAt'
+            ])
+        ) || isAdmin();
+
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // deposits
+    //   create  : owner only (userId = self)
+    //   read    : owner or admin
+    //   write   : admin only (approve/reject)
+    // -------------------------------------------------------------------------
+    match /deposits/{depositId} {
+      allow create: if
+        isSignedIn()
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.status in ['pending', 'submitted']
+        && request.resource.data.keys().hasOnly([
+          'userId','userEmail','amount','currency','transactionHash',
+          'walletAddress','planName','status','proofFileName','proofFileType',
+          'proofFileData','method','description','createdAt','approvedAt',
+          'rejectedAt','adminNote'
+        ]);
+
+      allow read: if belongsToUserOrIsAdmin('userId');
+
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly([
+            'status','approvedAt','rejectedAt','adminNote',
+            'transactionHash','walletAddress'
+          ])
+        && request.resource.data.status in [
+          'pending','submitted','approved','completed','rejected','cancelled'
+        ];
+
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // withdrawals
+    //   create  : owner only (userId = self)
+    //   read    : owner or admin
+    //   write   : admin only (approve/reject)
+    // -------------------------------------------------------------------------
+    match /withdrawals/{withdrawalId} {
+      allow create: if
+        isSignedIn()
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.status == 'pending'
+        && request.resource.data.keys().hasOnly([
+          'userId','userEmail','amount','currency','walletAddress',
+          'method','network','status','createdAt','approvedAt','rejectedAt',
+          'completedAt','txHash','adminNote','fee'
+        ]);
+
+      allow read: if belongsToUserOrIsAdmin('userId');
+
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly([
+            'status','approvedAt','rejectedAt','completedAt',
+            'txHash','adminNote','fee'
+          ])
+        && request.resource.data.status in [
+          'pending','approved','completed','rejected','cancelled','processing'
+        ];
+
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // investments
+    //   create  : owner only (userId = self)
+    //   read    : owner or admin
+    //   write   : admin only (status changes, earnings, settlement)
+    // -------------------------------------------------------------------------
+    match /investments/{investmentId} {
+      allow create: if
+        isSignedIn()
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.status == 'active'
+        && request.resource.data.keys().hasOnly([
+          'userId','userEmail','planId','planName','amount','roi',
+          'durationDays','startDate','endDate','status','createdAt',
+          'matureAt','totalReturn','lastEarningRun','earningsPaid'
+        ]);
+
+      allow read: if belongsToUserOrIsAdmin('userId');
+
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly([
+            'status','endDate','matureAt','totalReturn','lastEarningRun',
+            'earningsPaid','adminNote'
+          ])
+        && request.resource.data.status in [
+          'active','approved','completed','rejected','cancelled','matured'
+        ];
+
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // earnings
+    //   create  : admin or admin SDK only
+    //   read    : owner or admin
+    //   write   : admin only
+    // -------------------------------------------------------------------------
+    match /earnings/{earningId} {
+      allow create: if isAdmin()
+        && request.resource.data.userId is string
+        && request.resource.data.amount is number;
+
+      allow read: if belongsToUserOrIsAdmin('userId');
+
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // trades
+    //   create  : owner only (userId = self) + active + amount > 0
+    //   read    : owner or admin
+    //   update  : owner (settle their own trade on tick) OR admin
+    // -------------------------------------------------------------------------
+    match /trades/{tradeId} {
+      allow create: if
+        isSignedIn()
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.investment is number
+        && request.resource.data.investment > 0
+        && request.resource.data.status == 'active'
+        && request.resource.data.keys().hasOnly([
+          'userId','userEmail','asset','assetName','tvSymbol','direction',
+          'investment','entryPrice','expirySeconds','timeframe','status',
+          'payoutRate','indicators','createdAt','settledAt','exitPrice',
+          'payout','pnl','result'
+        ]);
+
+      allow read: if belongsToUserOrIsAdmin('userId');
+
+      allow update: if
+        (
+          isSignedIn() && request.auth.uid == resource.data.userId
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly([
+              'status','exitPrice','payout','pnl','settledAt','result'
+            ])
+          && request.resource.data.status in ['active','won','lost','settled']
+        ) || isAdmin();
+
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // settings
+    //   read  : ANY signed-in user (wallet addresses on deposit page etc.)
+    //   write : admin only
+    // -------------------------------------------------------------------------
+    match /settings/{docId} {
+      allow read: if isSignedIn() || docId == 'global';
+      allow write: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // newsletters
+    //   read  : admin only
+    //   write : admin only
+    // -------------------------------------------------------------------------
+    match /newsletters/{newsletterId} {
+      allow read, write: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // contacts (contact form submissions)
+    //   create  : public (anyone)
+    //   read    : admin only
+    //   write   : admin only
+    // -------------------------------------------------------------------------
+    match /contacts/{contactId} {
+      allow create: if request.resource.data.keys().hasOnly([
+        'name','email','goal','message','createdAt','status','reply','repliedAt'
+      ]);
+
+      allow read: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // referralCodes
+    //   create  : signed-in users creating their own code
+    //   read    : owner or admin
+    //   write   : admin only
+    // -------------------------------------------------------------------------
+    match /referralCodes/{codeId} {
+      allow create: if isSignedIn()
+        && request.auth.uid == request.resource.data.userId;
+
+      allow read: if belongsToUserOrIsAdmin('userId');
+      allow write: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // kyc
+    //   create  : owner only (userId = self)
+    //   read    : owner or admin
+    //   write   : admin only (approve/reject)
+    // -------------------------------------------------------------------------
+    match /kyc/{kycId} {
+      allow create: if isSignedIn()
+        && request.auth.uid == request.resource.data.userId;
+
+      allow read: if belongsToUserOrIsAdmin('userId');
+
+      allow update: if
+        (belongsToUser('userId')
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['firstName','lastName','dob','idType','idNumber',
+                      'idFrontUrl','idBackUrl','selfieUrl','addressLine1',
+                      'addressLine2','state','postalCode','country','status',
+                      'submittedAt','updatedAt','userId','userEmail']))
+        || isAdmin();
+
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // Catch-all: admin only, deny everything else (safe-by-default)
+    // -------------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

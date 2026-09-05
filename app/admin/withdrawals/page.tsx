@@ -2,18 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
 import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
   Timestamp,
   updateDoc,
   doc,
-  where,
   runTransaction,
-  getDoc,
   increment,
 } from "firebase/firestore";
 import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
@@ -51,7 +45,6 @@ export default function AdminWithdrawalsPage() {
   useEffect(() => {
     const app = getFirebaseApp();
     const auth = getAuth(app);
-    const db = getFirebaseFirestore();
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -60,38 +53,18 @@ export default function AdminWithdrawalsPage() {
       }
 
       try {
-        const withdrawalsQuery = query(
-          collection(db, "withdrawals"),
-          orderBy("createdAt", "desc"),
-        );
-        const snapshot = await getDocs(withdrawalsQuery);
-
-        const withdrawalsData = await Promise.all(
-          snapshot.docs.map(async (wdDoc) => {
-            const data = wdDoc.data();
-            let userEmail = data.userEmail || "Unknown";
-
-            // If email is missing in withdrawal doc, try to fetch from user doc
-            if (!data.userEmail && data.userId) {
-              try {
-                const userDoc = await getDoc(doc(db, "users", data.userId));
-                if (userDoc.exists()) {
-                  userEmail = userDoc.data().email;
-                }
-              } catch (e) {
-                console.error("Error fetching user email", e);
-              }
-            }
-
-            return {
-              id: wdDoc.id,
-              ...data,
-              userEmail,
-            } as WithdrawalRequest;
-          }),
-        );
-
-        setWithdrawals(withdrawalsData);
+        const idToken = await getIdToken(currentUser, true);
+        const res = await fetch("/api/admin/withdrawals", {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        });
+        const data = await res.json();
+        if (data.success && data.withdrawals) {
+          setWithdrawals(data.withdrawals as WithdrawalRequest[]);
+        } else {
+          console.error("Failed to fetch withdrawals:", data.error);
+        }
       } catch (error) {
         console.error("Error fetching withdrawals:", error);
       } finally {
@@ -193,14 +166,32 @@ export default function AdminWithdrawalsPage() {
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return "N/A";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
+    let date: Date | null = null;
+    try {
+      if (typeof timestamp.toDate === "function") {
+        date = timestamp.toDate();
+      } else if (
+        timestamp &&
+        typeof timestamp === "object" &&
+        typeof timestamp._seconds === "number"
+      ) {
+        date = new Date(
+          timestamp._seconds * 1000 + (timestamp._nanoseconds || 0) / 1000000,
+        );
+      } else {
+        date = new Date(timestamp);
+      }
+      if (!date || isNaN(date.getTime())) return "N/A";
+      return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(date);
+    } catch {
+      return "N/A";
+    }
   };
 
   const formatCurrency = (amount: number) => {

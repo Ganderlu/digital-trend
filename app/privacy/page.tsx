@@ -13,7 +13,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-bold text-slate-900 mb-4">Introduction</h2>
             <p>
-              At Digital-trend, we are committed to protecting your privacy and ensuring the security of your personal and financial information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our services.
+              At TeveXtra, we are committed to protecting your privacy and ensuring the security of your personal and financial information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our services.
             </p>
           </section>
 

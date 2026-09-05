@@ -4,13 +4,10 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import {
-  getFirebaseApp,
-  getFirebaseStorage,
-  getFirebaseFirestore,
-} from "@/lib/firebaseClient";
+import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
 import DashboardLayout from "@/components/dashboard-layout";
+import ProfileAvatar from "@/components/profile-avatar";
+import { useProfilePhotoURL } from "@/hooks/useProfilePhotoURL";
 import {
   User,
   Mail,
@@ -35,6 +32,7 @@ type UserProfile = {
   zipCode: string;
   bio: string;
   photoURL?: string;
+  photoPublicId?: string;
 };
 
 export default function AccountSettingsPage() {
@@ -46,8 +44,16 @@ export default function AccountSettingsPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [photoMessage, setPhotoMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [photoCacheBuster, setPhotoCacheBuster] = useState<number>(() =>
+    Date.now(),
+  );
+  const photoHook = useProfilePhotoURL(user?.uid);
 
   const [formData, setFormData] = useState<UserProfile>({
     firstName: "",
@@ -60,6 +66,15 @@ export default function AccountSettingsPage() {
     zipCode: "",
     bio: "",
   });
+
+  const effectivePhotoURL =
+    photoHook.url && photoHook.url.length > 0
+      ? photoHook.url
+      : formData.photoURL && formData.photoURL.length > 0
+        ? formData.photoURL
+        : user?.photoURL && user.photoURL.length > 0
+          ? user.photoURL
+          : null;
 
   useEffect(() => {
     const app = getFirebaseApp();
@@ -77,6 +92,8 @@ export default function AccountSettingsPage() {
         const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         if (userDoc.exists()) {
           const data = userDoc.data();
+          const photoURL = data.photoURL || currentUser.photoURL || "";
+          const photoPublicId = data.photoPublicId || "";
           setFormData({
             firstName: data.firstName || "",
             lastName: data.lastName || "",
@@ -87,8 +104,14 @@ export default function AccountSettingsPage() {
             address: data.address || "",
             zipCode: data.zipCode || "",
             bio: data.bio || "",
-            photoURL: currentUser.photoURL || "",
+            photoURL,
+            photoPublicId,
           });
+          if (photoURL) {
+            try {
+              photoHook.setPhoto(photoURL, photoPublicId || null);
+            } catch {}
+          }
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -111,60 +134,311 @@ export default function AccountSettingsPage() {
     fileInputRef.current?.click();
   };
 
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () =>
+        reject(new Error(`Failed to read file: ${file.name}`));
+      reader.onabort = () =>
+        reject(new Error(`File read was aborted: ${file.name}`));
+    });
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
+      setPhotoMessage({
+        type: "error",
+        text: "Image size should be less than 5MB.",
+      });
+      setTimeout(() => setPhotoMessage(null), 5000);
       setMessage({
         type: "error",
         text: "Image size should be less than 5MB.",
       });
-      setTimeout(() => setMessage(null), 3000);
+      setTimeout(() => setMessage(null), 5000);
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setPhotoMessage({
+        type: "error",
+        text: "Please select a valid image file.",
+      });
+      setTimeout(() => setPhotoMessage(null), 5000);
+      setMessage({
+        type: "error",
+        text: "Please select a valid image file.",
+      });
+      setTimeout(() => setMessage(null), 5000);
       return;
     }
 
     setUploadingImage(true);
     setMessage(null);
+    setPhotoMessage(null);
+
+    try {
+      const localPreview = await fileToBase64(file);
+      setFormData((prev) => ({ ...prev, photoURL: localPreview }));
+      try {
+        photoHook.setPhoto(localPreview, null);
+      } catch {}
+      setPhotoCacheBuster(Date.now());
+    } catch (readErr) {
+      console.warn(
+        "[AccountSettings] Could not generate local base64 preview — continuing with upload anyway.",
+        readErr,
+      );
+    }
 
     try {
       const app = getFirebaseApp();
-      const storage = getFirebaseStorage();
       const auth = getAuth(app);
       const db = getFirebaseFirestore();
 
-      if (!auth.currentUser) return;
+      if (!auth.currentUser) {
+        throw new Error("You must be signed in to upload a profile picture.");
+      }
 
-      const storageRef = ref(storage, `profile_images/${auth.currentUser.uid}`);
-      await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
+      console.log(
+        "[AccountSettings] Starting upload via multipart/form-data, file:",
+        file.name,
+        file.size,
+        file.type,
+      );
 
-      // Update Firestore
-      await updateDoc(doc(db, "users", auth.currentUser.uid), {
-        photoURL: downloadURL,
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("userId", auth.currentUser.uid);
+
+      let response: Response;
+      try {
+        response = await fetch("/api/cloudinary/upload-profile", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+          },
+          body: formData,
+          cache: "no-store",
+        });
+      } catch (networkErr: any) {
+        console.error(
+          "[AccountSettings] NETWORK ERROR during fetch:",
+          networkErr,
+        );
+        throw new Error(
+          `Network error: ${networkErr?.message || "Could not reach server. Check your connection."}`,
+        );
+      }
+
+      console.log("[AccountSettings] HTTP response:", {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        contentType: response.headers.get("content-type"),
       });
 
-      // Update Auth Profile
-      await updateProfile(auth.currentUser, {
-        photoURL: downloadURL,
-      });
+      const rawBody = await response.text();
 
-      // Update Local State
-      setFormData((prev) => ({ ...prev, photoURL: downloadURL }));
+      const criticalDiag =
+        "[AccountSettings] Response diag: HTTP " +
+        response.status +
+        " " +
+        (response.statusText || "") +
+        " | ok=" +
+        response.ok +
+        " | content-type=" +
+        (response.headers.get("content-type") || "MISSING") +
+        " | rawBodyLength=" +
+        rawBody.length +
+        " | rawBodyFirst300=" +
+        JSON.stringify(rawBody.slice(0, 300));
+      if (!response.ok) {
+        console.error(criticalDiag);
+      } else {
+        console.log(criticalDiag);
+      }
+
+      let result: any;
+      try {
+        result = rawBody ? JSON.parse(rawBody) : {};
+      } catch (parseErr: any) {
+        console.error("[AccountSettings] Response is NOT valid JSON:", {
+          parseError: parseErr?.message,
+          htmlTitleMatch: rawBody.match(/<title[^>]*>([^<]*)</i)?.[1],
+        });
+        const titleMatch = rawBody.match(/<title[^>]*>([^<]*)</i);
+        const msgFromHtml = titleMatch ? ` — ${titleMatch[1].trim()}` : "";
+        const detailedErr =
+          `Server sent non-JSON HTTP ${response.status}${msgFromHtml}. ` +
+          `Body length: ${rawBody.length}${rawBody.length > 0 ? ` | First 120 chars: ${rawBody.slice(0, 120)}` : ""}`;
+        throw new Error(detailedErr);
+      }
+
+      console.log("[AccountSettings] Parsed API result:", result);
+
+      if (!response.ok || result.success !== true) {
+        const httpStatus = response.status;
+        const fallbackStatusMsg =
+          httpStatus === 404
+            ? `HTTP 404 — Upload route not found. Fully restart the dev server (Ctrl+C → npm run dev). Raw body length=${rawBody.length}`
+            : httpStatus === 413
+              ? `HTTP 413 — Image too large after encoding. Pick a smaller file (<1MB).`
+              : httpStatus === 405
+                ? `HTTP 405 — Method Not Allowed. Next.js route config issue.`
+                : httpStatus === 500
+                  ? `HTTP 500 — Server error (check terminal for [upload-profile] logs). Body preview: ${rawBody.slice(0, 200)}`
+                  : rawBody.length === 0
+                    ? `HTTP ${httpStatus} with EMPTY response body. Next.js route module failed to load → FULL dev server restart required.`
+                    : `HTTP ${httpStatus} — ${response.statusText || ""}${rawBody.length > 0 && rawBody.length < 300 ? ` | Body: ${rawBody}` : ""}`;
+
+        const parsedMsg =
+          typeof result?.message === "string" && result.message.length > 0
+            ? result.message
+            : typeof result?.error === "string" && result.error.length > 0
+              ? result.error
+              : null;
+
+        const failureAt =
+          result?.failureAt ||
+          (result?.debug && result.debug.failureAt) ||
+          null;
+        const debugInfo = result?.debug || null;
+
+        console.error(
+          "[AccountSettings] UPLOAD FAILED STRING DIAG: " +
+            "http=" +
+            httpStatus +
+            " | success=" +
+            result?.success +
+            " | parsedMessage=" +
+            (parsedMsg ? `"${parsedMsg}"` : "NONE") +
+            " | failureAt=" +
+            (failureAt ?? "none") +
+            " | debug=" +
+            (debugInfo ? JSON.stringify(debugInfo) : "none") +
+            " | rawBodyFirst500=" +
+            JSON.stringify(rawBody.slice(0, 500)),
+        );
+
+        const userFacing =
+          (parsedMsg && parsedMsg.length < 240 ? parsedMsg + " " : "") +
+          (parsedMsg && parsedMsg.length < 240 && failureAt
+            ? `(step: ${failureAt}). `
+            : "") +
+          fallbackStatusMsg;
+
+        throw new Error(userFacing);
+      }
+
+      if (!result.data || !result.data.url) {
+        console.error("[AccountSettings] Result missing data.url:", result);
+        throw new Error(
+          "Upload succeeded but no URL returned — please try again.",
+        );
+      }
+
+      const { url, publicId } = result.data;
+      console.log("[AccountSettings] Upload SUCCESS! URL:", url);
+
+      try {
+        await updateDoc(doc(db, "users", auth.currentUser.uid), {
+          photoURL: url,
+          photoPublicId: publicId,
+        });
+      } catch (firestoreErr: any) {
+        console.warn(
+          "[AccountSettings] Non-fatal: Firestore updateDoc failed after successful upload (permission rules?). " +
+            "Image will still display via local state. Details:",
+          {
+            message: firestoreErr?.message,
+            code: firestoreErr?.code,
+            name: firestoreErr?.name,
+          },
+        );
+      }
+
+      try {
+        await updateProfile(auth.currentUser, {
+          photoURL: url,
+        });
+      } catch (authErr: any) {
+        console.warn(
+          "[AccountSettings] Non-fatal: Firebase Auth updateProfile failed after successful upload. " +
+            "Image will still display via local state. Details:",
+          {
+            message: authErr?.message,
+            code: authErr?.code,
+            name: authErr?.name,
+          },
+        );
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        photoURL: url,
+        photoPublicId: publicId,
+      }));
+      setPhotoCacheBuster(Date.now());
+      try {
+        photoHook.setPhoto(url, publicId);
+      } catch {}
       setMessage({
         type: "success",
         text: "Profile picture updated successfully!",
       });
-      setTimeout(() => setMessage(null), 3000);
-    } catch (error) {
-      console.error("Error uploading image:", error);
+      setPhotoMessage({
+        type: "success",
+        text: "Profile picture updated successfully!",
+      });
+      setTimeout(() => setMessage(null), 5000);
+      setTimeout(() => setPhotoMessage(null), 5000);
+    } catch (error: any) {
+      const errorInfo: Record<string, any> = {};
+      if (error instanceof Error) {
+        errorInfo.name = error.name;
+        errorInfo.message = error.message;
+        errorInfo.stack = error.stack?.split("\n").slice(0, 3).join("\n");
+      } else if (typeof error === "object" && error !== null) {
+        try {
+          errorInfo.rawKeys = Object.keys(error);
+          errorInfo.rawString = JSON.stringify(error).slice(0, 500);
+        } catch {
+          errorInfo.rawType = typeof error;
+        }
+        errorInfo.message =
+          (error as any).message ?? (error as any).error ?? (error as any).msg;
+        errorInfo.code = (error as any).code;
+      } else {
+        errorInfo.primitive = String(error);
+      }
+      console.error(
+        "[AccountSettings] FINAL ERROR uploading image:",
+        errorInfo,
+        "\nRaw error:",
+        error,
+      );
+      const errorText =
+        errorInfo.message ||
+        (typeof error === "string" ? error : null) ||
+        "Failed to upload image. Please check your internet connection and try again.";
       setMessage({
         type: "error",
-        text: "Failed to upload image. Please try again.",
+        text: errorText,
       });
+      setPhotoMessage({
+        type: "error",
+        text: errorText,
+      });
+      setTimeout(() => setMessage(null), 10000);
+      setTimeout(() => setPhotoMessage(null), 10000);
     } finally {
       setUploadingImage(false);
-      // Reset input value to allow same file selection again if needed
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -243,20 +517,31 @@ export default function AccountSettingsPage() {
           <div className="lg:col-span-1">
             <div className="rounded-3xl border border-white/5 bg-slate-900 p-6 text-center shadow-sm">
               <div className="relative mx-auto mb-4 h-24 w-24">
-                <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-800 text-3xl font-bold text-slate-500 ring-4 ring-slate-900">
-                  {formData.photoURL ? (
-                    <img
-                      src={formData.photoURL}
-                      alt="Profile"
-                      className="h-full w-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <span>
-                      {formData.firstName?.[0]?.toUpperCase() ||
-                        user?.email?.[0]?.toUpperCase()}
-                    </span>
-                  )}
-                </div>
+                {effectivePhotoURL ? (
+                  <img
+                    key={`guaranteed-${photoCacheBuster}-${effectivePhotoURL.length}`}
+                    src={effectivePhotoURL}
+                    alt="Profile"
+                    className="absolute inset-0 h-24 w-24 rounded-full object-cover ring-4 ring-slate-900 z-10"
+                    onError={(e) => {
+                      console.error(
+                        "[GuaranteedImg] Failed to load photo URL:",
+                        effectivePhotoURL,
+                      );
+                      (e.currentTarget as HTMLImageElement).style.display =
+                        "none";
+                    }}
+                  />
+                ) : null}
+                <ProfileAvatar
+                  src={effectivePhotoURL}
+                  alt="Profile"
+                  fallbackInitials={`${formData.firstName || ""} ${formData.lastName || user?.email || ""}`}
+                  size="h-24 w-24"
+                  className="ring-4 ring-slate-900"
+                  iconSize={36}
+                  cacheBuster={photoCacheBuster}
+                />
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -277,6 +562,26 @@ export default function AccountSettingsPage() {
                   )}
                 </button>
               </div>
+
+              {photoMessage && (
+                <div
+                  className={`mb-4 flex items-start gap-2 rounded-xl border p-3 text-left ${
+                    photoMessage.type === "success"
+                      ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                      : "border-red-500/20 bg-red-500/10 text-red-400"
+                  }`}
+                >
+                  {photoMessage.type === "success" ? (
+                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  ) : (
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  )}
+                  <p className="text-xs font-medium leading-snug">
+                    {photoMessage.text}
+                  </p>
+                </div>
+              )}
+
               <h2 className="text-lg font-bold text-slate-50">
                 {formData.firstName} {formData.lastName}
               </h2>

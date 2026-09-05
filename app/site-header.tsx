@@ -5,10 +5,12 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -16,12 +18,10 @@ export function SiteHeader() {
     setMounted(true);
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
 
-  // Prevent scrolling when mobile menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -51,22 +51,22 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur">
+    <header className="sticky top-0 z-[99999] border-b border-white/10 bg-slate-950">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-white ring-1 ring-emerald-500/40">
+            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-slate-900 ring-1 ring-emerald-500/30">
               <Image
                 src="/images/trend.jpeg"
-                alt="Digital-trend"
+                alt="TeveXtra"
                 width={36}
                 height={36}
                 className="h-9 w-9 object-cover"
                 priority
               />
             </div>
-            <span className="text-lg font-bold tracking-tight text-slate-900">
-              Digital-trend
+            <span className="text-lg font-bold tracking-tight text-white">
+              TeveXtra
             </span>
           </Link>
         </div>
@@ -75,44 +75,59 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-8 md:flex">
           <Link
             href="/about"
-            className="text-sm font-medium text-slate-600 transition hover:text-emerald-600"
+            className="text-sm font-medium text-slate-400 transition hover:text-emerald-400"
           >
             About Us
           </Link>
           <Link
             href="/plans"
-            className="text-sm font-medium text-slate-600 transition hover:text-emerald-600"
+            className="text-sm font-medium text-slate-400 transition hover:text-emerald-400"
           >
             Plans
           </Link>
           <Link
             href="/what-we-do"
-            className="text-sm font-medium text-slate-600 transition hover:text-emerald-600"
+            className="text-sm font-medium text-slate-400 transition hover:text-emerald-400"
           >
             What we do
           </Link>
           <Link
             href="/faqs"
-            className="text-sm font-medium text-slate-600 transition hover:text-emerald-600"
+            className="text-sm font-medium text-slate-400 transition hover:text-emerald-400"
           >
             FAQs
           </Link>
           <Link
             href="/contact"
-            className="text-sm font-medium text-slate-600 transition hover:text-emerald-600"
+            className="text-sm font-medium text-slate-400 transition hover:text-emerald-400"
           >
             Contact
           </Link>
-          <div className="flex items-center gap-4 border-l border-slate-200 pl-6">
+          <div className="flex items-center gap-4 border-l border-white/10 pl-6">
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle-btn flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-all hover:bg-white/10 hover:text-white hover:border-emerald-500/30"
+              aria-label={
+                theme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4.5 w-4.5" />
+              ) : (
+                <Moon className="h-4.5 w-4.5" />
+              )}
+            </button>
             <Link
               href="/login"
-              className="text-sm font-semibold text-emerald-600 hover:text-emerald-500"
+              className="text-sm font-semibold text-emerald-400 hover:text-emerald-300"
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500"
+              className="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:brightness-110"
             >
               Get Started
             </Link>
@@ -122,7 +137,20 @@ export function SiteHeader() {
         {/* Mobile Menu Button & Quick Actions */}
         <div className="ml-auto flex items-center gap-3 md:hidden">
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            onClick={toggleTheme}
+            className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300 transition-all hover:bg-white/10 hover:text-white hover:border-emerald-500/30"
+            aria-label={
+              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+            }
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </button>
+          <button
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 hover:bg-white/5 hover:text-white"
             onClick={() => setIsOpen(true)}
           >
             <span className="sr-only">Open menu</span>
@@ -135,71 +163,79 @@ export function SiteHeader() {
       {isOpen &&
         mounted &&
         createPortal(
-          <div className="fixed inset-0 z-[100] flex flex-col bg-white">
-            <div className="flex h-16 items-center justify-between border-b border-slate-200 px-6">
+          <div className="fixed inset-0 z-[100] flex flex-col bg-slate-950">
+            <div className="flex h-16 items-center justify-between border-b border-white/10 px-6">
               <Link href="/" className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-white ring-1 ring-emerald-500/40">
+                <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-slate-900 ring-1 ring-emerald-500/30">
                   <Image
                     src="/images/trend.jpeg"
-                    alt="Digital-trend"
+                    alt="TeveXtra"
                     width={36}
                     height={36}
                     className="h-9 w-9 object-cover"
                     priority
                   />
                 </div>
-                <span className="text-lg font-bold tracking-tight text-slate-900">
-                  Digital-trend
+                <span className="text-lg font-bold tracking-tight text-white">
+                  TeveXtra
                 </span>
               </Link>
-              <button
-                className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-                onClick={() => setIsOpen(false)}
-              >
-                <span className="sr-only">Close menu</span>
-                <X className="h-6 w-6" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={toggleTheme}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300 transition-all hover:bg-white/10 hover:text-white hover:border-emerald-500/30"
+                  aria-label={
+                    theme === "dark"
+                      ? "Switch to light mode"
+                      : "Switch to dark mode"
+                  }
+                >
+                  {theme === "dark" ? (
+                    <Sun className="h-5 w-5" />
+                  ) : (
+                    <Moon className="h-5 w-5" />
+                  )}
+                </button>
+                <button
+                  className="flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 hover:bg-white/5 hover:text-white"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span className="sr-only">Close menu</span>
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto px-6 py-8">
               <nav className="flex flex-col gap-6">
-                <Link
-                  href="/about"
-                  className="text-lg font-bold text-slate-900"
-                >
+                <Link href="/about" className="text-lg font-bold text-white">
                   About Us
                 </Link>
-                <Link
-                  href="/plans"
-                  className="text-lg font-bold text-slate-900"
-                >
+                <Link href="/plans" className="text-lg font-bold text-white">
                   Plans
                 </Link>
                 <Link
                   href="/what-we-do"
-                  className="text-lg font-bold text-slate-900"
+                  className="text-lg font-bold text-white"
                 >
                   What we do
                 </Link>
-                <Link href="/faqs" className="text-lg font-bold text-slate-900">
+                <Link href="/faqs" className="text-lg font-bold text-white">
                   FAQs
                 </Link>
-                <Link
-                  href="/contact"
-                  className="text-lg font-bold text-slate-900"
-                >
+                <Link href="/contact" className="text-lg font-bold text-white">
                   Contact
                 </Link>
-                <hr className="border-slate-200" />
+                <hr className="border-white/10" />
                 <div className="flex flex-col gap-4">
                   <Link
                     href="/login"
-                    className="flex h-14 items-center justify-center rounded-2xl border border-slate-200 font-bold text-slate-900"
+                    className="flex h-14 items-center justify-center rounded-2xl border border-white/10 font-bold text-white hover:bg-white/5 transition"
                   >
                     Login
                   </Link>
                   <Link
                     href="/register"
-                    className="flex h-14 items-center justify-center rounded-2xl bg-emerald-600 font-bold text-white transition hover:bg-emerald-500"
+                    className="flex h-14 items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 font-bold text-white shadow-xl shadow-emerald-500/25 transition hover:brightness-110"
                   >
                     Get Started
                   </Link>

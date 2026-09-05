@@ -3,1061 +3,1334 @@ import Image from "next/image";
 import { CryptoTicker } from "@/components/crypto-ticker";
 import { ForexHeatMap } from "@/components/forex-heatmap";
 import { LiveTradeChart } from "@/components/live-trade-chart";
+import {
+  Wallet,
+  TrendingUp,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Shield,
+  BarChart3,
+  Users,
+  Clock,
+  CheckCircle2,
+  ArrowRight,
+  Star,
+  Globe2,
+  Award,
+  Zap,
+  Sparkles,
+  Building2,
+  Lock,
+  Headphones,
+  LineChart,
+  PieChart,
+  Activity,
+  RefreshCw,
+  Send,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="bg-white text-slate-900 transition-colors duration-300">
-      {/* Hero Section with Video Background */}
-      <section className="relative min-h-[90vh] w-full overflow-hidden flex items-center">
-        {/* Background Video */}
-        <div className="absolute inset-0 z-0">
+    <div className="min-h-screen bg-slate-950 text-slate-100 antialiased overflow-x-hidden">
+      {/* ============================= HERO ============================= */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 -z-0">
           <video
             autoPlay
             loop
             muted
             playsInline
-            className="h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
           >
             <source src="/videos/digital.mp4" type="video/mp4" />
           </video>
-          {/* Subtle light overlay for cinematic feel that blends into white below */}
-          <div className="absolute inset-0 bg-slate-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/75 to-slate-950/90" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.18),_transparent_55%),radial-gradient(ellipse_at_bottom_right,_rgba(99,102,241,0.15),_transparent_50%)]" />
+          <div
+            className="absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(148,163,184,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.5) 1px, transparent 1px)",
+              backgroundSize: "42px 42px",
+            }}
+          />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6 py-24 md:py-32 w-full">
-          <div className="grid items-center gap-16 md:grid-cols-[1.2fr_0.8fr]">
+        <div className="relative mx-auto max-w-7xl px-6 pt-20 pb-24 lg:pt-28 lg:pb-32">
+          <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-14 items-center">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.4em] text-emerald-600">
-                The Future of Wealth Management
-              </p>
-              <h1 className="mt-6 text-balance text-5xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-8xl">
-                Institutional Investing, Simplified.
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-2 mb-8">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-400">
+                  Trusted by 50,000+ Investors Worldwide
+                </span>
+              </div>
+
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] text-white">
+                Build Wealth with
+                <span className="block mt-2 bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">
+                  Institutional Precision.
+                </span>
               </h1>
-              <p className="mt-8 max-w-lg text-pretty text-lg leading-relaxed text-slate-100">
-                Access sophisticated strategies, institutional-grade research,
-                and expert guidance. Build a resilient portfolio with
-                Digital-trend's data-driven approach.
+
+              <p className="mt-7 max-w-xl text-lg leading-relaxed text-slate-400">
+                A premium digital asset platform combining data-driven trading,
+                diversified investment plans, and a robust referral matrix. Grow
+                your capital with a fiduciary-standard partner built for serious
+                investors.
               </p>
-              <div className="mt-12 flex flex-wrap items-center gap-5">
+
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/register"
+                  className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-500/25 transition hover:brightness-110 hover:-translate-y-0.5"
+                >
+                  Create Free Account
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
                 <Link
                   href="/plans"
-                  className="rounded-full bg-emerald-600 px-10 py-5 text-sm font-bold text-white shadow-2xl shadow-emerald-600/30 transition-all hover:bg-emerald-700 hover:-translate-y-1"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 backdrop-blur px-8 py-4 text-sm font-bold text-slate-200 transition hover:bg-white/10 hover:text-white"
                 >
-                  Start Investing
-                </Link>
-                <Link
-                  href="/contact"
-                  className="rounded-full border border-white/20 bg-white/10 backdrop-blur-md px-10 py-5 text-sm font-bold text-white transition-all hover:bg-white/20 hover:border-emerald-500/50"
-                >
-                  Consult an Expert
+                  View Investment Plans
                 </Link>
               </div>
-              <div className="mt-16 flex flex-wrap gap-10">
-                <div className="flex flex-col gap-1">
-                  <span className="text-3xl font-black text-white">12+</span>
-                  <span className="text-xs uppercase tracking-widest text-slate-300 font-bold">
-                    Years Experience
-                  </span>
+
+              <div className="mt-12 flex items-center gap-6">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="relative h-10 w-10 rounded-full border-2 border-slate-950 overflow-hidden bg-slate-800"
+                    >
+                      <Image
+                        fill
+                        src={`https://i.pravatar.cc/80?u=${i + 12}`}
+                        alt="investor"
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-3xl font-black text-white">$750M+</span>
-                  <span className="text-xs uppercase tracking-widest text-slate-300 font-bold">
-                    Assets Managed
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-3xl font-black text-white">4.9/5</span>
-                  <span className="text-xs uppercase tracking-widest text-slate-300 font-bold">
-                    Client Rating
-                  </span>
+                <div>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-amber-400 text-amber-400"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xs font-medium text-slate-400 mt-1">
+                    <span className="text-slate-200 font-bold">4.9/5</span> from
+                    3,200+ verified reviews
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="hidden md:block">
-              <div className="rounded-[2.5rem] border border-white/10 bg-white/10 backdrop-blur-2xl p-8 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)]">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3">
-                    <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
-                      Live Portfolio Analytics
-                    </span>
+            {/* Hero Preview Card (Dashboard teaser) */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500/20 via-sky-500/10 to-indigo-500/20 rounded-3xl blur-2xl" />
+              <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-900/95 shadow-[0_40px_100px_-30px_rgba(0,0,0,0.6)] overflow-hidden">
+                <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <Wallet className="h-4 w-4 text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                        Portfolio Snapshot
+                      </p>
+                      <p className="text-[10px] text-slate-500">
+                        Live · Updated 2s ago
+                      </p>
+                    </div>
                   </div>
-                  <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
-                    <div className="h-4 w-4 rounded-sm border-2 border-slate-200 opacity-50" />
-                  </div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Profitable
+                  </span>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="p-5 rounded-3xl bg-white/10 border border-white/10">
-                    <p className="text-[10px] uppercase tracking-widest text-slate-300 font-bold mb-1">
-                      Total Performance
+                <div className="p-5 space-y-4">
+                  <div className="rounded-xl bg-gradient-to-br from-emerald-500/10 via-slate-900 to-slate-900 border border-emerald-500/10 p-5">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">
+                      Total Account Balance
                     </p>
                     <div className="flex items-end gap-3">
-                      <span className="text-4xl font-black text-white">
-                        +24.8%
+                      <span className="text-4xl font-black text-white tabular-nums">
+                        $74,528.40
                       </span>
-                      <span className="text-emerald-400 text-sm font-bold pb-1">
-                        ▲ 1.2% Today
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-5 rounded-3xl bg-emerald-500/20 border border-emerald-500/30">
-                      <p className="text-[10px] uppercase tracking-widest text-emerald-400 font-bold mb-1">
-                        Annual ROI
-                      </p>
-                      <span className="text-2xl font-black text-white">
-                        9.4%
-                      </span>
-                    </div>
-                    <div className="p-5 rounded-3xl bg-white/10 border border-white/10">
-                      <p className="text-[10px] uppercase tracking-widest text-slate-300 font-bold mb-1">
-                        Volatility
-                      </p>
-                      <span className="text-2xl font-black text-white">
-                        6.2%
+                      <span className="flex items-center gap-1 text-emerald-400 font-bold text-xs mb-1.5">
+                        <ArrowUpRight className="h-3.5 w-3.5" />
+                        +$3,284.17
                       </span>
                     </div>
                   </div>
 
-                  <div className="pt-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                          Total Earnings
+                        </p>
+                      </div>
+                      <p className="text-lg font-bold text-white tabular-nums">
+                        $18,204.55
+                      </p>
+                      <p className="text-[11px] text-emerald-400 mt-1 font-medium">
+                        +8.1% this month
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <BarChart3 className="h-3.5 w-3.5 text-indigo-400" />
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                          Active Investments
+                        </p>
+                      </div>
+                      <p className="text-lg font-bold text-white tabular-nums">
+                        $42,300.00
+                      </p>
+                      <p className="text-[11px] text-slate-500 mt-1 font-medium">
+                        3 plans active
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/5 bg-slate-950/50 p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
                         Asset Allocation
-                      </span>
+                      </p>
                       <span className="text-[10px] font-bold text-emerald-400">
                         Optimized
                       </span>
                     </div>
-                    <div className="flex h-2 gap-1 rounded-full overflow-hidden bg-white/10">
-                      <div className="w-[60%] bg-emerald-500" />
-                      <div className="w-[25%] bg-sky-400" />
-                      <div className="w-[15%] bg-slate-400" />
+                    <div className="flex h-2.5 gap-1 rounded-full overflow-hidden bg-slate-800">
+                      <div className="w-[52%] bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full" />
+                      <div className="w-[23%] bg-gradient-to-r from-indigo-400 to-blue-500 rounded-full" />
+                      <div className="w-[15%] bg-gradient-to-r from-amber-400 to-orange-500 rounded-full" />
+                      <div className="w-[10%] bg-slate-500 rounded-full" />
+                    </div>
+                    <div className="grid grid-cols-4 gap-2 mt-4 text-[10px]">
+                      {[
+                        { n: "Stocks", v: "52%", c: "bg-emerald-400" },
+                        { n: "Crypto", v: "23%", c: "bg-indigo-400" },
+                        { n: "Forex", v: "15%", c: "bg-amber-400" },
+                        { n: "Cash", v: "10%", c: "bg-slate-500" },
+                      ].map((a) => (
+                        <div key={a.n} className="flex items-center gap-1.5">
+                          <span className={`h-2 w-2 rounded-full ${a.c}`} />
+                          <div>
+                            <p className="text-slate-400 font-medium">{a.n}</p>
+                            <p className="text-slate-200 font-bold">{a.v}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Trusted By Bar */}
+          <div className="mt-24 pt-10 border-t border-white/5">
+            <p className="text-center text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500 mb-8">
+              Regulated &amp; Secured By Industry Leaders
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center opacity-70">
+              {[
+                "McAfee SECURE",
+                "SSL Encrypted",
+                "GDPR Compliant",
+                "PCI DSS",
+                "SOC 2 Type II",
+              ].map((b) => (
+                <div
+                  key={b}
+                  className="flex items-center justify-center h-8 text-sm font-bold text-slate-400 tracking-wider"
+                >
+                  {b}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <CryptoTicker />
+
+      {/* ============================= STATS ROW ============================= */}
+      <section className="relative border-y border-white/5 bg-slate-900/40">
+        <div className="mx-auto max-w-7xl px-6 py-14">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+            {[
+              {
+                label: "Assets Under Management",
+                value: "$750M+",
+                icon: Building2,
+                color: "text-emerald-400",
+                bg: "bg-emerald-500/10",
+                border: "border-emerald-500/20",
+              },
+              {
+                label: "Active Investors",
+                value: "50,000+",
+                icon: Users,
+                color: "text-sky-400",
+                bg: "bg-sky-500/10",
+                border: "border-sky-500/20",
+              },
+              {
+                label: "Countries Served",
+                value: "140+",
+                icon: Globe2,
+                color: "text-indigo-400",
+                bg: "bg-indigo-500/10",
+                border: "border-indigo-500/20",
+              },
+              {
+                label: "Avg. Monthly ROI",
+                value: "18.4%",
+                icon: Award,
+                color: "text-amber-400",
+                bg: "bg-amber-500/10",
+                border: "border-amber-500/20",
+              },
+            ].map((s) => (
+              <div key={s.label} className="group">
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl ${s.bg} border ${s.border} mb-4`}
+                >
+                  <s.icon className={`h-5 w-5 ${s.color}`} />
+                </div>
+                <p className="text-3xl md:text-4xl font-black text-white tabular-nums tracking-tight">
+                  {s.value}
+                </p>
+                <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================= FUTURE OF INVESTING ============================= */}
+      <section id="about-video" className="relative overflow-hidden">
+        <div className="absolute inset-0 -z-0">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(99,102,241,0.16),_transparent_55%),radial-gradient(ellipse_at_bottom_left,_rgba(14,165,233,0.1),_transparent_50%)]" />
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(148,163,184,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.5) 1px, transparent 1px)",
+              backgroundSize: "48px 48px",
+            }}
+          />
+        </div>
+
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="mx-auto max-w-3xl text-center mb-16">
+            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-sky-400 mb-4">
+              About TeveXtra Investments
+            </p>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white">
+              Experience the{" "}
+              <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                Future of Investing
+              </span>
+            </h2>
+            <p className="mt-6 text-base md:text-lg text-slate-400 leading-relaxed">
+              See how{" "}
+              <span className="font-semibold text-slate-200">
+                TeveXtra Investments
+              </span>{" "}
+              is revolutionizing the digital asset landscape with cutting-edge
+              technology and secure, fiduciary-standard strategies designed to
+              build long-term generational wealth for every investor.
+            </p>
+          </div>
+
+          <div className="relative mx-auto max-w-6xl">
+            <div className="absolute -inset-4 bg-gradient-to-r from-sky-500/25 via-indigo-500/15 to-blue-500/25 rounded-[2rem] blur-3xl" />
+            <div className="relative rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-900 shadow-[0_50px_120px_-40px_rgba(56,189,248,0.3)] overflow-hidden ring-1 ring-white/5">
+              <div className="relative w-full aspect-video bg-slate-950">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pointer-events-none" />
+                <iframe
+                  src="https://share.synthesia.io/embeds/videos/d25f8b1c-6174-4a64-a151-cb3ab5c40a35?loop=1&autoplay=1&muted=1&showTitle=0&skip_btn=1"
+                  title="About TeveXtra Investments"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full border-0 z-10"
+                />
+                <div className="pointer-events-none absolute inset-0 z-20 shadow-[inset_0_0_80px_rgba(0,0,0,0.45)]" />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-20 grid md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Building2,
+                title: "Institutional Heritage",
+                desc: "Founded by Wall Street veterans, TeveXtra Investments brings institutional-grade trading infrastructure and risk management to every retail investor account.",
+                color: "sky",
+              },
+              {
+                icon: Shield,
+                title: "Secured & Regulated",
+                desc: "Segregated Tier-1 custodian accounts, multi-sig cold storage, 256-bit encryption, SOC 2 Type II certified infrastructure, and full GDPR + PCI compliance.",
+                color: "emerald",
+              },
+              {
+                icon: Sparkles,
+                title: "Algorithmic Excellence",
+                desc: "Our proprietary AI-powered trading engine executes 50,000+ trades per day with 87.3% win-rate, blending quantitative signals with human portfolio oversight.",
+                color: "indigo",
+              },
+            ].map((card) => {
+              const map: Record<
+                string,
+                { bg: string; border: string; text: string }
+              > = {
+                sky: {
+                  bg: "bg-sky-500/10",
+                  border: "border-sky-500/20",
+                  text: "text-sky-400",
+                },
+                emerald: {
+                  bg: "bg-emerald-500/10",
+                  border: "border-emerald-500/20",
+                  text: "text-emerald-400",
+                },
+                indigo: {
+                  bg: "bg-indigo-500/10",
+                  border: "border-indigo-500/20",
+                  text: "text-indigo-400",
+                },
+              };
+              const c = map[card.color];
+              return (
+                <div
+                  key={card.title}
+                  className="rounded-2xl border border-white/5 bg-slate-900/50 backdrop-blur p-7 transition hover:bg-slate-900 hover:border-white/10 hover:-translate-y-0.5"
+                >
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.bg} border ${c.border} mb-5`}
+                  >
+                    <card.icon className={`h-5.5 w-5.5 ${c.text}`} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2.5">
+                    {card.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-400">
+                    {card.desc}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================= CORE FEATURES ============================= */}
+      <section id="features" className="relative">
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-emerald-400 mb-4">
+              Why Investors Choose Us
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+              Everything You Need to
+              <span className="text-emerald-400"> Grow Confidently</span>
+            </h2>
+            <p className="mt-5 text-base md:text-lg text-slate-400 leading-relaxed">
+              From institutional-grade trading tools to tiered investment plans
+              and a rewarding referral program — our platform is engineered to
+              multiply your opportunity at every step.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: LineChart,
+                title: "Smart Investment Plans",
+                desc: "4 tiered strategies from Basic ($200) to VIP ($200K+) with daily compounding returns and transparent performance.",
+                color: "emerald",
+              },
+              {
+                icon: BarChart3,
+                title: "Live Trading Terminal",
+                desc: "Trade 500+ instruments with a professional TradingView-powered interface. Real-time signals, 1-click execution.",
+                color: "sky",
+              },
+              {
+                icon: RefreshCw,
+                title: "Referral Matrix Program",
+                desc: "Earn up to 4% per referral + multi-level matrix rewards when your network grows. Track every commission live.",
+                color: "indigo",
+              },
+              {
+                icon: Shield,
+                title: "Military-Grade Security",
+                desc: "256-bit SSL encryption, 2FA authentication, multi-sig cold storage, and segregated accounts with Tier-1 custodians.",
+                color: "rose",
+              },
+              {
+                icon: Wallet,
+                title: "Instant Deposits & Withdrawals",
+                desc: "Fund via Bitcoin, Ethereum, USDT, or bank wire. Automated processing, approvals within 24 hours.",
+                color: "amber",
+              },
+              {
+                icon: PieChart,
+                title: "Advanced Portfolio Analytics",
+                desc: "Granular dashboards tracking earnings, investments, ROI, and referrals. Export reports in one click.",
+                color: "teal",
+              },
+              {
+                icon: Headphones,
+                title: "24/7 Expert Support",
+                desc: "Dedicated account managers, priority email and live chat assistance, plus personalized advisory for VIP clients.",
+                color: "purple",
+              },
+              {
+                icon: Sparkles,
+                title: "Profit & Earnings Engine",
+                desc: "Auto-distributed daily earnings to your balance with compounding reinvestment options across all plan tiers.",
+                color: "orange",
+              },
+              {
+                icon: Lock,
+                title: "Fiduciary Transparency",
+                desc: "No hidden fees, no surprise charges. Every cost and performance metric is fully auditable on your dashboard.",
+                color: "blue",
+              },
+            ].map((f) => {
+              const colorMap: Record<string, string> = {
+                emerald:
+                  "from-emerald-500/10 to-emerald-500/0 border-emerald-500/15 text-emerald-400",
+                sky: "from-sky-500/10 to-sky-500/0 border-sky-500/15 text-sky-400",
+                indigo:
+                  "from-indigo-500/10 to-indigo-500/0 border-indigo-500/15 text-indigo-400",
+                rose: "from-rose-500/10 to-rose-500/0 border-rose-500/15 text-rose-400",
+                amber:
+                  "from-amber-500/10 to-amber-500/0 border-amber-500/15 text-amber-400",
+                teal: "from-teal-500/10 to-teal-500/0 border-teal-500/15 text-teal-400",
+                purple:
+                  "from-purple-500/10 to-purple-500/0 border-purple-500/15 text-purple-400",
+                orange:
+                  "from-orange-500/10 to-orange-500/0 border-orange-500/15 text-orange-400",
+                blue: "from-blue-500/10 to-blue-500/0 border-blue-500/15 text-blue-400",
+              };
+              const cls = colorMap[f.color] || colorMap.emerald;
+              const [bgGradient, borderCls, textCls] = [
+                cls.split(" border")[0],
+                "border" + cls.split("border")[1].split(" text")[0],
+                "text" + cls.split(" text")[1],
+              ];
+              return (
+                <div
+                  key={f.title}
+                  className="group relative rounded-2xl border border-white/5 bg-slate-900/50 p-7 transition-all duration-300 hover:bg-slate-900 hover:border-white/10 hover:-translate-y-1 hover:shadow-[0_20px_40px_-20px_rgba(16,185,129,0.15)]"
+                >
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${bgGradient} ${borderCls} mb-5`}
+                  >
+                    <f.icon className={`h-5.5 w-5.5 ${textCls}`} />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2.5">
+                    {f.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-400">
+                    {f.desc}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================= HOW IT WORKS ============================= */}
+      <section
+        id="how"
+        className="relative border-y border-white/5 bg-slate-900/30"
+      >
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-emerald-400 mb-4">
+              Simple 3-Step Onboarding
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+              Start Earning in Under{" "}
+              <span className="text-emerald-400">5 Minutes</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                step: "01",
+                title: "Create Your Account",
+                desc: "Register with your name and email in 60 seconds. No KYC needed to start exploring.",
+                icon: Users,
+              },
+              {
+                step: "02",
+                title: "Fund Your Wallet",
+                desc: "Deposit starting at $200 via crypto or bank transfer. All deposits auto-confirm on-chain.",
+                icon: ArrowDownLeft,
+              },
+              {
+                step: "03",
+                title: "Invest & Grow Daily",
+                desc: "Pick a plan, monitor your dashboard, and withdraw profits at any time. Refer friends to earn 4% extra.",
+                icon: TrendingUp,
+              },
+            ].map((s, idx) => (
+              <div key={s.step} className="relative">
+                {idx < 2 && (
+                  <div className="hidden md:block absolute top-10 left-[calc(100%_-_2px)] w-[calc(100%_-_40px)] h-px bg-gradient-to-r from-emerald-500/40 via-white/10 to-transparent" />
+                )}
+                <div className="relative rounded-2xl border border-white/5 bg-gradient-to-br from-slate-900 to-slate-900/50 p-8 h-full">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                      <s.icon className="h-6 w-6" />
+                    </div>
+                    <span className="text-5xl font-black text-white/5">
+                      {s.step}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">
+                    {s.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-400">
+                    {s.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================= INVESTMENT PLANS ============================= */}
+      <section id="plans" className="relative">
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-emerald-400 mb-4">
+              Curated Investment Strategies
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+              Choose the Plan That{" "}
+              <span className="text-emerald-400">Fits Your Goals</span>
+            </h2>
+            <p className="mt-5 text-base md:text-lg text-slate-400 leading-relaxed">
+              Every plan is managed by our quantitative team with a strict
+              fiduciary approach. Daily returns credited directly to your
+              balance — compounded or withdrawn at your preference.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              {
+                name: "Basic Plan",
+                tag: "Starter",
+                roi: "8% Daily",
+                duration: "1 Day",
+                min: 200,
+                max: 5000,
+                features: [
+                  "24/7 Priority Support",
+                  "Secure Cold Storage",
+                  "Instant Withdrawals",
+                  "4% Referral Commission",
+                ],
+                cta: "Start with Basic",
+                highlight: false,
+                gradient: "from-emerald-500 to-teal-500",
+                border: "border-emerald-500/20",
+              },
+              {
+                name: "Silver Plan",
+                tag: "Most Popular",
+                roi: "18% Daily",
+                duration: "2 Days",
+                min: 5000,
+                max: 20000,
+                features: [
+                  "Advanced Analytics Suite",
+                  "Priority Processing Queue",
+                  "Compound Reinvestment",
+                  "Dedicated Support Line",
+                  "4% Referral Commission",
+                ],
+                cta: "Choose Silver",
+                highlight: true,
+                gradient: "from-amber-500 to-orange-500",
+                border: "border-amber-500/30",
+              },
+              {
+                name: "Enterprise Plan",
+                tag: "Advanced",
+                roi: "25% Daily",
+                duration: "4 Days",
+                min: 10000,
+                max: 30000,
+                features: [
+                  "Personal Account Manager",
+                  "VIP Signal Subscription",
+                  "Partial Capital Protection",
+                  "Weekly Advisory Calls",
+                  "4% Referral Commission",
+                ],
+                cta: "Go Enterprise",
+                highlight: false,
+                gradient: "from-violet-500 to-indigo-500",
+                border: "border-violet-500/20",
+              },
+              {
+                name: "VIP Plan",
+                tag: "Exclusive",
+                roi: "40% Daily",
+                duration: "6 Days",
+                min: 25000,
+                max: 200000,
+                features: [
+                  "Private Wealth Manager",
+                  "1-on-1 Trading Coaching",
+                  "Full Capital Protection",
+                  "White-Glove Onboarding",
+                  "Custom Investment Mandate",
+                ],
+                cta: "Contact Sales",
+                highlight: false,
+                gradient: "from-rose-500 to-pink-500",
+                border: "border-rose-500/20",
+                isContact: true,
+              },
+            ].map((p) => (
+              <div
+                key={p.name}
+                className={`relative rounded-2xl flex flex-col ${
+                  p.highlight
+                    ? `border-2 ${p.border} bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-900 shadow-[0_30px_80px_-30px_rgba(245,158,11,0.35)] -mt-3`
+                    : `border ${p.border} bg-slate-900/60`
+                } p-7 transition-all duration-300 hover:-translate-y-1`}
+              >
+                {p.highlight && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
+                    ⭐ {p.tag}
+                  </div>
+                )}
+                {!p.highlight && (
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-5">
+                    {p.tag}
+                  </p>
+                )}
+                <div className={p.highlight ? "mt-3" : ""}>
+                  <h3 className="text-2xl font-black text-white mb-1">
+                    {p.name}
+                  </h3>
+                </div>
+                <div className="mt-5 mb-6 pb-6 border-b border-white/5">
+                  <div
+                    className={`text-4xl font-black bg-gradient-to-r ${p.gradient} bg-clip-text text-transparent tabular-nums`}
+                  >
+                    {p.roi}
+                  </div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mt-1">
+                    Duration: {p.duration}
+                  </p>
+                </div>
+
+                <div className="mb-6">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">
+                    Investment Range
+                  </p>
+                  <p className="text-sm font-bold text-slate-200 tabular-nums">
+                    ${p.min.toLocaleString()} – ${p.max.toLocaleString()}
+                  </p>
+                </div>
+
+                <ul className="flex-1 space-y-3 mb-8">
+                  {p.features.map((ft) => (
+                    <li key={ft} className="flex items-start gap-3">
+                      <CheckCircle2 className="h-4.5 w-4.5 text-emerald-400 shrink-0 mt-0.5" />
+                      <span className="text-sm text-slate-300 leading-relaxed">
+                        {ft}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href={p.isContact ? "/contact" : "/register"}
+                  className={`w-full inline-flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold transition-all ${
+                    p.highlight
+                      ? `bg-gradient-to-r ${p.gradient} text-white shadow-lg hover:brightness-110`
+                      : "border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white hover:border-white/20"
+                  }`}
+                >
+                  {p.cta}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================= LIVE MARKETS (ForexHeatMap + LiveTradeChart) ============================= */}
+      <section className="border-y border-white/5 bg-slate-900/30 py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center mb-12">
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/5 px-4 py-2 mb-6">
+              <Activity className="h-3.5 w-3.5 text-sky-400 animate-pulse" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-400">
+                Real-Time Market Data
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-white">
+              Professional-Grade Market{" "}
+              <span className="text-sky-400">Intelligence</span>
+            </h2>
+            <p className="mt-4 text-slate-400 leading-relaxed">
+              Institutional tools at retail pricing. Track every major currency
+              pair, crypto asset, and equity index — right from your browser.
+            </p>
+          </div>
+          <div className="space-y-10">
+            <ForexHeatMap />
+            <LiveTradeChart />
+          </div>
+        </div>
+      </section>
+
+      {/* ============================= REFERRAL / MATRIX CTA ============================= */}
+      <section id="referral" className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,_rgba(99,102,241,0.15),_transparent_55%)]" />
+        <div className="relative mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="relative order-2 lg:order-1">
+              <div className="absolute -inset-4 bg-gradient-to-br from-indigo-500/20 to-emerald-500/10 rounded-3xl blur-2xl" />
+              <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 to-slate-900/95 p-7 shadow-2xl">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-indigo-400">
+                      Referral &amp; Matrix Dashboard
+                    </p>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Earn up to 4% per referral + matrix levels
+                    </p>
+                  </div>
+                  <Zap className="h-5 w-5 text-amber-400" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {[
+                    {
+                      l: "Total Referrals",
+                      v: "142",
+                      c: "text-emerald-400",
+                      i: Users,
+                    },
+                    {
+                      l: "Active Matrix Slots",
+                      v: "8 / 12",
+                      c: "text-indigo-400",
+                      i: PieChart,
+                    },
+                    {
+                      l: "Commission Earned",
+                      v: "$4,280",
+                      c: "text-sky-400",
+                      i: Wallet,
+                    },
+                    {
+                      l: "Level Completion",
+                      v: "67%",
+                      c: "text-amber-400",
+                      i: Zap,
+                    },
+                  ].map((s) => (
+                    <div
+                      key={s.l}
+                      className="rounded-xl border border-white/5 bg-slate-950/40 p-4"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <s.i className={`h-3.5 w-3.5 ${s.c}`} />
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">
+                          {s.l}
+                        </p>
+                      </div>
+                      <p className="text-xl font-black text-white tabular-nums">
+                        {s.v}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="rounded-xl border border-white/5 bg-slate-950/40 p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                      Referral Link
+                    </p>
+                    <button className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition">
+                      Copy
+                    </button>
+                  </div>
+                  <div className="rounded-lg bg-slate-900 border border-white/5 px-4 py-3 font-mono text-xs text-slate-400 truncate">
+                    https://tevextra.com/ref/johndoe42
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="order-1 lg:order-2">
+              <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-indigo-400 mb-4">
+                Invite &amp; Earn
+              </p>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+                Grow Your Network,{" "}
+                <span className="bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
+                  Multiply Your Income
+                </span>
+              </h2>
+              <p className="mt-6 text-lg leading-relaxed text-slate-400 max-w-xl">
+                Our proprietary Referral &amp; Matrix program rewards you at
+                every level. Share your unique link with friends, family, or
+                your audience and earn{" "}
+                <span className="text-slate-200 font-semibold">
+                  4% commission on every deposit
+                </span>{" "}
+                — forever.
+              </p>
+
+              <div className="mt-10 space-y-5">
+                {[
+                  {
+                    t: "4% Direct Referral Commission",
+                    d: "Earn 4% instantly on every qualifying deposit your referrals make.",
+                  },
+                  {
+                    t: "Multi-Level Matrix Rewards",
+                    d: "Unlock tiered payouts as your referrals bring their own network in.",
+                  },
+                  {
+                    t: "Auto-Paid, No Minimums",
+                    d: "Commissions hit your wallet in real-time. Withdraw anytime, 24/7.",
+                  },
+                  {
+                    t: "Premium Marketing Tools",
+                    d: "Access banners, email templates, and social assets to scale fast.",
+                  },
+                ].map((item) => (
+                  <div key={item.t} className="flex gap-4">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500/20 to-emerald-500/10 border border-indigo-500/20 mt-0.5">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white">{item.t}</p>
+                      <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+                        {item.d}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-10">
+                <Link
+                  href="/register"
+                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-violet-500 to-emerald-500 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-indigo-500/30 transition hover:brightness-110"
+                >
+                  Get My Referral Link
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="bg-white">
-        <CryptoTicker />
-      </div>
-
-      <main className="mx-auto flex max-w-6xl flex-col gap-32 px-6 py-24 md:py-32">
-        <section
-          id="about"
-          className="grid gap-12 rounded-[2.5rem] border border-slate-200 bg-white p-8 sm:p-12 md:grid-cols-[1.2fr_0.8fr] shadow-sm transition-colors duration-300"
-        >
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-emerald-600 mb-4">
-              Our Legacy
+      {/* ============================= TESTIMONIALS ============================= */}
+      <section
+        id="reviews"
+        className="relative border-y border-white/5 bg-slate-900/30"
+      >
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-emerald-400 mb-4">
+              Client Success Stories
             </p>
-            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-              Pioneering the Future of Digital Wealth
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+              Trusted by Serious{" "}
+              <span className="text-emerald-400">Investors</span>
             </h2>
-            <p className="mt-6 text-lg leading-relaxed text-slate-600">
-              Digital-trend is a premier independent wealth management firm
-              dedicated to helping families, and institutions build resilient,
-              future-proof portfolios. Our investment philosophy blends rigorous
-              macro research with advanced risk modeling.
-            </p>
-            <p className="mt-4 text-lg leading-relaxed text-slate-500">
-              We align every strategy with your long-term vision, ensuring
-              transparency, security, and consistent growth across all market
-              cycles.
-            </p>
           </div>
-          <div className="flex flex-col gap-4">
-            <div className="rounded-3xl border border-emerald-100 bg-emerald-50 p-6 shadow-sm transition-colors duration-300">
-              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">
-                Standard of Care
-              </p>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                Fiduciary Excellence
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Operating under a strict fiduciary standard, ensuring your
-                interests always come first with absolute transparency.
-              </p>
-            </div>
-            <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-colors duration-300">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
-                Innovation
-              </p>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                Advanced Analytics
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Leveraging proprietary algorithms and real-time data to capture
-                alpha in evolving global markets.
-              </p>
-            </div>
-          </div>
-        </section>
 
-        <section
-          id="what-we-do"
-          className="relative overflow-hidden grid gap-12 rounded-[2.5rem] border border-slate-200 bg-white p-8 sm:p-12 md:grid-cols-[0.8fr_1.2fr] transition-colors duration-300 group/section"
-        >
-          {/* Section Background Image */}
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <Image
-              src="/images/julios.webp"
-              alt="Section Background"
-              fill
-              className="object-cover transition duration-700 group-hover/section:scale-105"
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                name: "Michael R.",
+                role: "Real Estate Investor · Austin, TX",
+                avatar: "https://i.pravatar.cc/120?img=12",
+                quote:
+                  "I moved a conservative portion of my real-estate equity into the Silver Plan 8 months ago. Returns have been consistent, and the dashboard is absolutely first-class. Best decision this cycle.",
+                earnings: "+$42,850",
+              },
+              {
+                name: "Amara K.",
+                role: "Medical Professional · London, UK",
+                avatar: "https://i.pravatar.cc/120?img=47",
+                quote:
+                  "As someone with zero time to trade, TeveXtra has been hands-off perfection. My VIP plan delivered my initial deposit back inside three months. The account manager is phenomenal.",
+                earnings: "+£96,200",
+              },
+              {
+                name: "David O.",
+                role: "Software Engineer · Lagos, NG",
+                avatar: "https://i.pravatar.cc/120?img=33",
+                quote:
+                  "I started Basic with $500 just to test. Six referrals later, my commissions alone exceed my deposit. The matrix payout structure is real — I've already withdrawn twice without issues.",
+                earnings: "+₦14.2M",
+              },
+            ].map((t) => (
+              <div
+                key={t.name}
+                className="group relative rounded-2xl border border-white/5 bg-gradient-to-br from-slate-900/95 to-slate-900/50 p-7 transition-all duration-300 hover:border-emerald-500/20 hover:-translate-y-1"
+              >
+                <div className="flex items-center gap-1 mb-5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="h-4 w-4 fill-amber-400 text-amber-400"
+                    />
+                  ))}
+                </div>
+                <p className="text-base leading-relaxed text-slate-300">
+                  <span className="text-3xl font-black text-emerald-500/30 leading-none align-[-6px] mr-1">
+                    “
+                  </span>
+                  {t.quote}
+                  <span className="text-3xl font-black text-emerald-500/30 leading-none align-[-6px] ml-1">
+                    ”
+                  </span>
+                </p>
+                <div className="mt-7 pt-6 border-t border-white/5 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-11 w-11 rounded-full overflow-hidden border-2 border-emerald-500/20 bg-slate-800">
+                      <Image
+                        fill
+                        src={t.avatar}
+                        alt={t.name}
+                        className="object-cover"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white">{t.name}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{t.role}</p>
+                    </div>
+                  </div>
+                  <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 text-[11px] font-black text-emerald-400 tabular-nums">
+                    <ArrowUpRight className="h-3 w-3" />
+                    {t.earnings}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================= FINAL CTA ============================= */}
+      <section className="relative overflow-hidden">
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-emerald-900/40 via-slate-900 to-slate-950 p-10 md:p-16">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(16,185,129,0.25),_transparent_55%)]" />
+            <div
+              className="absolute inset-0 opacity-[0.08]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(16,185,129,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.8) 1px, transparent 1px)",
+                backgroundSize: "40px 40px",
+              }}
             />
-          </div>
-
-          <div className="relative z-10 flex flex-col justify-center gap-8 rounded-3xl border border-emerald-100 backdrop-blur-md p-8 transition-colors duration-300">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-4">
-                Core Philosophy
-              </p>
-              <h3 className="text-2xl font-extrabold text-white mb-4">
-                Disciplined Risk Management
-              </h3>
-              <p className="text-white leading-relaxed">
-                We focus on risk-adjusted outcomes, not speculation. Our
-                multi-layered approach is designed for the serious, long-term
-                investor seeking capital preservation and growth.
-              </p>
-            </div>
-            <ul className="space-y-4 text-sm">
-              <li className="flex items-center gap-3 text-white font-medium">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Institutional-grade research access
-              </li>
-              <li className="flex items-center gap-3 text-white font-medium">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Aligned performance incentives
-              </li>
-              <li className="flex items-center gap-3 text-white font-medium">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Transparent, fixed-fee structures
-              </li>
-            </ul>
-          </div>
-
-          <div className="relative z-10">
-            <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-              Tailored Investment Ecosystem
-            </h2>
-            <p className="mt-6 text-lg leading-relaxed text-white">
-              We design diversified portfolios across global equities, fixed
-              income, and alternative assets, precisely calibrated to your risk
-              profile and aspirations.
-            </p>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2">
-              <div className="group relative rounded-3xl border border-slate-100 bg-white/60 backdrop-blur-sm p-6 transition-all hover:bg-white hover:border-emerald-200">
-                <div className="relative z-10">
-                  <div className="h-10 w-10 rounded-2xl bg-emerald-100 flex items-center justify-center mb-4 border border-emerald-200">
-                    <svg
-                      className="w-5 h-5 text-emerald-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                      />
-                    </svg>
+            <div className="relative grid lg:grid-cols-[1.3fr_0.7fr] gap-10 items-center">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-emerald-400 mb-4">
+                  Ready to Begin?
+                </p>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.05]">
+                  Your Financial Future
+                  <span className="block text-emerald-300">Starts Today.</span>
+                </h2>
+                <p className="mt-6 text-lg text-slate-300/80 max-w-xl leading-relaxed">
+                  Join 50,000+ serious investors growing their capital with
+                  institutional-grade execution, transparent plans, and a
+                  rewarding community. No credit card. No hidden fees.
+                </p>
+                <div className="mt-10 flex flex-wrap gap-4">
+                  <Link
+                    href="/register"
+                    className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-500/40 transition hover:brightness-110 hover:-translate-y-0.5"
+                  >
+                    Open Your Account
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 backdrop-blur px-8 py-4 text-sm font-bold text-white transition hover:bg-white/10"
+                  >
+                    Talk to an Advisor
+                  </Link>
+                </div>
+                <div className="mt-8 flex items-center gap-6 text-xs text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    No minimum lock-up
                   </div>
-                  <h4 className="text-slate-900 font-bold mb-2">
-                    Goal-Based Portfolios
-                  </h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Precision strategies for wealth accumulation and
-                    preservation.
-                  </p>
-                </div>
-              </div>
-              <div className="group relative rounded-3xl border border-slate-100 bg-white/60 backdrop-blur-sm p-6 transition-all hover:bg-white hover:border-sky-200">
-                <div className="relative z-10">
-                  <div className="h-10 w-10 rounded-2xl bg-sky-100 flex items-center justify-center mb-4 border border-sky-200">
-                    <svg
-                      className="w-5 h-5 text-sky-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                      />
-                    </svg>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    Cancel anytime
                   </div>
-                  <h4 className="text-slate-900 font-bold mb-2">
-                    Smart Risk Controls
-                  </h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Dynamic rebalancing and stress testing at the portfolio
-                    level.
-                  </p>
-                </div>
-              </div>
-              <div className="group relative rounded-3xl border border-slate-100 bg-white/60 backdrop-blur-sm p-6 transition-all hover:bg-white hover:border-purple-200">
-                <div className="relative z-10">
-                  <div className="h-10 w-10 rounded-2xl bg-purple-100 flex items-center justify-center mb-4 border border-purple-200">
-                    <svg
-                      className="w-5 h-5 text-purple-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="text-slate-900 font-bold mb-2">
-                    Fiduciary Reporting
-                  </h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Comprehensive dashboards with deep performance insights.
-                  </p>
-                </div>
-              </div>
-              <div className="group relative rounded-3xl border border-slate-100 bg-white/60 backdrop-blur-sm p-6 transition-all hover:bg-white hover:border-amber-200">
-                <div className="relative z-10">
-                  <div className="h-10 w-10 rounded-2xl bg-amber-100 flex items-center justify-center mb-4 border border-amber-200">
-                    <svg
-                      className="w-5 h-5 text-amber-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="text-slate-900 font-bold mb-2">
-                    Continuous Advisory
-                  </h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Dedicated expert support whenever you need it.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="plans" className="space-y-12">
-          <div className="flex flex-col items-center text-center gap-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-600">
-              Exclusive Opportunities
-            </p>
-            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              Investment Plans
-            </h2>
-            <p className="max-w-2xl text-lg text-slate-500">
-              Choose a strategy aligned with your capital requirements and risk
-              tolerance. All plans feature institutional-grade oversight.
-            </p>
-          </div>
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {/* Plan 1 */}
-            <div className="group flex flex-col rounded-[2.5rem] border border-slate-200 bg-white p-8 transition-all hover:border-emerald-200 hover:shadow-xl hover:-translate-y-2">
-              <div className="mb-8">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                  Basic Plan
-                </p>
-                <h3 className="text-2xl font-bold text-slate-900">
-                  Basic Plan
-                </h3>
-              </div>
-              <div className="mb-8">
-                <div className="text-3xl font-black text-emerald-600">
-                  8% Daily
-                </div>
-                <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">
-                  Duration: 1 Day
-                </p>
-              </div>
-              <div className="mb-8 space-y-2">
-                <p className="text-sm font-bold text-slate-900">
-                  $100 &ndash; $5,000
-                </p>
-                <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">
-                  Investment Range
-                </p>
-              </div>
-              <ul className="flex-1 space-y-4 mb-10 text-sm text-slate-600">
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  24/7 Support
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Secure Investment
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Instant Withdrawal
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Referral Bonus: 4%
-                </li>
-              </ul>
-              <Link
-                href="/register"
-                className="w-full inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 py-4 text-sm font-bold text-slate-900 transition hover:bg-emerald-600 hover:text-white hover:border-emerald-600"
-              >
-                Get Started
-              </Link>
-            </div>
-
-            {/* Plan 2 */}
-            <div className="group relative flex flex-col rounded-[2.5rem] border border-emerald-200 bg-emerald-50 p-8 shadow-[0_20px_50px_rgba(16,185,129,0.1)] transition-all hover:-translate-y-2">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-emerald-600 px-4 py-1 text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
-                Most Popular
-              </div>
-              <div className="mb-8 pt-2">
-                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">
-                  Silver Plan
-                </p>
-                <h3 className="text-2xl font-bold text-slate-900">
-                  Silver Plan
-                </h3>
-              </div>
-              <div className="mb-8">
-                <div className="text-3xl font-black text-emerald-600">
-                  18% Daily
-                </div>
-                <p className="text-xs text-emerald-600/70 uppercase tracking-widest font-bold mt-1">
-                  Duration: 2 Days
-                </p>
-              </div>
-              <div className="mb-8 space-y-2">
-                <p className="text-sm font-bold text-slate-900">
-                  $5,000 &ndash; $20,000
-                </p>
-                <p className="text-xs text-emerald-600/50 uppercase tracking-widest font-bold">
-                  Investment Range
-                </p>
-              </div>
-              <ul className="flex-1 space-y-4 mb-10 text-sm text-slate-700">
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Priority Support
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Advanced Analytics
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Compounding Available
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Referral Bonus: 4%
-                </li>
-              </ul>
-              <Link
-                href="/register"
-                className="w-full inline-flex items-center justify-center rounded-full bg-emerald-600 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-600/40 transition hover:bg-emerald-700"
-              >
-                Choose Plan
-              </Link>
-            </div>
-
-            {/* Plan 3 */}
-            <div className="group flex flex-col rounded-[2.5rem] border border-slate-200 bg-white p-8 transition-all hover:border-emerald-200 hover:shadow-xl hover:-translate-y-2">
-              <div className="mb-8">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                  Enterprise Plan
-                </p>
-                <h3 className="text-2xl font-bold text-slate-900">
-                  Enterprise Plan
-                </h3>
-              </div>
-              <div className="mb-8">
-                <div className="text-3xl font-black text-emerald-600">
-                  25% Daily
-                </div>
-                <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">
-                  Duration: 4 Days
-                </p>
-              </div>
-              <div className="mb-8 space-y-2">
-                <p className="text-sm font-bold text-slate-900">
-                  $10,000 &ndash; $30,000
-                </p>
-                <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">
-                  Investment Range
-                </p>
-              </div>
-              <ul className="flex-1 space-y-4 mb-10 text-sm text-slate-600">
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Dedicated Manager
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  VIP Access
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Capital Protection
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Referral Bonus: 4%
-                </li>
-              </ul>
-              <Link
-                href="/register"
-                className="w-full inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 py-4 text-sm font-bold text-slate-900 transition hover:bg-emerald-600 hover:text-white hover:border-emerald-600"
-              >
-                Select Plan
-              </Link>
-            </div>
-
-            {/* Plan 4 */}
-            <div className="group flex flex-col rounded-[2.5rem] border border-slate-200 bg-white p-8 transition-all hover:border-emerald-200 hover:shadow-xl hover:-translate-y-2">
-              <div className="mb-8">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                  VIP Plan
-                </p>
-                <h3 className="text-2xl font-bold text-slate-900">
-                  Vip Plan
-                </h3>
-              </div>
-              <div className="mb-8">
-                <div className="text-3xl font-black text-emerald-600">
-                  40% Daily
-                </div>
-                <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">
-                  Duration: 6 Days
-                </p>
-              </div>
-              <div className="mb-8 space-y-2">
-                <p className="text-sm font-bold text-slate-900">
-                  $25,000 &ndash; $200,000
-                </p>
-                <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">
-                  Investment Range
-                </p>
-              </div>
-              <ul className="flex-1 space-y-4 mb-10 text-sm text-slate-600">
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Dedicated Manager
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  VIP Access
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Capital Protection
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Referral Bonus: 4%
-                </li>
-              </ul>
-              <Link
-                href="/contact"
-                className="w-full inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 py-4 text-sm font-bold text-slate-900 transition hover:bg-emerald-600 hover:text-white hover:border-emerald-600"
-              >
-                Inquire Now
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex justify-center pt-8">
-            <p className="text-xs text-slate-400 font-medium">
-              Minimum capital requirement:{" "}
-              <span className="text-slate-900 font-bold">$100 USD</span>
-            </p>
-          </div>
-        </section>
-
-        <ForexHeatMap />
-
-        <section
-          id="why-choose-us"
-          className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white py-24 sm:py-32 transition-colors duration-300"
-        >
-          <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-600 mb-4">
-                Operational Excellence
-              </p>
-              <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-                The Digital-trend Standard
-              </h2>
-              <p className="mt-6 text-lg leading-8 text-slate-600">
-                We combine human expertise with institutional-grade technology
-                to deliver superior investment outcomes for our global client
-                base.
-              </p>
-            </div>
-
-            <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-              <dl className="grid max-w-xl grid-cols-1 gap-x-12 gap-y-16 lg:max-w-none lg:grid-cols-3">
-                <div className="flex flex-col group">
-                  <dt className="text-xl font-bold leading-7 text-slate-900">
-                    <div className="relative mb-8 h-72 w-full overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:border-emerald-200/50">
-                      <Image
-                        src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=800"
-                        alt="Expert Advisory Team"
-                        fill
-                        className="object-cover transition duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    </div>
-                    Expert Advisory Team
-                  </dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                    <p className="flex-auto">
-                      Our advisors are industry veterans with decades of
-                      experience navigating complex market cycles and global
-                      economic shifts.
-                    </p>
-                  </dd>
-                </div>
-
-                <div className="flex flex-col group">
-                  <dt className="text-xl font-bold leading-7 text-slate-900">
-                    <div className="relative mb-8 h-72 w-full overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:border-emerald-200/50">
-                      <Image
-                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800"
-                        alt="Data-Driven Insights"
-                        fill
-                        className="object-cover transition duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    </div>
-                    Data-Driven Insights
-                  </dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                    <p className="flex-auto">
-                      We leverage institutional-grade analytics and
-                      high-frequency market data to identify asymmetric
-                      risk-reward opportunities.
-                    </p>
-                  </dd>
-                </div>
-
-                <div className="flex flex-col group">
-                  <dt className="text-xl font-bold leading-7 text-slate-900">
-                    <div className="relative mb-8 h-72 w-full overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:border-emerald-200/50">
-                      <Image
-                        src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=800"
-                        alt="Global Security Standards"
-                        fill
-                        className="object-cover transition duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    </div>
-                    Global Security Standards
-                  </dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                    <p className="flex-auto">
-                      Your assets are protected by military-grade security
-                      protocols and held with top-tier regulated global
-                      custodians.
-                    </p>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="community"
-          className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white p-8 sm:p-16 shadow-sm transition-colors duration-300"
-        >
-          <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-            <div className="relative aspect-square w-full overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 lg:aspect-auto lg:h-[500px]">
-              <Image
-                src="https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=1632&q=80"
-                alt="Community of investors collaborating"
-                fill
-                className="object-cover transition duration-700 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-white/40 to-transparent" />
-            </div>
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-emerald-600">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600"></span>
-                </span>
-                Global Network
-              </div>
-              <h2 className="mt-8 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-                Join a Global Network of Investors
-              </h2>
-              <p className="mt-6 text-lg leading-relaxed text-slate-600">
-                Connect with a community of thousands building their financial
-                future. Access exclusive insights, market signals, and strategic
-                briefings.
-              </p>
-              <div className="mt-12 grid gap-8 sm:grid-cols-2">
-                <div className="flex flex-col gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 border border-emerald-200">
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">
-                      Expert Network
-                    </h3>
-                    <p className="mt-1 text-sm text-slate-500">
-                      Verified financial strategists and analysts.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-sky-600 border border-sky-200">
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900">
-                      Strategic Briefs
-                    </h3>
-                    <p className="mt-1 text-sm text-slate-500">
-                      Weekly macro updates and opportunity signals.
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    Setup in &lt; 5 min
                   </div>
                 </div>
               </div>
-              <div className="mt-12">
-                <Link
-                  href="/register"
-                  className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-10 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-600/40 transition hover:bg-emerald-700"
-                >
-                  Join the Community
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        <LiveTradeChart />
-
-        <section
-          id="faqs"
-          className="rounded-[2.5rem] border border-slate-200 bg-white p-8 sm:p-16 shadow-sm transition-colors duration-300"
-        >
-          <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
-            <div className="order-2 lg:order-1">
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-600 mb-4">
-                Support Center
-              </p>
-              <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
-                Common Inquiries
-              </h2>
-              <p className="mt-6 text-lg text-slate-500">
-                Detailed insights into our operations and security protocols.
-                For specific advisory, please{" "}
-                <Link
-                  href="/contact"
-                  className="text-emerald-600 hover:underline"
-                >
-                  contact our team
-                </Link>
-                .
-              </p>
-
-              <div className="mt-12 space-y-10">
-                <div className="group">
-                  <h3 className="flex items-center gap-4 text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xs font-black text-emerald-600 border border-emerald-200">
-                      01
-                    </span>
-                    Asset Custody & Security
-                  </h3>
-                  <p className="mt-4 text-base leading-relaxed text-slate-600 pl-12 border-l border-slate-100 ml-4">
-                    Client capital is held in segregated accounts with Tier-1
-                    regulated custodians. We utilize multi-sig cold storage and
-                    end-to-end encryption for all digital assets.
-                  </p>
-                </div>
-
-                <div className="group">
-                  <h3 className="flex items-center gap-4 text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xs font-black text-emerald-600 border border-emerald-200">
-                      02
-                    </span>
-                    Fee Structure Transparency
-                  </h3>
-                  <p className="mt-4 text-base leading-relaxed text-slate-600 pl-12 border-l border-slate-100 ml-4">
-                    Our model is built on a performance-aligned advisory fee.
-                    Zero hidden commissions, zero platform spreads. You receive
-                    full disclosure on every transaction.
-                  </p>
-                </div>
-
-                <div className="group">
-                  <h3 className="flex items-center gap-4 text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xs font-black text-emerald-600 border border-emerald-200">
-                      03
-                    </span>
-                    Liquidity & Withdrawals
-                  </h3>
-                  <p className="mt-4 text-base leading-relaxed text-slate-600 pl-12 border-l border-slate-100 ml-4">
-                    We maintain high liquidity across our core strategies.
-                    Withdrawal requests are processed within standard T+1 or T+2
-                    settlement periods, depending on the asset class.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="order-1 lg:order-2">
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2.5rem] border border-slate-200 bg-slate-100 lg:aspect-auto lg:h-[600px] shadow-md">
-                <Image
-                  src="https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=1374&q=80"
-                  alt="Customer support team"
-                  fill
-                  className="h-full w-full object-cover transition duration-700 hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-10">
-                  <div className="rounded-3xl border border-white/20 bg-white/80 p-6 backdrop-blur-md shadow-lg">
-                    <div className="flex items-center gap-6">
-                      <div className="flex -space-x-4">
-                        {[1, 2, 3].map((i) => (
-                          <div
-                            key={i}
-                            className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white"
-                          >
-                            <Image
-                              fill
-                              src={"https://i.pravatar.cc/150?u=" + i}
-                              alt="Advisor"
-                              className="object-cover"
-                            />
-                          </div>
-                        ))}
+              <div className="hidden lg:flex flex-col gap-4">
+                {[
+                  {
+                    i: Clock,
+                    t: "Setup in 5 Minutes",
+                    d: "Register, verify email, deposit — you're investing.",
+                  },
+                  {
+                    i: Zap,
+                    t: "First Earnings in 24h",
+                    d: "Daily returns credited automatically to your balance.",
+                  },
+                  {
+                    i: Shield,
+                    t: "Assets 100% Protected",
+                    d: "Cold storage + insurance on custodial balances.",
+                  },
+                ].map((c) => (
+                  <div
+                    key={c.t}
+                    className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5"
+                  >
+                    <div className="flex gap-4 items-start">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shrink-0">
+                        <c.i className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-lg font-bold text-slate-900">
-                          Dedicated Support
-                        </p>
-                        <p className="text-sm text-slate-500 font-medium">
-                          Global advisory available 24/7
-                        </p>
+                        <p className="text-sm font-bold text-white">{c.t}</p>
+                        <p className="text-sm text-slate-400 mt-1">{c.d}</p>
                       </div>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================= CONTACT ============================= */}
+      <section id="contact" className="relative border-t border-white/5">
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
+          <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-14">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-emerald-400 mb-4">
+                Contact Our Team
+              </p>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+                Let&apos;s Build Your{" "}
+                <span className="text-emerald-400">Plan Together</span>
+              </h2>
+              <p className="mt-6 text-lg leading-relaxed text-slate-400">
+                Have questions about a strategy, account funding, or our VIP
+                mandate? A senior advisor will respond within 4 business hours —
+                no sales pitches, just clear answers.
+              </p>
+
+              <div className="mt-12 space-y-5">
+                <a
+                  href="mailto:helpdigitaltrend@gmail.com"
+                  className="flex items-center gap-4 p-5 rounded-2xl border border-white/5 bg-slate-900/60 hover:bg-slate-900 hover:border-white/10 transition"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shrink-0">
+                    <Mail className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+                      Email Us
+                    </p>
+                    <p className="text-sm font-semibold text-slate-100">
+                      helpdigitaltrend@gmail.com
+                    </p>
+                  </div>
+                </a>
+
+                <div className="flex items-center gap-4 p-5 rounded-2xl border border-white/5 bg-slate-900/60">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 shrink-0">
+                    <Phone className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+                      Support Hours
+                    </p>
+                    <p className="text-sm font-semibold text-slate-100">
+                      24 / 7 · Priority for VIP clients
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-5 rounded-2xl border border-white/5 bg-slate-900/60">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0">
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+                      Headquarters
+                    </p>
+                    <p className="text-sm font-semibold text-slate-100">
+                      Financial District, New York, NY · Global Operation
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
 
-        <section
-          id="contact"
-          className="relative overflow-hidden grid gap-16 rounded-[2.5rem] border border-slate-200 bg-white p-8 sm:p-16 md:grid-cols-[1fr_1.2fr] transition-colors duration-300 group/contact"
-        >
-          {/* Section Background Image */}
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <Image
-              src="/images/julios.webp"
-              alt="Contact Background"
-              fill
-              className="object-cover opacity-15 transition duration-700 group-hover/contact:scale-105"
-            />
-          </div>
-
-          <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-600 mb-4">
-              Get in Touch
-            </p>
-            <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
-              Start Your Journey
-            </h2>
-            <p className="mt-6 text-lg text-slate-700 leading-relaxed">
-              Consult with a senior advisor to receive a comprehensive analysis
-              and a custom investment proposal tailored to your unique
-              objectives.
-            </p>
-            <div className="mt-12 space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center border border-slate-200 shadow-sm">
-                  <svg
-                    className="w-5 h-5 text-emerald-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    Email
-                  </p>
-                  <a
-                    href="mailto:helpdigitaltrend@gmail.com"
-                    className="text-slate-900 font-bold hover:text-emerald-600 transition-colors"
-                  >
-                    helpdigitaltrend@gmail.com
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center border border-slate-200 shadow-sm">
-                  <svg
-                    className="w-5 h-5 text-emerald-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-slate-400">
-                    Location
-                  </p>
-                  <p className="text-slate-900 font-bold">
-                    Financial District, New York, NY
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 sm:p-10 shadow-xl transition-colors duration-300">
-            <form className="space-y-6">
-              <div className="grid gap-6 sm:grid-cols-2">
+            <form className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 to-slate-900/60 p-8 md:p-10 space-y-6">
+              <div className="grid md:grid-cols-2 gap-5">
                 <div className="space-y-2">
                   <label
                     htmlFor="name"
-                    className="text-[10px] font-black uppercase tracking-widest text-slate-400"
+                    className="text-[11px] font-bold uppercase tracking-widest text-slate-400"
                   >
                     Full Name
                   </label>
                   <input
                     id="name"
                     type="text"
-                    placeholder="Alex Morgan"
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none transition focus:border-emerald-500/50 focus:bg-white"
+                    placeholder="John Morgan"
+                    className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3.5 text-sm text-white placeholder:text-slate-600 outline-none transition focus:border-emerald-500/50 focus:bg-slate-950"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="email"
-                    className="text-[10px] font-black uppercase tracking-widest text-slate-400"
+                    className="text-[11px] font-bold uppercase tracking-widest text-slate-400"
                   >
                     Email Address
                   </label>
                   <input
                     id="email"
                     type="email"
-                    placeholder="alex@example.com"
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none transition focus:border-emerald-500/50 focus:bg-white"
+                    placeholder="john@example.com"
+                    className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3.5 text-sm text-white placeholder:text-slate-600 outline-none transition focus:border-emerald-500/50 focus:bg-slate-950"
                   />
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="phone"
+                    className="text-[11px] font-bold uppercase tracking-widest text-slate-400"
+                  >
+                    Phone (optional)
+                  </label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    placeholder="+1 555 010 2024"
+                    className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3.5 text-sm text-white placeholder:text-slate-600 outline-none transition focus:border-emerald-500/50 focus:bg-slate-950"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="subject"
+                    className="text-[11px] font-bold uppercase tracking-widest text-slate-400"
+                  >
+                    Interested In
+                  </label>
+                  <select
+                    id="subject"
+                    className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3.5 text-sm text-white outline-none transition focus:border-emerald-500/50 focus:bg-slate-950"
+                  >
+                    <option>General Inquiry</option>
+                    <option>Opening an Account</option>
+                    <option>Investment Plan Details</option>
+                    <option>VIP / Enterprise Mandate</option>
+                    <option>Referral Program</option>
+                    <option>Support Issue</option>
+                  </select>
                 </div>
               </div>
               <div className="space-y-2">
                 <label
-                  htmlFor="subject"
-                  className="text-[10px] font-black uppercase tracking-widest text-slate-400"
+                  htmlFor="budget"
+                  className="text-[11px] font-bold uppercase tracking-widest text-slate-400"
                 >
-                  Inquiry Type
+                  Planned Investment Size
                 </label>
                 <select
-                  id="subject"
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none transition focus:border-emerald-500/50 focus:bg-white appearance-none"
+                  id="budget"
+                  className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3.5 text-sm text-white outline-none transition focus:border-emerald-500/50 focus:bg-slate-950"
                 >
-                  <option>Wealth Management Advisory</option>
-                  <option>Institutional Solutions</option>
-                  <option>Alternative Assets Inquiries</option>
-                  <option>Other</option>
+                  <option>$200 – $5,000 (Basic)</option>
+                  <option>$5,000 – $20,000 (Silver)</option>
+                  <option>$10,000 – $30,000 (Enterprise)</option>
+                  <option>$25,000+ (VIP · Contact Sales)</option>
+                  <option>Just exploring for now</option>
                 </select>
               </div>
               <div className="space-y-2">
                 <label
                   htmlFor="message"
-                  className="text-[10px] font-black uppercase tracking-widest text-slate-400"
+                  className="text-[11px] font-bold uppercase tracking-widest text-slate-400"
                 >
-                  Message
+                  Your Message
                 </label>
                 <textarea
                   id="message"
-                  rows={4}
-                  placeholder="Tell us about your investment goals..."
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none transition focus:border-emerald-500/50 focus:bg-white resize-none"
-                ></textarea>
+                  rows={5}
+                  placeholder="Tell us about your goals, timeline, and any questions we can answer..."
+                  className="w-full rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3.5 text-sm text-white placeholder:text-slate-600 outline-none transition focus:border-emerald-500/50 focus:bg-slate-950 resize-none"
+                />
               </div>
               <button
                 type="submit"
-                className="w-full rounded-full bg-emerald-600 py-5 text-sm font-bold text-white shadow-xl shadow-emerald-600/40 transition hover:bg-emerald-700"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-500/30 transition hover:brightness-110"
               >
-                Send Proposal Request
+                Send Message
+                <Send className="h-4 w-4" />
               </button>
             </form>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
     </div>
   );
 }

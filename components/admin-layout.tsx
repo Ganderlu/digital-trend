@@ -6,6 +6,7 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
 import Link from "next/link";
+import { GoogleTranslateSelect } from "@/components/google-translate-select";
 import {
   LayoutDashboard,
   Users,
@@ -109,10 +110,7 @@ export default function AdminLayout({
         } else {
           router.replace("/login");
         }
-      } catch (error) {
-        console.error("Error verifying admin status:", error);
-        router.replace("/login");
-      }
+      } catch (error) {}
     });
 
     return () => unsubscribe();
@@ -125,7 +123,9 @@ export default function AdminLayout({
   const confirmLogout = async () => {
     const app = getFirebaseApp();
     const auth = getAuth(app);
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch {}
     router.push("/login");
   };
 
@@ -269,6 +269,7 @@ export default function AdminLayout({
           </button>
           <div className="hidden md:block"></div>
           <div className="flex items-center gap-4">
+            <GoogleTranslateSelect compact />
             <div className="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold uppercase tracking-wider">
               Admin Mode
             </div>

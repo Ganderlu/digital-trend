@@ -12,22 +12,43 @@ export async function POST(request: Request) {
       amount?: number;
       currency?: string;
       transactionHash?: string;
+      proofFileName?: string;
+      proofFileData?: string;
+      proofFileType?: string;
     };
 
     const currency = String(body.currency || "").toUpperCase();
     const amount = Number(body.amount);
     const transactionHash = String(body.transactionHash || "Not provided");
+    const proofFileName = body.proofFileName
+      ? String(body.proofFileName).slice(0, 300)
+      : "";
+    const proofFileType = body.proofFileType
+      ? String(body.proofFileType).slice(0, 100)
+      : "";
+    const proofFileData = body.proofFileData
+      ? String(body.proofFileData).slice(0, 15 * 1024 * 1024)
+      : "";
 
     if (!allowedCurrencies.has(currency)) {
-      return NextResponse.json({ ok: false, error: "Invalid currency" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "Invalid currency" },
+        { status: 400 },
+      );
     }
 
     if (!Number.isFinite(amount) || amount <= 0) {
-      return NextResponse.json({ ok: false, error: "Invalid amount" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "Invalid amount" },
+        { status: 400 },
+      );
     }
 
     const adminDb = getAdminDb();
-    const settingsSnap = await adminDb.collection("settings").doc("global").get();
+    const settingsSnap = await adminDb
+      .collection("settings")
+      .doc("global")
+      .get();
     const settings = settingsSnap.data() || {};
     const walletByCurrency: Record<string, string> = {
       BTC: String(settings.walletBTC || ""),
@@ -38,7 +59,10 @@ export async function POST(request: Request) {
 
     const walletAddress = walletByCurrency[currency] || "";
     if (!walletAddress) {
-      return NextResponse.json({ ok: false, error: "Wallet address not configured" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "Wallet address not configured" },
+        { status: 400 },
+      );
     }
 
     const userEmail = decoded.email || "";
@@ -50,6 +74,9 @@ export async function POST(request: Request) {
       status: "pending",
       walletAddress,
       transactionHash,
+      proofFileName,
+      proofFileType,
+      proofFileData: proofFileData || undefined,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });

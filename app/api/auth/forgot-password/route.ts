@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     }
 
     const auth = getAdminAuth();
-    const appName = process.env.APP_NAME || "Digital-trend";
+    const appName = process.env.APP_NAME || "TeveXtra";
     const appUrl = process.env.APP_URL || "";
 
     let resetLink: string;

@@ -49,7 +49,7 @@ const PLANS: InvestmentPlan[] = [
   {
     id: "starter",
     name: "Basic Plan",
-    minAmount: 100,
+    minAmount: 200,
     maxAmount: 5000,
     roi: "8% Daily",
     duration: "1 Days",
