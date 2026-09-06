@@ -3,27 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
-import {
-  Timestamp,
-  updateDoc,
-  doc,
-  runTransaction,
-  increment,
-  type DocumentData,
-  type DocumentReference,
-  type DocumentSnapshot,
-} from "firebase/firestore";
-import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
+import { type Timestamp } from "firebase/firestore";
+import { getFirebaseApp } from "@/lib/firebaseClient";
 import AdminLayout from "@/components/admin-layout";
-import {
-  CreditCard,
-  Search,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Filter,
-  AlertCircle,
-} from "lucide-react";
+import { CreditCard, CheckCircle, XCircle, Clock, Filter } from "lucide-react";
 
 type DepositRequest = {
   id: string;
@@ -85,65 +68,35 @@ export default function AdminDepositsPage() {
     if (!confirm(`Are you sure you want to ${newStatus} this deposit?`)) return;
 
     setProcessingId(deposit.id);
-    const db = getFirebaseFirestore();
 
     try {
-      await runTransaction(db, async (transaction) => {
-        const depositRef = doc(db, "deposits", deposit.id);
-        const userRef = doc(db, "users", deposit.userId);
+      const app = getFirebaseApp();
+      const auth = getAuth(app);
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        router.replace("/login");
+        return;
+      }
 
-        const depositDoc = await transaction.get(depositRef);
-        if (!depositDoc.exists()) {
-          throw "Deposit document does not exist!";
-        }
+      const idToken = await getIdToken(currentUser, true);
 
-        if (depositDoc.data().status !== "pending") {
-          throw "Deposit is already processed!";
-        }
-
-        const userDocSnapshot = await transaction.get(userRef);
-        if (!userDocSnapshot.exists()) {
-          throw "User document does not exist!";
-        }
-
-        const userData = userDocSnapshot.data();
-        let referrerRef: DocumentReference<DocumentData> | null = null;
-        let referrerDoc: DocumentSnapshot<DocumentData> | null = null;
-
-        // Prepare referrer update if applicable (Reads must be before Writes)
-        if (
-          newStatus === "approved" &&
-          (userData.totalInvested || 0) === 0 &&
-          userData.referredBy
-        ) {
-          referrerRef = doc(db, "users", userData.referredBy);
-          referrerDoc = await transaction.get(referrerRef);
-        }
-
-        transaction.update(depositRef, {
+      const res = await fetch("/api/admin/deposits", {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          depositId: deposit.id,
           status: newStatus,
-          processedAt: Timestamp.now(),
-        });
-
-        if (newStatus === "approved") {
-          transaction.update(userRef, {
-            balance: increment(deposit.amount),
-            totalInvested: increment(deposit.amount),
-            activeDeposits: increment(1),
-          });
-
-          // Apply Referral Bonus
-          if (referrerRef && referrerDoc?.exists()) {
-            const bonus = deposit.amount * 0.1; // 10% bonus
-            transaction.update(referrerRef, {
-              balance: increment(bonus),
-              referralEarnings: increment(bonus),
-            });
-          }
-        }
+        }),
       });
 
-      // Update local state
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || "Failed to update deposit status");
+      }
+
       setDeposits(
         deposits.map((d) =>
           d.id === deposit.id ? { ...d, status: newStatus } : d,
@@ -151,9 +104,7 @@ export default function AdminDepositsPage() {
       );
 
       try {
-        const app = getFirebaseApp();
-        const auth = getAuth(app);
-        const token = await auth.currentUser?.getIdToken();
+        const token = await currentUser.getIdToken();
         if (token) {
           await fetch("/api/notifications/deposit-status", {
             method: "POST",
@@ -168,9 +119,9 @@ export default function AdminDepositsPage() {
           });
         }
       } catch {}
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating deposit:", error);
-      alert("Failed to update deposit status: " + error);
+      alert("Failed to update deposit status: " + (error?.message || error));
     } finally {
       setProcessingId(null);
     }

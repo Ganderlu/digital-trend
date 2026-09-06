@@ -13,6 +13,8 @@ import {
   CreditCard,
   ArrowUpRight,
   TrendingUp,
+  BarChart3,
+  Layers,
   Settings,
   LogOut,
   Menu,
@@ -53,6 +55,18 @@ const adminNavItems = [
     label: "Investments",
     icon: TrendingUp,
     href: "/admin/investments",
+  },
+  {
+    key: "trades",
+    label: "Trades",
+    icon: BarChart3,
+    href: "/admin/trades",
+  },
+  {
+    key: "matrix",
+    label: "Matrix",
+    icon: Layers,
+    href: "/admin/matrix",
   },
   {
     key: "settings",

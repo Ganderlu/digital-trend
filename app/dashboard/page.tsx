@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
 import DashboardLayout from "@/components/dashboard-layout";
+import WelcomeBackModal from "@/components/welcome-back-modal";
 import {
   Wallet,
   TrendingUp,
@@ -49,6 +50,7 @@ type UserProfile = {
   joinedDate?: Timestamp | Date;
   createdAt?: Timestamp | Date;
   lastAccess?: Timestamp | Date;
+  lastActivityAt?: Timestamp | Date;
   balance?: number;
   totalEarnings?: number;
   totalDeposits?: number;
@@ -111,6 +113,10 @@ export default function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [liveChart, setLiveChart] = useState<number[][]>(INITIAL_LIVE_CHART);
   const [chartTick, setChartTick] = useState(0);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [welcomeModalUser, setWelcomeModalUser] = useState<UserProfile | null>(
+    null,
+  );
 
   useEffect(() => {
     const app = getFirebaseApp();
@@ -269,6 +275,33 @@ export default function DashboardPage() {
       }
 
       setCheckingAuth(false);
+
+      try {
+        const justLoggedIn =
+          typeof window !== "undefined" &&
+          window.sessionStorage &&
+          window.sessionStorage.getItem("welcome_back:just_logged_in") === "1";
+        if (justLoggedIn) {
+          window.sessionStorage.removeItem("welcome_back:just_logged_in");
+          if (
+            currentUser &&
+            userDoc.exists() &&
+            typeof window !== "undefined"
+          ) {
+            const profileData = userDoc.data() as UserProfile;
+            setWelcomeModalUser({
+              ...profileData,
+              email: profileData.email || currentUser.email || "",
+            });
+            setShowWelcomeModal(true);
+          } else if (currentUser) {
+            setWelcomeModalUser({
+              email: currentUser.email ?? "",
+            });
+            setShowWelcomeModal(true);
+          }
+        }
+      } catch {}
     });
 
     return () => unsubscribe();
@@ -1448,6 +1481,11 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      <WelcomeBackModal
+        open={showWelcomeModal}
+        onClose={() => setShowWelcomeModal(false)}
+        user={welcomeModalUser}
+      />
     </DashboardLayout>
   );
 }

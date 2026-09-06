@@ -3,23 +3,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
-import {
-  Timestamp,
-  updateDoc,
-  doc,
-  runTransaction,
-  increment,
-} from "firebase/firestore";
-import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
+import { type Timestamp } from "firebase/firestore";
+import { getFirebaseApp } from "@/lib/firebaseClient";
 import AdminLayout from "@/components/admin-layout";
 import {
   ArrowUpRight,
-  Search,
   CheckCircle,
   XCircle,
   Clock,
   Filter,
-  AlertCircle,
   Wallet,
   Landmark,
 } from "lucide-react";
@@ -85,48 +77,35 @@ export default function AdminWithdrawalsPage() {
     if (!confirm(`Are you sure you want to ${action} this withdrawal?`)) return;
 
     setProcessingId(withdrawal.id);
-    const db = getFirebaseFirestore();
 
     try {
-      await runTransaction(db, async (transaction) => {
-        const withdrawalRef = doc(db, "withdrawals", withdrawal.id);
-        const userRef = doc(db, "users", withdrawal.userId);
+      const app = getFirebaseApp();
+      const auth = getAuth(app);
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        router.replace("/login");
+        return;
+      }
 
-        const withdrawalDoc = await transaction.get(withdrawalRef);
-        if (!withdrawalDoc.exists()) {
-          throw "Withdrawal document does not exist!";
-        }
+      const idToken = await getIdToken(currentUser, true);
 
-        if (withdrawalDoc.data().status !== "pending") {
-          throw "Withdrawal is already processed!";
-        }
-
-        // Check balance if approving
-        if (newStatus === "approved") {
-          const userDoc = await transaction.get(userRef);
-          if (!userDoc.exists()) {
-            throw "User document does not exist!";
-          }
-
-          const currentBalance = userDoc.data().balance || 0;
-          if (currentBalance < withdrawal.amount) {
-            throw `Insufficient user balance! Current: ${currentBalance}, Requested: ${withdrawal.amount}`;
-          }
-
-          // Deduct balance
-          transaction.update(userRef, {
-            balance: increment(-withdrawal.amount),
-          });
-        }
-
-        // Update withdrawal status
-        transaction.update(withdrawalRef, {
+      const res = await fetch("/api/admin/withdrawals", {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          withdrawalId: withdrawal.id,
           status: newStatus,
-          processedAt: Timestamp.now(),
-        });
+        }),
       });
 
-      // Update local state
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || "Failed to update withdrawal status");
+      }
+
       setWithdrawals(
         withdrawals.map((w) =>
           w.id === withdrawal.id ? { ...w, status: newStatus } : w,
@@ -134,9 +113,7 @@ export default function AdminWithdrawalsPage() {
       );
 
       try {
-        const app = getFirebaseApp();
-        const auth = getAuth(app);
-        const token = await auth.currentUser?.getIdToken();
+        const token = await currentUser.getIdToken();
         if (token) {
           await fetch("/api/notifications/withdrawal-status", {
             method: "POST",
@@ -151,9 +128,9 @@ export default function AdminWithdrawalsPage() {
           });
         }
       } catch {}
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating withdrawal:", error);
-      alert("Failed to update withdrawal status: " + error);
+      alert("Failed to update withdrawal status: " + (error?.message || error));
     } finally {
       setProcessingId(null);
     }

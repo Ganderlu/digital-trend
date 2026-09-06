@@ -42,6 +42,10 @@ export default function LoginPage() {
 
       await signInWithEmailAndPassword(auth, email, password);
 
+      try {
+        sessionStorage.setItem("welcome_back:just_logged_in", "1");
+      } catch {}
+
       router.push("/dashboard");
     } catch (loginError: unknown) {
       if (
