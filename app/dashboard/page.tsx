@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useState,
-  useMemo,
-  useRef,
-  startTransition,
-  flushSync,
-} from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
@@ -324,19 +317,17 @@ export default function DashboardPage() {
       liveChartTickRef.current += 1;
       const nextTick = liveChartTickRef.current;
       try {
-        flushSync(() => {
-          setLiveChartState((prev) => {
-            const nextMatrix = prev.matrix.map((row, r) =>
-              row.map((cell, c) => {
-                if (r === c) return cell;
-                const delta = (Math.random() - 0.5) * 0.08;
-                let next = cell + delta;
-                next = Math.max(-0.9, Math.min(0.9, next));
-                return Number(next.toFixed(2));
-              }),
-            );
-            return { tick: nextTick, matrix: nextMatrix };
-          });
+        setLiveChartState((prev) => {
+          const nextMatrix = prev.matrix.map((row, r) =>
+            row.map((cell, c) => {
+              if (r === c) return cell;
+              const delta = (Math.random() - 0.5) * 0.08;
+              let next = cell + delta;
+              next = Math.max(-0.9, Math.min(0.9, next));
+              return Number(next.toFixed(2));
+            }),
+          );
+          return { tick: nextTick, matrix: nextMatrix };
         });
       } catch {}
     }, 2000);
