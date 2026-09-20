@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, startTransition } from "react";
 import { GoogleTranslateSelect } from "@/components/google-translate-select";
 import { useRouter, usePathname } from "next/navigation";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
@@ -335,28 +335,35 @@ export default function DashboardLayout({
   const notifRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const interval = setInterval(() => {
-      setTicker((prev) =>
-        prev.map((coin) => {
-          const driftPct = (Math.random() - 0.5) * 0.004;
-          const newPrice = Math.max(0.0001, coin.price * (1 + driftPct));
-          const priceDelta = newPrice - coin.price;
-          const newChange = coin.change + priceDelta * 0.5;
-          const denom = newPrice - newChange;
-          const newChangePct =
-            denom !== 0 ? (newChange / denom) * 100 : coin.changePct;
-          return {
-            ...coin,
-            price: newPrice,
-            change: newChange,
-            changePct: Number.isFinite(newChangePct)
-              ? newChangePct
-              : coin.changePct,
-          };
-        }),
-      );
+      if (cancelled) return;
+      startTransition(() => {
+        setTicker((prev) =>
+          prev.map((coin) => {
+            const driftPct = (Math.random() - 0.5) * 0.004;
+            const newPrice = Math.max(0.0001, coin.price * (1 + driftPct));
+            const priceDelta = newPrice - coin.price;
+            const newChange = coin.change + priceDelta * 0.5;
+            const denom = newPrice - newChange;
+            const newChangePct =
+              denom !== 0 ? (newChange / denom) * 100 : coin.changePct;
+            return {
+              ...coin,
+              price: newPrice,
+              change: newChange,
+              changePct: Number.isFinite(newChangePct)
+                ? newChangePct
+                : coin.changePct,
+            };
+          }),
+        );
+      });
     }, 1800);
-    return () => clearInterval(interval);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -377,6 +384,19 @@ export default function DashboardLayout({
     () => notifications.filter((n) => !n.read).length,
     [notifications],
   );
+
+  const tickerTape = useMemo(() => {
+    const loop = [...ticker, ...ticker];
+    return loop.map((coin, idx) => ({
+      key:
+        idx < ticker.length
+          ? `${coin.symbol}-a-${idx}`
+          : `${coin.symbol}-b-${idx - ticker.length}`,
+      coin,
+      index: idx,
+      showDivider: idx < ticker.length,
+    }));
+  }, [ticker]);
 
   const markAllRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
@@ -693,13 +713,10 @@ export default function DashboardLayout({
             </div>
             <div className="relative flex-1 overflow-hidden">
               <div className="ticker-track flex w-max items-center gap-10 whitespace-nowrap">
-                {[...ticker, ...ticker].map((coin, idx) => {
+                {tickerTape.map(({ key, coin, showDivider }) => {
                   const pos = coin.changePct >= 0;
                   return (
-                    <div
-                      key={`${coin.symbol}-${idx}`}
-                      className="flex items-center gap-2.5 pr-10"
-                    >
+                    <div key={key} className="flex items-center gap-2.5 pr-10">
                       <div
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
                         style={{ backgroundColor: coin.color }}
@@ -741,7 +758,7 @@ export default function DashboardLayout({
                           </span>
                         </span>
                       </div>
-                      {idx < ticker.length && (
+                      {showDivider && (
                         <span className="ml-2 h-5 w-px shrink-0 bg-white/10" />
                       )}
                     </div>

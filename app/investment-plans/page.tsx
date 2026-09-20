@@ -3,15 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  runTransaction,
-  serverTimestamp,
-  Timestamp,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { getFirebaseApp, getFirebaseFirestore } from "@/lib/firebaseClient";
 import DashboardLayout from "@/components/dashboard-layout";
 import {
@@ -40,7 +32,7 @@ type InvestmentPlan = {
   duration: string;
   features: string[];
   color: string;
-  referral:string;
+  referral: string;
   icon: any;
   popular?: boolean;
 };
@@ -53,7 +45,7 @@ const PLANS: InvestmentPlan[] = [
     maxAmount: 5000,
     roi: "8% Daily",
     duration: "1 Days",
-    referral:"4%",
+    referral: "4%",
     features: ["24/7 Support", "Secure Investment", "Instant Withdrawal"],
     color: "emerald",
     icon: Zap,
@@ -71,7 +63,7 @@ const PLANS: InvestmentPlan[] = [
       "Compounding Available",
     ],
     color: "amber",
-      referral:"4%",
+    referral: "4%",
     icon: TrendingUp,
     popular: true,
   },
@@ -84,7 +76,7 @@ const PLANS: InvestmentPlan[] = [
     duration: "4 Days",
     features: ["Dedicated Manager", "VIP Access", "Capital Protection"],
     color: "violet",
-    referral:"4%",
+    referral: "4%",
     icon: ShieldCheck,
   },
   {
@@ -96,7 +88,7 @@ const PLANS: InvestmentPlan[] = [
     duration: "6 Days",
     features: ["Dedicated Manager", "VIP Access", "Capital Protection"],
     color: "amber",
-    referral:"4%",
+    referral: "4%",
     icon: ShieldCheck,
   },
 ];
@@ -173,45 +165,46 @@ export default function InvestmentPlansPage() {
       return;
     }
 
+    const roiMatch = selectedPlan.roi.match(/([\d.]+)/);
+    const roiDecimal = roiMatch ? parseFloat(roiMatch[1]) / 100 : 0;
+    const durationMatch = selectedPlan.duration.match(/(\d+)/);
+    const durationDays = durationMatch ? parseInt(durationMatch[1], 10) : 0;
+    const matureAt =
+      durationDays > 0
+        ? new Date(
+            Date.now() + durationDays * 24 * 60 * 60 * 1000,
+          ).toISOString()
+        : undefined;
+
     setSubmitting(true);
 
     try {
-      const db = getFirebaseFirestore();
-
-      await runTransaction(db, async (transaction) => {
-        const userRef = doc(db, "users", user.uid);
-        const userSnapshot = await transaction.get(userRef);
-
-        if (!userSnapshot.exists()) {
-          throw "User does not exist!";
-        }
-
-        const currentBalance = userSnapshot.data().balance || 0;
-        if (currentBalance < investAmount) {
-          throw "Insufficient balance!";
-        }
-
-        // Deduct balance
-        transaction.update(userRef, {
-          balance: currentBalance - investAmount,
-          activeDeposits:
-            (userSnapshot.data().activeDeposits || 0) + investAmount,
-        });
-
-        // Create investment record
-        const investmentRef = doc(collection(db, "investments"));
-        transaction.set(investmentRef, {
-          userId: user.uid,
-          userEmail: user.email,
+      const token = await user.getIdToken();
+      const response = await fetch("/api/investments/create", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           planId: selectedPlan.id,
           planName: selectedPlan.name,
+          planType: "investment",
           amount: investAmount,
-          roi: selectedPlan.roi,
-          startDate: serverTimestamp(),
-          status: "active",
-          createdAt: serverTimestamp(),
-        });
+          roi: roiDecimal,
+          durationDays,
+          matureAt,
+        }),
       });
+
+      const data = await response.json().catch(() => ({
+        ok: false,
+        error: "Unexpected server response",
+      }));
+
+      if (!data.ok || !response.ok) {
+        throw new Error(data.error || "Investment failed");
+      }
 
       // Update local state to reflect new balance immediately
       setProfile((prev) =>
@@ -226,11 +219,11 @@ export default function InvestmentPlansPage() {
       setSuccess(true);
     } catch (err: any) {
       console.error("Investment error:", err);
-      setError(
-        err === "Insufficient balance!"
-          ? err
-          : "Investment failed. Please try again.",
-      );
+      const msg =
+        typeof err?.message === "string"
+          ? err.message
+          : "Investment failed. Please try again.";
+      setError(msg);
     } finally {
       setSubmitting(false);
     }

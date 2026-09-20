@@ -180,7 +180,9 @@ function MatrixNode({
         .map((p) => p[0]?.toUpperCase() ?? "")
         .filter(Boolean)
         .slice(0, 2)
-        .join("") || name[0]?.toUpperCase() || "?"
+        .join("") ||
+      name[0]?.toUpperCase() ||
+      "?"
     : "";
 
   return (
@@ -191,9 +193,7 @@ function MatrixNode({
         {isYou || status === "you" ? (
           <User className={`h-5 w-5 ${styles.text}`} />
         ) : status !== "empty" ? (
-          <span
-            className={`text-xs font-bold tracking-tight ${styles.text}`}
-          >
+          <span className={`text-xs font-bold tracking-tight ${styles.text}`}>
             {shortName}
           </span>
         ) : (
@@ -282,7 +282,10 @@ export default function MatrixPlanPage() {
         );
 
         const referralsPromise = getDocs(
-          query(collection(db, "users"), where("referredBy", "==", currentUser.uid)),
+          query(
+            collection(db, "users"),
+            where("referredBy", "==", currentUser.uid),
+          ),
         ).then((snap) =>
           snap.docs.map((d) => {
             const data = d.data();
@@ -290,8 +293,7 @@ export default function MatrixPlanPage() {
               id: d.id,
               ...data,
               status:
-                ((data.activeDeposits || 0) > 0 ||
-                  (data.totalDeposits || 0) > 0)
+                (data.activeDeposits || 0) > 0 || (data.totalDeposits || 0) > 0
                   ? "active"
                   : "inactive",
             } as ReferredUser;
@@ -309,8 +311,9 @@ export default function MatrixPlanPage() {
           .then((snap) =>
             snap.docs.map((d) => {
               const data = d.data();
-              const startTs =
-                (data.startDate || data.createdAt) as Timestamp | undefined;
+              const startTs = (data.startDate || data.createdAt) as
+                | Timestamp
+                | undefined;
               const amount = (data.amount ?? 0) as number;
               const totalReturn = (data.totalReturn ?? amount * 2) as number;
               const earned = (data.earningsPaid ?? 0) as number;
@@ -318,7 +321,8 @@ export default function MatrixPlanPage() {
                 totalReturn > 0
                   ? Math.min(100, Math.round((earned / totalReturn) * 100))
                   : 0;
-              const statusVal = (data.status as string)?.toLowerCase?.() ?? "active";
+              const statusVal =
+                (data.status as string)?.toLowerCase?.() ?? "active";
               let status: MatrixCycle["status"] = "Active";
               if (statusVal === "mature" || statusVal === "completed")
                 status = "Completed";
@@ -486,7 +490,8 @@ export default function MatrixPlanPage() {
 
   const nextPayout = useMemo(() => {
     const activeCycle = cycles.find((c) => c.status === "Active");
-    if (activeCycle?.amount) return Math.round(activeCycle.amount * 0.84 * 100) / 100;
+    if (activeCycle?.amount)
+      return Math.round(activeCycle.amount * 0.84 * 100) / 100;
     const lastPayout = payouts[0]?.amount;
     return lastPayout && lastPayout > 0 ? lastPayout : 50;
   }, [cycles, payouts]);
@@ -529,7 +534,7 @@ export default function MatrixPlanPage() {
               How It Works
             </button>
             <button
-              onClick={() => router.push("/plans")}
+              onClick={() => router.push("/matrix-investment")}
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-violet-500/20 hover:brightness-110 transition"
             >
               <Rocket className="h-4 w-4" />
@@ -632,7 +637,8 @@ export default function MatrixPlanPage() {
                     key={item.key}
                     onClick={() => {
                       setActiveNav(item.key);
-                      if (item.key === "upgrade-plan") router.push("/plans");
+                      if (item.key === "upgrade-plan")
+                        router.push("/matrix-investment");
                       if (item.key === "leaderboard") router.push("/referrals");
                     }}
                     className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
@@ -658,7 +664,7 @@ export default function MatrixPlanPage() {
               </p>
               <div className="mt-3 flex items-end justify-between">
                 <button
-                  onClick={() => router.push("/plans")}
+                  onClick={() => router.push("/matrix-investment")}
                   className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-violet-500/20 transition hover:brightness-110"
                 >
                   Upgrade Now
@@ -676,7 +682,10 @@ export default function MatrixPlanPage() {
                 {[
                   { k: "Plan Type", v: "3x Matrix" },
                   { k: "Total Levels", v: "3 Levels" },
-                  { k: "Max Positions", v: `${levelStats.level1.total + levelStats.level2.total + levelStats.level3.total}` },
+                  {
+                    k: "Max Positions",
+                    v: `${levelStats.level1.total + levelStats.level2.total + levelStats.level3.total}`,
+                  },
                   { k: "Entry Amount", v: "$50" },
                   {
                     k: "Your Level",
@@ -1036,9 +1045,7 @@ export default function MatrixPlanPage() {
                   </div>
                   <div className="flex items-center gap-1">
                     <button
-                      onClick={() =>
-                        setOngoingPage((p) => Math.max(1, p - 1))
-                      }
+                      onClick={() => setOngoingPage((p) => Math.max(1, p - 1))}
                       disabled={ongoingPage === 1}
                       className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-slate-800 text-slate-400 transition hover:bg-white/5 hover:text-slate-200 disabled:opacity-30"
                     >
@@ -1049,9 +1056,7 @@ export default function MatrixPlanPage() {
                     </span>
                     <button
                       onClick={() =>
-                        setOngoingPage((p) =>
-                          p < totalCyclePages ? p + 1 : p,
-                        )
+                        setOngoingPage((p) => (p < totalCyclePages ? p + 1 : p))
                       }
                       disabled={ongoingPage >= totalCyclePages}
                       className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-slate-800 text-slate-400 transition hover:bg-white/5 hover:text-slate-200 disabled:opacity-30"
@@ -1088,10 +1093,12 @@ export default function MatrixPlanPage() {
                                 started!
                               </p>
                               <button
-                                onClick={() => router.push("/plans")}
+                                onClick={() =>
+                                  router.push("/matrix-investment")
+                                }
                                 className="mt-1 rounded-xl bg-violet-600 px-4 py-2 text-xs font-semibold text-white hover:brightness-110 transition"
                               >
-                                Browse Plans
+                                Browse Matrix Plans
                               </button>
                             </div>
                           </td>

@@ -48,7 +48,7 @@ const faqs = [
   {
     question: "How can I contact support?",
     answer:
-      "Our support team is available 24/7. You can reach us via live chat on our website, email at helpdigitaltrend@gmail.com, or by calling our dedicated support line.",
+      "Our support team is available 24/7. You can reach us via live chat on our website, email at tevextraadvisors@gmail.com, or by calling our dedicated support line.",
   },
 ];
 
@@ -154,7 +154,7 @@ export default function FaqsPage() {
               title: "Email Support",
               p: "Get a response within 24 hours.",
               cta: "Send Email",
-              href: "mailto:helpdigitaltrend@gmail.com",
+              href: "mailto:tevextraadvisors@gmail.com",
             },
             {
               icon: Phone,

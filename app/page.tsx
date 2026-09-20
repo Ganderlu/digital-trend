@@ -1176,7 +1176,7 @@ export default function Home() {
 
               <div className="mt-12 space-y-5">
                 <a
-                  href="mailto:helpdigitaltrend@gmail.com"
+                  href="mailto:tevextraadvisors@gmail.com"
                   className="flex items-center gap-4 p-5 rounded-2xl border border-white/5 bg-slate-900/60 hover:bg-slate-900 hover:border-white/10 transition"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shrink-0">
@@ -1187,7 +1187,7 @@ export default function Home() {
                       Email Us
                     </p>
                     <p className="text-sm font-semibold text-slate-100">
-                      helpdigitaltrend@gmail.com
+                      tevextraadvisors@gmail.com
                     </p>
                   </div>
                 </a>

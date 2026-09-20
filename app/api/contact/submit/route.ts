@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
     const appName = process.env.APP_NAME || "TeveXtra";
     const supportEmail =
-      process.env.SUPPORT_EMAIL || "helpdigitaltrend@gmail.com";
+      process.env.SUPPORT_EMAIL || "tevextraadvisors@gmail.com";
 
     const db = getAdminDb();
     await db.collection("contacts").add({

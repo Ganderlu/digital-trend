@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import { PublicChrome } from "@/components/public-chrome";
 import { InvestmentNotification } from "@/components/investment-notification";
 import { LanguageProvider } from "@/components/language-provider";
+import { LanguageProvider as KeyedLanguageProvider } from "@/components/language-context";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -41,9 +42,11 @@ export default function RootLayout({
         style={{ fontFamily: "var(--font-poppins), system-ui, sans-serif" }}
         suppressHydrationWarning
       >
-        <LanguageProvider />
-        <PublicChrome>{children}</PublicChrome>
-        <InvestmentNotification />
+        <KeyedLanguageProvider>
+          <LanguageProvider />
+          <PublicChrome>{children}</PublicChrome>
+          <InvestmentNotification />
+        </KeyedLanguageProvider>
       </body>
     </html>
   );

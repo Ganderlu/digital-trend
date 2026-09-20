@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 declare global {
   interface Window {
@@ -131,123 +132,214 @@ const INTRUSIVE_SELECTORS = [
   ".goog-te-menu-value",
 ];
 
+function safeRemove(el: Element | null | undefined) {
+  if (!el) return;
+  try {
+    if (el.parentNode) {
+      el.parentNode.removeChild(el);
+    }
+  } catch {}
+  try {
+    el.remove();
+  } catch {}
+}
+
 function removeIntrusiveElements() {
+  if (typeof document === "undefined") return;
   for (const sel of INTRUSIVE_SELECTORS) {
-    document.querySelectorAll<HTMLElement>(sel).forEach((el) => {
-      try {
-        el.remove();
-      } catch {}
-    });
+    let nodes: NodeListOf<HTMLElement> | undefined;
+    try {
+      nodes = document.querySelectorAll<HTMLElement>(sel);
+    } catch {
+      continue;
+    }
+    if (!nodes || nodes.length === 0) continue;
+    nodes.forEach((el) => safeRemove(el));
   }
   try {
-    document.body.style.top = "0px";
-    document.body.style.marginTop = "0px";
+    if (document.body) {
+      document.body.style.top = "0px";
+      document.body.style.marginTop = "0px";
+    }
     if (document.documentElement) {
       document.documentElement.style.top = "0px";
     }
   } catch {}
 }
 
+function getOrCreateTarget(): HTMLElement | null {
+  if (typeof document === "undefined") return null;
+  try {
+    let el = document.getElementById("google_translate_element");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "google_translate_element";
+      el.className = "gt-fallback";
+      if (document.body) {
+        document.body.appendChild(el);
+      }
+    } else {
+      el.classList.add("gt-fallback");
+    }
+    return el;
+  } catch {
+    return null;
+  }
+}
+
+function clearTargetChildren(target: HTMLElement) {
+  try {
+    if (!target) return;
+    if (typeof target.replaceChildren === "function") {
+      target.replaceChildren();
+      return;
+    }
+  } catch {}
+  try {
+    target.textContent = "";
+  } catch {}
+  try {
+    target.innerHTML = "";
+  } catch {}
+  try {
+    while (target.lastChild) {
+      const last = target.lastChild;
+      if (!last || !target.contains(last) || last.parentNode !== target) break;
+      target.removeChild(last);
+    }
+  } catch {}
+}
+
+function initGoogleTranslateElement() {
+  getOrCreateTarget();
+  if (window.google?.translate?.TranslateElement) {
+    try {
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+          includedLanguages: INCLUDED_LANG_CODES,
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false,
+          multilanguagePage: false,
+        },
+        "google_translate_element",
+      );
+    } catch (e) {
+      console.error("GT init error:", e);
+    }
+  }
+}
+
+function tryApplySaved() {
+  if (typeof document === "undefined") return;
+  const saved = readSavedLangCode();
+  if (!saved || saved === "en") return;
+  let combo: HTMLSelectElement | null = null;
+  try {
+    combo = document.querySelector(".goog-te-combo");
+  } catch {}
+  if (combo && combo.value !== saved) {
+    try {
+      combo.value = saved;
+      combo.dispatchEvent(new Event("change", { bubbles: true }));
+    } catch {}
+  }
+}
+
 export function LanguageProvider() {
-  const initedRef = useRef(false);
+  const pathname = usePathname();
   const scriptLoadedRef = useRef(false);
   const reapplyTimerRef = useRef<number | undefined>(undefined);
   const cleanupTimerRef = useRef<number | undefined>(undefined);
+  const reapplyObsRef = useRef<MutationObserver | undefined>(undefined);
+  const comboObsRef = useRef<MutationObserver | undefined>(undefined);
+  const firstMountRef = useRef(false);
 
   useEffect(() => {
-    if (initedRef.current) return;
-    initedRef.current = true;
-
-    const getOrCreateTarget = (): HTMLElement => {
-      let el = document.getElementById("google_translate_element");
-      if (!el) {
-        el = document.createElement("div");
-        el.id = "google_translate_element";
-        el.className = "gt-fallback";
-        document.body.appendChild(el);
-      } else {
-        el.classList.add("gt-fallback");
-      }
-      return el;
-    };
-
+    if (typeof document === "undefined") return;
     getOrCreateTarget();
 
-    window.googleTranslateElementInit = () => {
-      if (window.google?.translate?.TranslateElement) {
-        try {
-          new window.google.translate.TranslateElement(
-            {
-              pageLanguage: "en",
-              includedLanguages: INCLUDED_LANG_CODES,
-              layout:
-                window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-              autoDisplay: false,
-              multilanguagePage: false,
-            },
-            "google_translate_element",
-          );
-        } catch (e) {
-          console.error("GT init error:", e);
-        }
-      }
-    };
-
-    if (
-      !window.google?.translate &&
-      !scriptLoadedRef.current &&
-      !document.querySelector('script[src*="translate.google.com"]')
-    ) {
-      scriptLoadedRef.current = true;
-      const s = document.createElement("script");
-      s.type = "text/javascript";
-      s.src =
-        "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-      s.async = true;
-      s.onerror = () => {
-        scriptLoadedRef.current = false;
+    try {
+      window.googleTranslateElementInit = () => {
+        initGoogleTranslateElement();
+        tryApplySaved();
       };
-      document.head.appendChild(s);
-    } else if (window.google?.translate?.TranslateElement) {
-      window.googleTranslateElementInit();
+    } catch {}
+
+    try {
+      if (
+        !window.google?.translate &&
+        !scriptLoadedRef.current &&
+        !document.querySelector('script[src*="translate.google.com"]')
+      ) {
+        scriptLoadedRef.current = true;
+        const s = document.createElement("script");
+        s.type = "text/javascript";
+        s.src =
+          "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+        s.async = true;
+        s.onerror = () => {
+          scriptLoadedRef.current = false;
+        };
+        if (document.head) {
+          document.head.appendChild(s);
+        }
+      } else if (window.google?.translate?.TranslateElement) {
+        window.googleTranslateElementInit?.();
+      }
+    } catch {}
+
+    if (firstMountRef.current) {
+      let target: HTMLElement | null = null;
+      try {
+        target = document.getElementById("google_translate_element");
+      } catch {}
+      if (target) {
+        clearTargetChildren(target);
+      }
+      try {
+        window.googleTranslateElementInit?.();
+      } catch {}
+      tryApplySaved();
+    }
+    firstMountRef.current = true;
+
+    removeIntrusiveElements();
+    tryApplySaved();
+
+    if (!reapplyObsRef.current && document.documentElement) {
+      try {
+        const reapplyObs = new MutationObserver(() => {
+          tryApplySaved();
+          removeIntrusiveElements();
+        });
+        reapplyObs.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["style", "class"],
+        });
+        reapplyObsRef.current = reapplyObs;
+      } catch {}
     }
 
-    const tryApply = () => {
-      const saved = readSavedLangCode();
-      if (!saved || saved === "en") return;
-      const combo: HTMLSelectElement | null =
-        document.querySelector(".goog-te-combo");
-      if (combo && combo.value !== saved) {
-        try {
-          combo.value = saved;
-          combo.dispatchEvent(new Event("change", { bubbles: true }));
-        } catch {}
-      }
-    };
+    if (reapplyTimerRef.current == null) {
+      reapplyTimerRef.current = window.setInterval(() => tryApplySaved(), 800);
+    }
 
-    tryApply();
-
-    const reapplyObs = new MutationObserver(() => {
-      tryApply();
-      removeIntrusiveElements();
-    });
-    reapplyObs.observe(document.documentElement, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["style", "class"],
-    });
-
-    reapplyTimerRef.current = window.setInterval(() => tryApply(), 800);
-
-    cleanupTimerRef.current = window.setInterval(
-      () => removeIntrusiveElements(),
-      500,
-    );
-    removeIntrusiveElements();
+    if (cleanupTimerRef.current == null) {
+      cleanupTimerRef.current = window.setInterval(
+        () => removeIntrusiveElements(),
+        500,
+      );
+    }
 
     const onComboChange = () => {
-      const combo = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+      if (typeof document === "undefined") return;
+      let combo: HTMLSelectElement | null = null;
+      try {
+        combo = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+      } catch {}
       const v = combo?.value || "en";
       try {
         localStorage.setItem("googtrans", `/en/${v}`);
@@ -263,29 +355,57 @@ export function LanguageProvider() {
     };
 
     const attachComboListener = () => {
-      const combo = document.querySelector<HTMLSelectElement>(".goog-te-combo");
-      if (combo && !(combo as any).__gtBound) {
-        (combo as any).__gtBound = true;
-        combo.addEventListener("change", onComboChange);
+      if (typeof document === "undefined") return;
+      let combo: HTMLSelectElement | null = null;
+      try {
+        combo = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+      } catch {}
+      if (combo && !(combo as any).__gtProviderBound) {
+        try {
+          (combo as any).__gtProviderBound = true;
+          combo.addEventListener("change", onComboChange);
+        } catch {}
       }
     };
 
-    const comboObs = new MutationObserver(() => attachComboListener());
-    comboObs.observe(document.documentElement, {
-      childList: true,
-      subtree: true,
-    });
+    if (!comboObsRef.current && document.documentElement) {
+      try {
+        const comboObs = new MutationObserver(() => attachComboListener());
+        comboObs.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+        comboObsRef.current = comboObs;
+      } catch {}
+    }
     attachComboListener();
 
+    removeIntrusiveElements();
+  }, [pathname]);
+
+  useEffect(() => {
     return () => {
-      reapplyObs.disconnect();
-      comboObs.disconnect();
+      try {
+        reapplyObsRef.current?.disconnect();
+      } catch {}
+      try {
+        comboObsRef.current?.disconnect();
+      } catch {}
       if (reapplyTimerRef.current != null) {
-        window.clearInterval(reapplyTimerRef.current);
+        try {
+          window.clearInterval(reapplyTimerRef.current);
+        } catch {}
+        reapplyTimerRef.current = undefined;
       }
       if (cleanupTimerRef.current != null) {
-        window.clearInterval(cleanupTimerRef.current);
+        try {
+          window.clearInterval(cleanupTimerRef.current);
+        } catch {}
+        cleanupTimerRef.current = undefined;
       }
+      try {
+        delete (window as any).googleTranslateElementInit;
+      } catch {}
     };
   }, []);
 

@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import {
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+  startTransition,
+  flushSync,
+} from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
@@ -111,8 +118,11 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [liveChart, setLiveChart] = useState<number[][]>(INITIAL_LIVE_CHART);
-  const [chartTick, setChartTick] = useState(0);
+  const [liveChartState, setLiveChartState] = useState<{
+    tick: number;
+    matrix: number[][];
+  }>(() => ({ tick: 0, matrix: INITIAL_LIVE_CHART }));
+  const liveChartTickRef = useRef(0);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [welcomeModalUser, setWelcomeModalUser] = useState<UserProfile | null>(
     null,
@@ -308,22 +318,35 @@ export default function DashboardPage() {
   }, [router]);
 
   useEffect(() => {
+    let cancelled = false;
     const interval = setInterval(() => {
-      setLiveChart((prev) =>
-        prev.map((row, r) =>
-          row.map((cell, c) => {
-            if (r === c) return cell;
-            const delta = (Math.random() - 0.5) * 0.08;
-            let next = cell + delta;
-            next = Math.max(-0.9, Math.min(0.9, next));
-            return Number(next.toFixed(2));
-          }),
-        ),
-      );
-      setChartTick((t) => t + 1);
-    }, 2200);
-    return () => clearInterval(interval);
+      if (cancelled) return;
+      liveChartTickRef.current += 1;
+      const nextTick = liveChartTickRef.current;
+      try {
+        flushSync(() => {
+          setLiveChartState((prev) => {
+            const nextMatrix = prev.matrix.map((row, r) =>
+              row.map((cell, c) => {
+                if (r === c) return cell;
+                const delta = (Math.random() - 0.5) * 0.08;
+                let next = cell + delta;
+                next = Math.max(-0.9, Math.min(0.9, next));
+                return Number(next.toFixed(2));
+              }),
+            );
+            return { tick: nextTick, matrix: nextMatrix };
+          });
+        });
+      } catch {}
+    }, 2000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, []);
+
+  const { matrix: liveChart, tick: chartTickRender } = liveChartState;
 
   const chartStats = useMemo(() => {
     const all: number[] = [];
@@ -366,6 +389,66 @@ export default function DashboardPage() {
       bottomPair: pairs[topLoserIdx],
       topLoser: Math.min(...all),
     };
+  }, [liveChart]);
+
+  const matrixHeaderCols = useMemo(() => LIVE_CHART_CURRENCIES, []);
+
+  const matrixRows = useMemo(() => {
+    return LIVE_CHART_CURRENCIES.map((row, r) => {
+      const cells = LIVE_CHART_CURRENCIES.map((col, c) => {
+        const val = liveChart[r][c];
+        const isDiagonal = r === c;
+        const abs = Math.abs(val);
+        const intensity = isDiagonal ? 0 : Math.min(1, abs / 0.8);
+        const positive = val > 0;
+        let bg = "bg-slate-900/70";
+        let fg = "text-slate-500";
+        if (!isDiagonal) {
+          if (positive) {
+            if (intensity > 0.6) {
+              bg = "bg-emerald-600/25";
+              fg = "text-emerald-300";
+            } else if (intensity > 0.35) {
+              bg = "bg-emerald-700/18";
+              fg = "text-emerald-400";
+            } else {
+              bg = "bg-emerald-800/12";
+              fg = "text-emerald-400/90";
+            }
+          } else {
+            if (intensity > 0.6) {
+              bg = "bg-red-600/25";
+              fg = "text-red-300";
+            } else if (intensity > 0.35) {
+              bg = "bg-red-700/18";
+              fg = "text-red-400";
+            } else {
+              bg = "bg-red-800/12";
+              fg = "text-red-400/90";
+            }
+          }
+        }
+        return {
+          key: `${row.code}-${col.code}`,
+          colCode: col.code,
+          isLastRow: r === LIVE_CHART_CURRENCIES.length - 1,
+          isLastCol: c === LIVE_CHART_CURRENCIES.length - 1,
+          val,
+          isDiagonal,
+          bg,
+          fg,
+          title: isDiagonal
+            ? `${row.code} vs ${row.code}`
+            : `${row.code}/${col.code}: ${val > 0 ? "+" : ""}${val.toFixed(2)}%`,
+        };
+      });
+      return {
+        key: `r-${row.code}`,
+        row,
+        isLastRow: r === LIVE_CHART_CURRENCIES.length - 1,
+        cells,
+      };
+    });
   }, [liveChart]);
 
   if (checkingAuth) {
@@ -1176,7 +1259,7 @@ export default function DashboardPage() {
                   </div>
                   <p className="mt-1 text-[12px] text-white/80 font-medium">
                     Global FX correlation matrix · 72 major pairs · tick #
-                    {chartTick.toLocaleString()}
+                    {chartTickRender.toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -1199,7 +1282,9 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-400/20 border border-sky-300/30">
                       <RefreshCw
-                        className={`h-4 w-4 text-sky-200 ${chartTick % 2 === 0 ? "" : ""}`}
+                        className={`h-4 w-4 text-sky-200 ${
+                          chartTickRender % 2 === 0 ? "" : ""
+                        }`}
                       />
                     </div>
                     <div className="leading-tight">
@@ -1308,7 +1393,7 @@ export default function DashboardPage() {
                     <th className="sticky left-0 z-10 bg-slate-950/95 backdrop-blur border-b border-r border-white/5 px-2.5 py-3 text-right text-[11px] font-bold uppercase tracking-wider text-slate-500 w-[88px]">
                       vs →
                     </th>
-                    {LIVE_CHART_CURRENCIES.map((col) => (
+                    {matrixHeaderCols.map((col) => (
                       <th
                         key={`h-${col.code}`}
                         className="border-b border-r border-white/5 last:border-r-0 px-2 py-3 text-slate-100 min-w-[84px]"
@@ -1328,8 +1413,8 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {LIVE_CHART_CURRENCIES.map((row, r) => (
-                    <tr key={`r-${row.code}`} className="group">
+                  {matrixRows.map(({ key, row, cells }) => (
+                    <tr key={key} className="group">
                       <td className="sticky left-0 z-10 bg-slate-950/95 backdrop-blur group-hover:bg-slate-900/95 border-b border-r border-white/5 last:border-b-0 px-2.5 py-0.5 min-w-[88px]">
                         <div className="flex items-center justify-end gap-2 py-2">
                           <div className="text-right leading-tight">
@@ -1345,49 +1430,22 @@ export default function DashboardPage() {
                           </span>
                         </div>
                       </td>
-                      {LIVE_CHART_CURRENCIES.map((_, c) => {
-                        const val = liveChart[r][c];
-                        const isDiagonal = r === c;
-                        const abs = Math.abs(val);
-                        const intensity = isDiagonal
-                          ? 0
-                          : Math.min(1, abs / 0.8);
-                        const positive = val > 0;
-                        let bg = "bg-slate-900/70";
-                        let fg = "text-slate-500";
-                        if (!isDiagonal) {
-                          if (positive) {
-                            if (intensity > 0.6) {
-                              bg = "bg-emerald-600/25";
-                              fg = "text-emerald-300";
-                            } else if (intensity > 0.35) {
-                              bg = "bg-emerald-700/18";
-                              fg = "text-emerald-400";
-                            } else {
-                              bg = "bg-emerald-800/12";
-                              fg = "text-emerald-400/90";
-                            }
-                          } else {
-                            if (intensity > 0.6) {
-                              bg = "bg-red-600/25";
-                              fg = "text-red-300";
-                            } else if (intensity > 0.35) {
-                              bg = "bg-red-700/18";
-                              fg = "text-red-400";
-                            } else {
-                              bg = "bg-red-800/12";
-                              fg = "text-red-400/90";
-                            }
-                          }
-                        }
-                        return (
+                      {cells.map(
+                        ({
+                          key: cellKey,
+                          val,
+                          isDiagonal,
+                          bg,
+                          fg,
+                          title,
+                          isLastRow,
+                          isLastCol,
+                        }) => (
                           <td
-                            key={`${r}-${c}`}
+                            key={cellKey}
                             className={`border-b border-r border-white/5 last:border-r-0 last:border-b-0 relative ${
-                              r === LIVE_CHART_CURRENCIES.length - 1
-                                ? "last:border-b-0"
-                                : ""
-                            }`}
+                              isLastRow ? "last:border-b-0" : ""
+                            } ${isLastCol ? "last:border-r-0" : ""}`}
                           >
                             <div
                               className={`cell-flash mx-1.5 my-1.5 rounded-lg px-2 py-3 text-center transition-all duration-500 ${
@@ -1395,11 +1453,7 @@ export default function DashboardPage() {
                                   ? "bg-slate-800/80 text-slate-600 border border-white/5"
                                   : `${bg} ${fg} border border-transparent hover:brightness-125 hover:scale-[1.03] hover:shadow-inner cursor-crosshair`
                               }`}
-                              title={
-                                isDiagonal
-                                  ? `${row.code} vs ${row.code}`
-                                  : `${row.code}/${LIVE_CHART_CURRENCIES[c].code}: ${val > 0 ? "+" : ""}${val.toFixed(2)}%`
-                              }
+                              title={title}
                             >
                               {isDiagonal ? (
                                 <span className="text-[11px] font-bold text-slate-600 tracking-wider">
@@ -1413,8 +1467,8 @@ export default function DashboardPage() {
                               )}
                             </div>
                           </td>
-                        );
-                      })}
+                        ),
+                      )}
                     </tr>
                   ))}
                 </tbody>

@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
+import { GoogleTranslateSelect } from "@/components/google-translate-select";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -57,7 +58,7 @@ export function SiteHeader() {
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-slate-900 ring-1 ring-emerald-500/30">
               <Image
-                src="/images/trend.jpeg"
+                src="/images/tx.png"
                 alt="TeveXtra"
                 width={36}
                 height={36}
@@ -104,9 +105,10 @@ export function SiteHeader() {
             Contact
           </Link>
           <div className="flex items-center gap-4 border-l border-white/10 pl-6">
+            <GoogleTranslateSelect />
             <button
               onClick={toggleTheme}
-              className="theme-toggle-btn flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-all hover:bg-white/10 hover:text-white hover:border-emerald-500/30"
+              className="theme-toggle-btn flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-all hover:bg-white/10 hover:text-white hover:border-emerald-500/30"
               aria-label={
                 theme === "dark"
                   ? "Switch to light mode"
@@ -114,9 +116,9 @@ export function SiteHeader() {
               }
             >
               {theme === "dark" ? (
-                <Sun className="h-4.5 w-4.5" />
+                <Sun className="h-5 w-5" />
               ) : (
-                <Moon className="h-4.5 w-4.5" />
+                <Moon className="h-5 w-5" />
               )}
             </button>
             <Link
@@ -136,6 +138,7 @@ export function SiteHeader() {
 
         {/* Mobile Menu Button & Quick Actions */}
         <div className="ml-auto flex items-center gap-3 md:hidden">
+          <GoogleTranslateSelect compact />
           <button
             onClick={toggleTheme}
             className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300 transition-all hover:bg-white/10 hover:text-white hover:border-emerald-500/30"
@@ -168,7 +171,7 @@ export function SiteHeader() {
               <Link href="/" className="flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-slate-900 ring-1 ring-emerald-500/30">
                   <Image
-                    src="/images/trend.jpeg"
+                    src="/images/tx.png"
                     alt="TeveXtra"
                     width={36}
                     height={36}
@@ -181,6 +184,7 @@ export function SiteHeader() {
                 </span>
               </Link>
               <div className="flex items-center gap-2">
+                <GoogleTranslateSelect compact />
                 <button
                   onClick={toggleTheme}
                   className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-300 transition-all hover:bg-white/10 hover:text-white hover:border-emerald-500/30"

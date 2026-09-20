@@ -19,7 +19,7 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "helpdigitaltrend@gmail.com",
+    value: "tevextraadvisors@gmail.com",
     href: GMAIL_COMPOSE_URL,
     external: true,
     cta: "Send Email",

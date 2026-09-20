@@ -43,7 +43,7 @@ export function SiteFooter() {
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-slate-900 ring-1 ring-emerald-500/30 shadow-lg shadow-emerald-500/10">
                 <Image
-                  src="/images/trend.jpeg"
+                  src="/images/tx.png"
                   alt="TeveXtra"
                   width={40}
                   height={40}
@@ -160,10 +160,10 @@ export function SiteFooter() {
               <li className="flex items-center gap-3 text-sm text-slate-400">
                 <Mail size={18} className="text-emerald-400 shrink-0" />
                 <a
-                  href="mailto:helpdigitaltrend@gmail.com"
+                  href="mailto:tevextraadvisors@gmail.com"
                   className="hover:text-emerald-400 transition-colors"
                 >
-                  helpdigitaltrend@gmail.com
+                  tevextraadvisors@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm text-slate-400">

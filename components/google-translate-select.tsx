@@ -1,19 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Globe,
-  ChevronDown,
-  Loader2,
-  Search,
-  CheckCircle2,
-} from "lucide-react";
-
-declare global {
-  interface Window {
-    dispatchLanguageChanged?: (code: string) => void;
-  }
-}
+import { Globe, ChevronDown, Search, CheckCircle2 } from "lucide-react";
 
 type TLang = {
   code: string;
@@ -117,10 +105,10 @@ function getLangMeta(code: string): TLang {
   if (found) return found;
   const prefix = code.split("-")[0];
   const normalized = TOP_LANGS.find((l) => l.code.startsWith(prefix));
-  return normalized ?? { code, label: code, flag: "🌐" };
+  return normalized ?? { code, label: code.toUpperCase(), flag: "🌐" };
 }
 
-function readSavedLang(): string {
+export function readSavedLangCode(): string {
   if (typeof window === "undefined") return "en";
   try {
     const v =
@@ -133,9 +121,31 @@ function readSavedLang(): string {
       const parts = decodeURIComponent(v).split("/");
       if (parts[2]) return parts[2];
     }
-  } catch {
-  }
+  } catch {}
   return "en";
+}
+
+function persistLang(code: string) {
+  try {
+    localStorage.setItem("googtrans", `/en/${code}`);
+  } catch {}
+  try {
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 1);
+    document.cookie = `googtrans=/en/${code}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+  } catch {}
+}
+
+function tryApplyOnCombo(code: string) {
+  if (typeof document === "undefined") return;
+  const combo: HTMLSelectElement | null =
+    document.querySelector(".goog-te-combo");
+  if (combo && combo.value !== code) {
+    try {
+      combo.value = code;
+      combo.dispatchEvent(new Event("change", { bubbles: true }));
+    } catch {}
+  }
 }
 
 export function GoogleTranslateSelect({
@@ -143,52 +153,44 @@ export function GoogleTranslateSelect({
 }: {
   compact?: boolean;
 }) {
-  const [ready, setReady] = useState(false);
   const [current, setCurrent] = useState<string>("en");
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const comboBoundRef = useRef(false);
 
   useEffect(() => {
-    setCurrent(readSavedLang());
+    const onComboChange = () => {
+      const combo = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+      const v = combo?.value || "en";
+      setCurrent(v);
+    };
 
     const waitCombo = () => {
       const combo: HTMLSelectElement | null =
         document.querySelector(".goog-te-combo");
       if (combo) {
-        setReady(true);
-        if (!comboBoundRef.current) {
-          comboBoundRef.current = true;
-          combo.addEventListener("change", () => {
-            const v = combo.value || "en";
-            setCurrent(v);
-            try {
-              localStorage.setItem("googtrans", `/en/${v}`);
-            } catch {
-            }
-            try {
-              window.dispatchLanguageChanged?.(v);
-            } catch {
-            }
-          });
+        if (!(combo as any).__gtSelectBound) {
+          (combo as any).__gtSelectBound = true;
+          combo.addEventListener("change", onComboChange);
         }
-        const saved = readSavedLang();
-        if (saved && saved !== "en" && combo.value !== saved) {
-          combo.value = saved;
-          combo.dispatchEvent(new Event("change"));
+        const saved = readSavedLangCode();
+        if (saved && combo.value !== saved) {
+          tryApplyOnCombo(saved);
+          setCurrent(saved);
+        } else {
+          setCurrent(combo.value || "en");
         }
       }
     };
 
     waitCombo();
-
     const obs = new MutationObserver(() => waitCombo());
     obs.observe(document.documentElement, { childList: true, subtree: true });
 
     const storageListener = () => {
-      setCurrent(readSavedLang());
-      waitCombo();
+      const c = readSavedLangCode();
+      setCurrent(c);
+      tryApplyOnCombo(c);
     };
     window.addEventListener("storage", storageListener);
 
@@ -196,10 +198,13 @@ export function GoogleTranslateSelect({
       const code = (e as CustomEvent<string>).detail;
       if (code) setCurrent(code);
     };
-    window.addEventListener("gt:lang-changed", onLangChanged);
+    window.addEventListener("gt:lang-changed", onLangChanged as any);
 
     const onClickOutside = (e: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -208,33 +213,21 @@ export function GoogleTranslateSelect({
     return () => {
       obs.disconnect();
       window.removeEventListener("storage", storageListener);
-      window.removeEventListener("gt:lang-changed", onLangChanged);
+      window.removeEventListener("gt:lang-changed", onLangChanged as any);
       document.removeEventListener("mousedown", onClickOutside);
     };
   }, []);
 
   const applyLang = (code: string) => {
-    const combo: HTMLSelectElement | null =
-      document.querySelector(".goog-te-combo");
-    if (combo) {
-      if (combo.value !== code) {
-        combo.value = code;
-        combo.dispatchEvent(new Event("change"));
-      }
-    } else {
-      try {
-        localStorage.setItem("googtrans", `/en/${code}`);
-      } catch {
-      }
-    }
+    persistLang(code);
+    tryApplyOnCombo(code);
     setCurrent(code);
     setOpen(false);
     try {
       window.dispatchEvent(
         new CustomEvent("gt:lang-changed", { detail: code }),
       );
-    } catch {
-    }
+    } catch {}
   };
 
   const meta = getLangMeta(current);
@@ -258,8 +251,7 @@ export function GoogleTranslateSelect({
           background: rgba(148, 163, 184, 0.2);
           border-radius: 9999px;
         }
-        .language-select-root
-          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        .language-select-root .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: rgba(148, 163, 184, 0.4);
         }
       `}</style>
@@ -267,28 +259,43 @@ export function GoogleTranslateSelect({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        disabled={!ready}
         title="Select Language"
-        className={`group flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 backdrop-blur px-3 py-2 text-slate-200 transition-all hover:border-emerald-500/30 hover:bg-white/10 hover:text-white disabled:opacity-70 disabled:cursor-not-allowed h-10`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={`group flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur px-3.5 py-2 text-slate-200 transition-all hover:border-emerald-500/30 hover:bg-white/10 hover:text-white h-10 ${
+          compact ? "px-2.5" : ""
+        }`}
       >
-        <div className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-sm text-[14px] leading-none">
-          <span>{meta.flag}</span>
-        </div>
-        {!compact && (
-          <span className="text-[12.5px] font-semibold tabular-nums max-w-[120px] truncate">
-            {meta.label}
-          </span>
-        )}
-        {ready ? (
-          <ChevronDown
-            className={`h-3.5 w-3.5 text-slate-400 transition-transform ${
-              open ? "rotate-180 text-emerald-400" : ""
-            }`}
-          />
+        {compact ? (
+          <>
+            {current !== "en" ? (
+              <span className="text-[14px] leading-none shrink-0">{meta.flag}</span>
+            ) : (
+              <Globe className="h-4.5 w-4.5 text-slate-400 group-hover:text-emerald-400" />
+            )}
+            <ChevronDown
+              className={`h-3.5 w-3.5 text-slate-400 transition-transform ${
+                open ? "rotate-180 text-emerald-400" : ""
+              }`}
+            />
+          </>
         ) : (
-          <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" />
+          <>
+            {current !== "en" ? (
+              <span className="text-[14px] leading-none shrink-0 w-6 text-center">{meta.flag}</span>
+            ) : (
+              <Globe className="h-4 w-4 shrink-0 text-slate-400 group-hover:text-emerald-400" />
+            )}
+            <span className="text-[12.5px] font-semibold tabular-nums text-slate-300 group-hover:text-white">
+              {current !== "en" ? meta.label : "Select Language"}
+            </span>
+            <ChevronDown
+              className={`h-3.5 w-3.5 text-slate-400 transition-transform ${
+                open ? "rotate-180 text-emerald-400" : ""
+              }`}
+            />
+          </>
         )}
-        <Globe className="h-3.5 w-3.5 text-slate-500 group-hover:text-emerald-400" />
       </button>
 
       {open && (
@@ -356,6 +363,8 @@ export function GoogleTranslateSelect({
                   <button
                     key={lang.code}
                     type="button"
+                    role="option"
+                    aria-selected={active}
                     onClick={() => applyLang(lang.code)}
                     className={`group flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition ${
                       active
@@ -382,7 +391,10 @@ export function GoogleTranslateSelect({
 
           <div className="flex items-center justify-between border-t border-white/5 px-4 py-2.5 bg-slate-950/50">
             <p className="text-[10px] text-slate-500">
-              {TOP_LANGS.length} languages supported
+              {TOP_LANGS.length} languages supported — currently:&nbsp;
+              <span className="font-semibold text-slate-400">
+                {meta.flag} {meta.label}
+              </span>
             </p>
             <button
               type="button"

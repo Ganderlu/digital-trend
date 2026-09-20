@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
@@ -574,15 +574,22 @@ export default function TradePage() {
   }, [router]);
 
   useEffect(() => {
+    let cancelled = false;
     const interval = setInterval(() => {
-      setNow(Date.now());
-      setLivePrice((prev) => {
-        const delta = (Math.random() - 0.5) * prev * 0.0005;
-        return prev + delta;
+      if (cancelled) return;
+      startTransition(() => {
+        setNow(Date.now());
+        setLivePrice((prev) => {
+          const delta = (Math.random() - 0.5) * prev * 0.0005;
+          return prev + delta;
+        });
+        setCountdown((c) => (c <= 1 ? 28 : c - 1));
       });
-      setCountdown((c) => (c <= 1 ? 28 : c - 1));
     }, 1000);
-    return () => clearInterval(interval);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -590,7 +597,9 @@ export default function TradePage() {
   }, [selectedAsset, livePrice]);
 
   useEffect(() => {
+    let cancelled = false;
     const interval = setInterval(() => {
+      if (cancelled) return;
       const db = getFirebaseFirestore();
 
       setActiveTrades((trades): ActiveTrade[] => {
@@ -689,7 +698,10 @@ export default function TradePage() {
         return updated.filter((t) => t.status === "active");
       });
     }, 1000);
-    return () => clearInterval(interval);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [
     user?.uid,
     profile?.balance,
@@ -701,14 +713,31 @@ export default function TradePage() {
     if (!chartContainer.current || loading) return;
     const token = ++chartLoadToken.current;
     const container = chartContainer.current;
+    if (typeof container.isConnected === "boolean" && !container.isConnected)
+      return;
     const { clientWidth, clientHeight } = container;
 
-    container.innerHTML = "";
+    try {
+      if (typeof container.replaceChildren === "function") {
+        container.replaceChildren();
+      } else {
+        container.innerHTML = "";
+      }
+    } catch {
+      try {
+        container.innerHTML = "";
+      } catch {}
+    }
     const widgetRoot = document.createElement("div");
     widgetRoot.className = "tradingview-widget-container__widget h-full w-full";
+    widgetRoot.id = `tv-root-${chartRenderKey.current}`;
     widgetRoot.style.width = "100%";
     widgetRoot.style.height = "100%";
-    container.appendChild(widgetRoot);
+    try {
+      container.appendChild(widgetRoot);
+    } catch {
+      return;
+    }
 
     const intervalMap: Record<string, string> = {
       "1M": "1",
@@ -750,17 +779,25 @@ export default function TradePage() {
       support_host: "https://www.tradingview.com",
       container_id: widgetRoot.id,
     };
-    script.innerHTML = JSON.stringify(cfg);
+    try {
+      script.innerHTML = JSON.stringify(cfg);
+    } catch {}
     script.onload = () => {
       if (chartLoadToken.current !== token) {
-        const wrapper = container.querySelector(
-          ".tradingview-widget-container__widget",
-        );
-        if (wrapper) wrapper.innerHTML = "";
+        try {
+          const wrapper = container.querySelector(
+            ".tradingview-widget-container__widget",
+          );
+          if (wrapper) wrapper.innerHTML = "";
+        } catch {}
       }
     };
-    container.appendChild(script);
-    setLivePrice(selectedAsset.price);
+    try {
+      container.appendChild(script);
+    } catch {}
+    try {
+      setLivePrice(selectedAsset.price);
+    } catch {}
   };
 
   useEffect(() => {
