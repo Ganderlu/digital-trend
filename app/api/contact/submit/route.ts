@@ -7,7 +7,7 @@ function escapeHtml(input: string) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll("\"", "&quot;")
+    .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
 }
 
@@ -16,8 +16,10 @@ export async function POST(request: Request) {
     const body = await request.json();
     const name = typeof body?.name === "string" ? body.name.trim() : "";
     const email = typeof body?.email === "string" ? body.email.trim() : "";
-    const goal = typeof body?.goal === "string" ? body.goal.trim() : "Not specified";
-    const message = typeof body?.message === "string" ? body.message.trim() : "";
+    const goal =
+      typeof body?.goal === "string" ? body.goal.trim() : "Not specified";
+    const message =
+      typeof body?.message === "string" ? body.message.trim() : "";
 
     if (!name || !email || !message) {
       return NextResponse.json(
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
 
     const appName = process.env.APP_NAME || "TeveXtra";
     const supportEmail =
-      process.env.SUPPORT_EMAIL || "tevextraadvisors@gmail.com";
+      process.env.SUPPORT_EMAIL || "support@tevextra.com";
 
     const db = getAdminDb();
     await db.collection("contacts").add({
@@ -187,9 +189,6 @@ Reply to this email to respond to the customer, or contact them directly at: ${e
     console.error("Contact form error:", error);
     const message =
       error instanceof Error ? error.message : "An unexpected error occurred.";
-    return NextResponse.json(
-      { ok: false, error: message },
-      { status: 500 },
-    );
+    return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 }
