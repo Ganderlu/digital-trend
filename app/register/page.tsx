@@ -475,8 +475,8 @@ function RegisterForm() {
   function StepIndicator() {
     return (
       <div className="mb-7">
-        <ol className="grid grid-cols-4 gap-2 sm:gap-4">
-          {STEPS.map((s) => {
+        <ol className="relative grid grid-cols-4 gap-1 sm:gap-3">
+          {STEPS.map((s, idx) => {
             const active = step === s.num;
             const done = step > s.num;
             const ring = active
@@ -485,27 +485,40 @@ function RegisterForm() {
                 ? "ring-0"
                 : "ring-0";
             const bg = active
-              ? "bg-emerald-500 text-white border-emerald-400"
+              ? "bg-emerald-500 text-white border-emerald-400 shadow-lg shadow-emerald-500/20"
               : done
                 ? "bg-emerald-500 text-white border-emerald-400"
-                : "bg-slate-800 text-slate-400 border-white/5";
+                : "bg-slate-800/80 text-slate-400 border-white/10";
+            const showConnector = idx < STEPS.length - 1;
+            const connectorDone = done;
             return (
               <li
                 key={s.num}
-                className="flex flex-col items-center text-center"
+                className="relative flex flex-col items-center text-center"
               >
+                {showConnector && (
+                  <div
+                    className={`pointer-events-none absolute left-[calc(50%+18px)] top-[22px] right-[-50%] hidden sm:block h-0.5 ${
+                      connectorDone ? "bg-emerald-500" : "bg-slate-800"
+                    }`}
+                    aria-hidden
+                  />
+                )}
                 <div
-                  className={`flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border-2 transition-all ${bg} ${ring}`}
+                  className={`relative z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl border-2 transition-all ${bg} ${ring}`}
                 >
                   {done ? (
-                    <CheckCircle2 className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+                    <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
                   ) : (
-                    <span className="text-sm font-black">{s.num}</span>
+                    <s.Icon
+                      className="h-4 w-4 sm:h-5 sm:w-5"
+                      strokeWidth={2.4}
+                    />
                   )}
                 </div>
-                <div className="mt-2">
+                <div className="mt-2 w-full">
                   <p
-                    className={`text-[11px] sm:text-xs font-bold ${
+                    className={`text-[10px] sm:text-xs font-black tracking-tight ${
                       active
                         ? "text-white"
                         : done
@@ -515,7 +528,7 @@ function RegisterForm() {
                   >
                     {s.title}
                   </p>
-                  <p className="text-[10px] text-slate-500 hidden sm:block">
+                  <p className="hidden sm:block text-[10px] text-slate-500 mt-0.5 leading-tight">
                     {s.subtitle}
                   </p>
                 </div>
@@ -523,7 +536,7 @@ function RegisterForm() {
             );
           })}
         </ol>
-        <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-4">
+        <div className="mt-5 grid grid-cols-3 gap-1.5 sm:gap-4">
           <div
             className={`h-1 rounded-full ${
               step > 1 ? "bg-emerald-500" : "bg-slate-800"
@@ -590,63 +603,75 @@ function RegisterForm() {
         />
       </div>
 
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center justify-center px-6 py-16 md:py-24 min-h-screen">
-        <section className="grid w-full max-w-5xl gap-12 rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-slate-900/80 backdrop-blur p-8 sm:p-12 md:grid-cols-[1.1fr_0.9fr] shadow-[0_40px_120px_-40px_rgba(0,0,0,0.6)] transition-colors duration-300">
-          {/* Left column: info */}
-          <div className="relative flex flex-col justify-between">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center justify-center px-3 py-10 sm:px-6 sm:py-16 md:py-24 min-h-screen">
+        <section className="relative grid w-full max-w-5xl gap-6 md:gap-12 rounded-3xl sm:rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-slate-900/85 via-slate-900/65 to-slate-900/85 backdrop-blur-sm p-4 sm:p-8 md:p-10 lg:grid-cols-[1.05fr_0.95fr] shadow-[0_40px_120px_-40px_rgba(0,0,0,0.6)] transition-colors duration-300">
+          {/* Left column: info (hidden on mobile, gives more space to form) */}
+          <div className="hidden lg:flex lg:flex-col lg:justify-between rounded-[2rem] border border-white/5 bg-gradient-to-br from-emerald-500/5 via-slate-900/10 to-indigo-500/5 p-7">
             <div>
-              <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/20 border border-emerald-500/30">
-                  <Rocket className="h-3.5 w-3.5 text-emerald-400" />
+              <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-1.5">
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/20 border border-emerald-500/30">
+                  <Rocket className="h-3 w-3 text-emerald-400" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">
+                <span className="text-[10px] font-black uppercase tracking-[0.28em] text-emerald-400">
                   Create Your Account
                 </span>
               </div>
-              <h1 className="text-balance text-4xl font-black tracking-tight text-white sm:text-5xl leading-[1.1]">
+              <h1 className="text-balance text-3xl font-black tracking-tight text-white xl:text-4xl leading-[1.08]">
                 Join TeveXtra and start building your portfolio.
               </h1>
-              <p className="mt-6 text-lg leading-relaxed text-slate-400">
+              <p className="mt-5 text-[14px] leading-relaxed text-slate-400">
                 Open a verified trading account in minutes. Complete 4 simple
                 steps to fund, trade, and monitor your investments with
                 institutional-grade security and full regulatory compliance.
               </p>
-              <div className="mt-10 space-y-4">
-                {[
-                  {
-                    title: "KYC-verified accounts for secure withdrawals",
-                    icon: ShieldCheck,
-                  },
-                  {
-                    title: "Instant deposit methods and multi-currency support",
-                    icon: CreditCard,
-                  },
-                  {
-                    title: "Professional dashboard with real-time analytics",
-                    icon: TrendingUp,
-                  },
-                  {
-                    title: "Earn rewards through our referral program",
-                    icon: Sparkles,
-                  },
-                ].map((b) => (
-                  <div key={b.title} className="flex items-center gap-3">
-                    <div className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500" />
-                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-300">
-                      <b.icon className="h-4 w-4 text-emerald-400" />
-                      <span>{b.title}</span>
-                    </div>
+
+              <div className="mt-7 rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/30">
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
                   </div>
-                ))}
+                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-400">
+                    Membership benefits
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    {
+                      title: "KYC-verified accounts for secure withdrawals",
+                      icon: ShieldCheck,
+                    },
+                    {
+                      title:
+                        "Instant deposit methods and multi-currency support",
+                      icon: CreditCard,
+                    },
+                    {
+                      title: "Professional dashboard with real-time analytics",
+                      icon: TrendingUp,
+                    },
+                    {
+                      title: "Earn rewards through our referral program",
+                      icon: Sparkles,
+                    },
+                  ].map((b) => (
+                    <div key={b.title} className="flex items-center gap-3">
+                      <div className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500" />
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 leading-snug">
+                        <b.icon className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                        <span>{b.title}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {referredBy && (
-                <div className="mt-10 rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent p-4 max-w-sm">
+                <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent p-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/20 border border-emerald-500/30">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex-shrink-0">
                       <Sparkles className="h-4 w-4 text-emerald-400" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <div className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
                         Referred by
                       </div>
@@ -660,14 +685,46 @@ function RegisterForm() {
               )}
             </div>
 
-            <p className="mt-10 text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
-              Security notice: Your data is encrypted end-to-end and never
-              shared with third parties.
-            </p>
+            <div className="mt-6 rounded-2xl border border-emerald-500/15 bg-emerald-500/5 p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/25 flex-shrink-0">
+                  <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                </div>
+                <p className="text-[11px] leading-relaxed text-slate-400">
+                  Your data is encrypted end-to-end and stored on ISO 27001
+                  certified servers. TeveXtra never shares your personal
+                  information with unaffiliated third parties.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile-only: compact top intro */}
+          <div className="lg:hidden">
+            <div className="flex items-center justify-between mb-5">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5">
+                <div className="flex h-5.5 w-5.5 items-center justify-center rounded-md bg-emerald-500/15 border border-emerald-500/25">
+                  <Rocket className="h-3 w-3 text-emerald-400" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
+                  Join TeveXtra
+                </span>
+              </div>
+              {referredBy && (
+                <div className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5">
+                  <span className="text-[10px] font-bold text-emerald-300">
+                    Ref: {referredBy}
+                  </span>
+                </div>
+              )}
+            </div>
+            <h1 className="text-2xl font-black tracking-tight text-white leading-tight">
+              Build your investment portfolio in 4 steps.
+            </h1>
           </div>
 
           {/* Right column: form */}
-          <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-slate-950/70 to-slate-900/60 backdrop-blur p-6 sm:p-8 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.4)] transition-colors duration-300">
+          <div className="relative rounded-2xl sm:rounded-3xl border border-white/10 bg-gradient-to-br from-slate-950/70 to-slate-900/60 backdrop-blur-sm p-4 sm:p-7 md:p-8 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.4)] transition-colors duration-300">
             {/* Decorative corner ring */}
             <div className="absolute -top-6 -right-6 h-24 w-24 rounded-full bg-gradient-to-br from-emerald-500/25 via-teal-500/10 to-transparent blur-2xl opacity-70" />
 
@@ -1101,124 +1158,221 @@ function RegisterForm() {
                 <div className="animate-[fadeIn_.3s_ease]">
                   <StepHeaderCard
                     icon={Camera}
-                    title="Profile Image Verification"
-                    subtitle="Upload a clear photo of yourself so we can verify your account"
+                    title="Profile Photo Verification"
+                    subtitle="Final step — upload a clear photo to secure your account and enable withdrawals"
                   />
-                  <div className="grid gap-6 sm:grid-cols-[1fr_1fr]">
-                    <div
-                      onClick={handleFilePickClick}
-                      className={`group relative cursor-pointer rounded-3xl border-2 border-dashed transition-all overflow-hidden ${
-                        profileImageDataUrl
-                          ? "border-emerald-500/40 bg-slate-950/40"
-                          : "border-white/15 bg-slate-950/50 hover:border-emerald-500/50 hover:bg-slate-950/80"
-                      }`}
-                    >
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleFileSelected}
-                      />
-                      {profileImageDataUrl ? (
-                        <div className="relative aspect-square">
-                          <img
-                            src={profileImageDataUrl}
-                            alt="Profile preview"
-                            className="h-full w-full object-cover"
-                            crossOrigin="anonymous"
+
+                  <div className="mb-5 rounded-2xl border border-emerald-500/15 bg-emerald-500/5 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex-shrink-0">
+                        <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-black text-white">
+                          This unlocks full account access
+                        </p>
+                        <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">
+                          Verified members can deposit, withdraw, and
+                          participate in the referral rewards program
+                          immediately.
+                        </p>
+                      </div>
+                      <div className="ml-auto hidden sm:flex flex-shrink-0 items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300">
+                          Final step
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-6 lg:grid-cols-[1fr_1.05fr] xl:gap-7">
+                    {/* Avatar upload column */}
+                    <div className="flex flex-col items-center">
+                      <div
+                        onClick={handleFilePickClick}
+                        className={`group relative cursor-pointer transition-all select-none ${
+                          profileImageDataUrl ? "" : "hover:-translate-y-0.5"
+                        }`}
+                      >
+                        <div
+                          className={`relative flex items-center justify-center transition-all ${
+                            profileImageDataUrl
+                              ? "rounded-full border-4 border-emerald-500/40 bg-slate-950 shadow-[0_20px_50px_-15px_rgba(16,185,129,0.35)]"
+                              : "rounded-full border-[3px] border-dashed border-white/15 bg-slate-950/70 hover:border-emerald-500/40 hover:bg-slate-950"
+                          } ${
+                            profileImageDataUrl
+                              ? "h-48 w-48 sm:h-56 sm:w-56"
+                              : "h-48 w-48 sm:h-56 sm:w-56"
+                          }`}
+                        >
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleFileSelected}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
-                          <div className="absolute left-4 bottom-4 right-4 flex items-center justify-between">
-                            <div>
-                              <p className="text-xs font-black text-white truncate max-w-[180px]">
-                                {profileFileName || "Your photo"}
+                          {profileImageDataUrl ? (
+                            <>
+                              <img
+                                src={profileImageDataUrl}
+                                alt="Profile preview"
+                                className="h-full w-full rounded-full object-cover"
+                                crossOrigin="anonymous"
+                              />
+                              <div className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-white/10" />
+                              <div className="absolute -bottom-1.5 right-1">
+                                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-xl shadow-emerald-500/40 border-4 border-slate-950">
+                                  <CheckCircle2 className="h-5 w-5" />
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleFilePickClick();
+                                }}
+                                className="absolute -top-2 -right-1 flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 border border-white/10 text-white/80 hover:text-white hover:bg-slate-800 shadow-lg transition-all"
+                                aria-label="Replace photo"
+                              >
+                                <Camera className="h-4 w-4" />
+                              </button>
+                            </>
+                          ) : (
+                            <div className="flex flex-col items-center justify-center p-6 text-center">
+                              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[20px] bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-teal-500/5 border border-white/10 group-hover:scale-105 transition-transform">
+                                <UserRound
+                                  className="h-8 w-8 text-emerald-400/80"
+                                  strokeWidth={1.6}
+                                />
+                              </div>
+                              <p className="text-sm font-black text-white leading-tight">
+                                Your profile photo
                               </p>
-                              <p className="text-[11px] text-emerald-300 mt-0.5 flex items-center gap-1">
-                                <CheckCircle2 className="h-3 w-3" />
-                                Selected for verification
+                              <p className="mt-1.5 text-[11px] text-slate-400 leading-relaxed max-w-[180px]">
+                                Tap to upload a clear, front-facing selfie
                               </p>
                             </div>
-                            <div className="rounded-xl bg-emerald-500/20 border border-emerald-500/40 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-300">
-                              Ready
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-5 w-full max-w-xs">
+                        <button
+                          type="button"
+                          onClick={handleFilePickClick}
+                          className={`w-full inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-black transition-all active:translate-y-0 ${
+                            profileImageDataUrl
+                              ? "border border-white/10 bg-slate-900/80 text-slate-200 hover:bg-slate-800 hover:text-white"
+                              : "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-xl shadow-emerald-500/30 hover:brightness-110 hover:-translate-y-0.5"
+                          }`}
+                        >
+                          {profileImageDataUrl ? (
+                            <>
+                              <Upload className="h-4 w-4" />
+                              Choose a different photo
+                            </>
+                          ) : (
+                            <>
+                              <Camera className="h-4 w-4" />
+                              Upload verification photo
+                            </>
+                          )}
+                        </button>
+                        {profileFileName && (
+                          <div className="mt-3 flex items-center justify-center gap-2">
+                            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 max-w-[280px] truncate">
+                              <CheckCircle2 className="h-3 w-3 text-emerald-400 flex-shrink-0" />
+                              <span className="text-[11px] font-bold text-emerald-300 truncate">
+                                {profileFileName}
+                              </span>
                             </div>
                           </div>
-                        </div>
-                      ) : (
-                        <div className="aspect-square flex flex-col items-center justify-center p-8 text-center">
-                          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-white/5 group-hover:scale-105 transition-transform">
-                            <Upload className="h-7 w-7 text-emerald-400" />
-                          </div>
-                          <p className="text-base font-black text-white">
-                            Click to upload your photo
-                          </p>
-                          <p className="mt-1 text-xs text-slate-400 max-w-xs">
-                            JPG, PNG or WEBP · Max 5MB · Clear, well-lit selfie
-                            recommended
-                          </p>
-                          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-300">
-                            <Camera className="h-3 w-3" />
-                            Choose file
-                          </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
 
+                    {/* Info column: requirements + tips + why */}
                     <div className="space-y-4">
-                      <div className="rounded-2xl border border-emerald-500/20 bg-slate-950/50 p-5">
-                        <h3 className="text-sm font-black text-white mb-3 flex items-center gap-2">
-                          <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                          Photo requirements
-                        </h3>
-                        <ul className="space-y-2.5">
+                      {/* Requirements */}
+                      <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-5">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-sm font-black text-white flex items-center gap-2">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/25">
+                              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                            </div>
+                            Photo requirements
+                          </h3>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                            KYC compliant
+                          </span>
+                        </div>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2.5">
                           {[
-                            "Clear, high-resolution photo of your face",
-                            "Good lighting, no sunglasses or masks",
-                            "Front-facing, eyes open and visible",
-                            "JPG, PNG, or WEBP format under 5MB",
+                            "Clear, high-resolution photo",
+                            "Good natural lighting",
+                            "No sunglasses or face masks",
+                            "Front-facing, eyes visible",
+                            "No hats or heavy filters",
+                            "JPG / PNG / WEBP under 5MB",
                           ].map((t) => (
                             <li
                               key={t}
-                              className="flex items-start gap-2 text-xs text-slate-300 leading-relaxed"
+                              className="flex items-center gap-2 text-[11px] text-slate-300 leading-snug"
                             >
-                              <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-emerald-400" />
+                              <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/30">
+                                <span className="block h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                              </span>
                               {t}
                             </li>
                           ))}
                         </ul>
                       </div>
 
-                      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
-                        <h3 className="text-sm font-black text-amber-300 mb-1.5 flex items-center gap-2">
-                          <ShieldAlert className="h-4 w-4" />
-                          Why we need this
-                        </h3>
-                        <p className="text-xs text-slate-400 leading-relaxed">
-                          Your photo is used solely for identity verification
-                          per KYC/AML regulations. It helps secure your account
-                          against fraud and ensures withdrawals are processed
-                          smoothly. You can replace it anytime from your
-                          dashboard.
-                        </p>
+                      {/* Tips */}
+                      <div className="rounded-2xl border border-sky-500/15 bg-sky-500/5 p-5">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500/15 border border-sky-500/25 flex-shrink-0">
+                            <Sparkles className="h-4 w-4 text-sky-400" />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="text-xs font-black text-white mb-1.5">
+                              Quick tips for instant approval
+                            </h3>
+                            <p className="text-[11px] text-slate-400 leading-relaxed">
+                              Use a plain, well-lit background (white or neutral
+                              wall is ideal). Selfies are fine — this is not a
+                              passport photo. You&apos;ll receive confirmation
+                              via email within minutes.
+                            </p>
+                          </div>
+                        </div>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={handleFilePickClick}
-                        className="w-full rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-black text-emerald-300 transition-all hover:bg-emerald-500/20 flex items-center justify-center gap-2"
-                      >
-                        {profileImageDataUrl ? (
-                          <>
-                            <Camera className="h-4 w-4" />
-                            Choose a different photo
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="h-4 w-4" />
-                            Select photo from device
-                          </>
-                        )}
-                      </button>
+                      {/* Why we need this */}
+                      <div className="rounded-2xl border border-amber-500/15 bg-amber-500/5 p-5">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15 border border-amber-500/25 flex-shrink-0">
+                            <ShieldAlert className="h-4 w-4 text-amber-400" />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="text-xs font-black text-amber-300 mb-1.5">
+                              Why we require this
+                            </h3>
+                            <p className="text-[11px] text-slate-400 leading-relaxed">
+                              Your photo enables KYC verification per global
+                              anti-fraud and AML regulations. It ensures only
+                              <em className="not-italic text-slate-300 font-semibold">
+                                {" "}
+                                you
+                              </em>{" "}
+                              can approve withdrawals on your account. It&apos;s
+                              encrypted and never shared publicly.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1226,30 +1380,36 @@ function RegisterForm() {
 
               <div className="mt-8 space-y-4">
                 {stepError && (
-                  <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-3.5">
-                    <p className="text-xs font-bold text-red-300 leading-relaxed">
-                      {stepError}
-                    </p>
+                  <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4">
+                    <div className="flex items-start gap-2.5">
+                      <ShieldAlert className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs font-bold text-red-300 leading-relaxed">
+                        {stepError}
+                      </p>
+                    </div>
                   </div>
                 )}
                 {success && (
-                  <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3.5">
-                    <p className="text-xs font-bold text-emerald-300 leading-relaxed">
-                      {success}
-                    </p>
+                  <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+                    <div className="flex items-start gap-2.5">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs font-bold text-emerald-300 leading-relaxed">
+                        {success}
+                      </p>
+                    </div>
                   </div>
                 )}
 
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="text-xs text-slate-500 font-bold tracking-wide order-2 sm:order-1">
                     Step {step} of 4
                   </div>
-                  <div className="flex gap-3 justify-end order-1 sm:order-2">
+                  <div className="flex flex-col-reverse sm:flex-row gap-2.5 sm:gap-3 justify-stretch sm:justify-end order-1 sm:order-2 w-full sm:w-auto">
                     {step > 1 && !submitting && (
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-slate-900 px-5 py-3.5 text-sm font-black text-slate-300 transition-all hover:bg-slate-800 hover:text-white"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/10 bg-slate-900 px-6 py-3.5 text-sm font-black text-slate-300 transition-all hover:bg-slate-800 hover:text-white"
                       >
                         <ChevronLeft className="h-4 w-4" />
                         Back
@@ -1260,29 +1420,25 @@ function RegisterForm() {
                         type="button"
                         onClick={nextStep}
                         disabled={submitting}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-7 py-3.5 text-sm font-black text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-7 py-3.5 text-sm font-black text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
                       >
                         Continue
                         <ChevronRight className="h-4 w-4" />
                       </button>
                     ) : submitting ? (
-                      <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-7 py-3.5 text-sm font-black text-white shadow-xl shadow-emerald-500/30 opacity-90 cursor-wait">
-                        {uploadingImage ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        )}
+                      <div className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-7 py-3.5 text-sm font-black text-white shadow-xl shadow-emerald-500/30 opacity-90 cursor-wait">
+                        <Loader2 className="h-4 w-4 animate-spin" />
                         {uploadingImage
-                          ? "Uploading verification photo..."
-                          : "Creating your secure account..."}
+                          ? "Uploading photo..."
+                          : "Creating your account..."}
                       </div>
                     ) : (
                       <button
                         type="submit"
-                        className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-7 py-3.5 text-sm font-black text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-7 py-3.5 text-sm font-black text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0"
                       >
                         <CheckCircle2 className="h-4 w-4" />
-                        Create Account & Verify
+                        Create My Verified Account
                       </button>
                     )}
                   </div>
@@ -1290,8 +1446,8 @@ function RegisterForm() {
               </div>
             </form>
 
-            <div className="mt-8 border-t border-white/5 pt-6 text-center">
-              <p className="text-sm text-slate-500">
+            <div className="mt-7 border-t border-white/5 pt-5 text-center">
+              <p className="text-[12px] text-slate-500 leading-relaxed">
                 Already have an account?{" "}
                 <Link
                   href="/login"

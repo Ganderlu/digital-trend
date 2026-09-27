@@ -63,7 +63,7 @@ const TEMPLATES: {
       "We hope this message finds you well. Each month, our team puts together a snapshot of what's happening in the markets and how it impacts your portfolio. Thank you for the continued trust you place in TeveXtra.",
     body: "· Portfolio performance for the month exceeded benchmark by +1.4%\n· Tech and sustainable equities sectors led the rally\n· The TeveXtra Wealth team has been rebalancing portfolios to lock in gains\n· Our 2026 outlook report will be published next week — stay tuned\n\nIf you'd like to discuss your strategy, reply to this email or schedule a call directly from your dashboard.",
     ctaLabel: "Review My Portfolio",
-    ctaUrl: "https://tevextra.example.com/dashboard",
+    ctaUrl: "https://tevextra.com/dashboard",
     outro:
       "As a reminder, your dedicated advisor is always available. There's no question too big or too small — we're here to help.",
   },
@@ -77,7 +77,7 @@ const TEMPLATES: {
       "Great news — after months of research and portfolio construction, we're officially launching the new TeveXtra Global Income Plan.",
     body: "Built for investors who want a steady stream of income alongside long-term growth, the Global Income Plan targets 48 diversified holdings across equities, bonds, REITs, and covered calls.\n\nKey features:\n· Estimated 5.2% annual yield with monthly distributions\n· Global sector diversification\n· Historically lower volatility vs. pure growth portfolios\n· Minimum investment: $2,500\n\nMembers can upgrade or open a new position directly from the dashboard.",
     ctaLabel: "Learn About the New Plan",
-    ctaUrl: "https://tevextra.example.com/investment-plans",
+    ctaUrl: "https://tevextra.com/investment-plans",
     outro:
       "If you'd like to know whether the Global Income Plan fits your goals, simply reply and we'll schedule a complimentary review.",
   },
@@ -91,7 +91,7 @@ const TEMPLATES: {
       "You've probably seen the headlines — markets have been moving quickly this week. Here's our perspective in plain language.",
     body: "The recent pullback is primarily driven by inflation data and sector rotation. Importantly, the diversified portfolios we build for TeveXtra members are designed to weather exactly these kinds of storms.\n\nWhat we're watching:\n· Inflation trends and central bank commentary\n· Earnings quality across the holdings in your portfolio\n· Rebalancing opportunities where overweights have emerged\n\nThis is not a time for emotional decisions. Stick to the plan we built together — that's how long-term wealth is created.",
     ctaLabel: "Book an Advisor Call",
-    ctaUrl: "https://tevextra.example.com/contact",
+    ctaUrl: "https://tevextra.com/contact",
     outro:
       "If you're feeling uneasy, you're not alone. We're here. A quick 15-minute call with your advisor can often provide the clarity you need.",
   },
@@ -105,7 +105,7 @@ const TEMPLATES: {
       "The best compliment we can receive is a referral from a member like you. Thank you to everyone who has already shared TeveXtra with friends and family.",
     body: "Here's how the referral program works:\n1. Share your unique referral link (available on the Referrals page)\n2. Your friend signs up and makes their first qualifying deposit\n3. You both receive a $100 bonus added to your account balance\n\nThere's no limit on referrals — refer as many people as you'd like.",
     ctaLabel: "Get My Referral Link",
-    ctaUrl: "https://tevextra.example.com/referrals",
+    ctaUrl: "https://tevextra.com/referrals",
     outro:
       "If you know someone who's been looking for a smarter way to invest, this could be the perfect nudge. Thank you, sincerely, for being part of the TeveXtra community.",
   },
@@ -455,6 +455,23 @@ export default function AdminNewsletterPage() {
   function audienceLabel(aud: string) {
     const opt = AUDIENCE_OPTIONS.find((o) => o.value === aud);
     return opt?.label || aud;
+  }
+
+  function senderDisplay(sentByRaw: string | undefined) {
+    const SENDER = "TeveXtra Admin";
+    if (!sentByRaw) return SENDER;
+    const isGmail = /@gmail\.com$/i.test(sentByRaw.trim());
+    if (isGmail) return SENDER;
+    if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(sentByRaw.trim())) {
+      const local = sentByRaw.trim().split("@")[0];
+      if (local) {
+        const pretty = local
+          .replace(/[._-]+/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+        if (pretty.length >= 2) return `${pretty} · ${SENDER}`;
+      }
+    }
+    return sentByRaw;
   }
 
   if (loading) {
@@ -1111,7 +1128,7 @@ export default function AdminNewsletterPage() {
                                 <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
                                   {audienceLabel(h.audience)}
                                 </span>
-                                <span>Sent by {h.sentBy || "Admin"}</span>
+                                <span>Sent by {senderDisplay(h.sentBy)}</span>
                               </div>
                             </div>
                           </div>

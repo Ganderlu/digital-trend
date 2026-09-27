@@ -40,9 +40,12 @@ export function buildNewsletterHtml(params: {
     year,
   } = params;
 
-  const appDomain = appUrl
-    ? appUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")
-    : "";
+  const PRODUCTION_URL = "https://tevextra.com";
+  let safeAppUrl = (appUrl || "").trim().replace(/\/$/, "");
+  if (!safeAppUrl || /localhost|127\.0\.0\.1|^http:\/\/[^\/]*:3000/.test(safeAppUrl)) {
+    safeAppUrl = PRODUCTION_URL;
+  }
+  const appDomain = safeAppUrl.replace(/^https?:\/\//, "");
 
   return `<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -56,15 +59,13 @@ export function buildNewsletterHtml(params: {
   <title>${escapeHtml(subject)}</title>
   ${preheader ? `<div style="display:none;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">${escapeHtml(preheader)}</div>` : ""}
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
     body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
     table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
     img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-    body { margin: 0 !important; padding: 0 !important; width: 100% !important; font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; }
+    body { margin: 0 !important; padding: 0 !important; width: 100% !important; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; }
     a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }
     @media only screen and (max-width: 600px) {
       .container { width: 100% !important; }
-      .fluid { width: 100% !important; height: auto !important; }
       .stack-column { display: block !important; width: 100% !important; }
       .stack-column td { display: block !important; width: 100% !important; padding-left: 0 !important; padding-right: 0 !important; }
       .mobile-center { text-align: center !important; }
@@ -90,14 +91,12 @@ export function buildNewsletterHtml(params: {
                         <tr>
                           <td style="padding: 0; text-align: left;">
                             <div style="display: inline-flex; align-items: center; gap: 10px;">
-                              <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #059669, #10b981); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px -8px rgba(5,150,105,0.5);">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                                </svg>
+                              <div style="width: 40px; height: 40px; border-radius: 12px; background-color: #059669; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px -8px rgba(5,150,105,0.5);">
+                                <span style="color: #ffffff; font-size: 18px; font-weight: 800; line-height: 1;">T</span>
                               </div>
                               <div style="display: inline-block;">
                                 <div style="font-size: 18px; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">${escapeHtml(appName)}</div>
-                                <div style="font-size: 11px; color: #64748b; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;">Official Newsletter</div>
+                                <div style="font-size: 11px; color: #64748b; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;">OFFICIAL NEWSLETTER</div>
                               </div>
                             </div>
                           </td>
@@ -122,12 +121,10 @@ export function buildNewsletterHtml(params: {
 
             <tr>
               <td style="padding: 28px 24px 0 24px;" class="padding-x">
-                <div style="overflow: hidden; border-radius: 24px 24px 0 0; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #064e3b 100%); padding: 44px 40px; position: relative;">
-                  <div style="position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(16,185,129,0.25) 0%, transparent 70%);"></div>
-                  <div style="position: absolute; bottom: -30px; left: -30px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%);"></div>
+                <div style="overflow: hidden; border-radius: 24px 24px 0 0; background-color: #0f172a; padding: 44px 40px;">
                   <div style="position: relative;">
-                    <div style="display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);">
-                      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6ee7b7;">Monthly Update</span>
+                    <div style="display: inline-block; padding: 6px 14px; border-radius: 999px; background-color: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);">
+                      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6ee7b7;">TEVEXTRA UPDATE</span>
                     </div>
                     <h1 style="margin: 18px 0 0 0; font-size: 36px; font-weight: 800; color: #ffffff; line-height: 1.15; letter-spacing: -0.02em;" class="hero-title">
                       ${escapeHtml(subject)}
@@ -146,7 +143,7 @@ export function buildNewsletterHtml(params: {
                       <p style="margin: 0 0 18px 0; font-size: 16px; font-weight: 600; color: #0f172a;">${escapeHtml(greeting)}</p>
                       ${intro ? `<p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.75; color: #475569;">${nl2br(intro)}</p>` : ""}
 
-                      <div style="padding: 28px 28px; border-radius: 18px; background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 100%); border: 1px solid #dcfce7;">
+                      <div style="padding: 28px 28px; border-radius: 18px; background-color: #f0fdf4; border: 1px solid #dcfce7;">
                         <div style="font-size: 15px; line-height: 1.8; color: #1e293b;">
                           ${nl2br(body)}
                         </div>
@@ -156,7 +153,7 @@ export function buildNewsletterHtml(params: {
                       <div style="margin-top: 32px; text-align: center;" class="button">
                         <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
                           <tr>
-                            <td style="border-radius: 999px; background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 14px 28px -10px rgba(5,150,105,0.55);">
+                            <td style="border-radius: 999px; background-color: #059669; box-shadow: 0 14px 28px -10px rgba(5,150,105,0.55);">
                               <a href="${escapeHtml(ctaUrl)}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 16px 36px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none; letter-spacing: 0.01em;">
                                 ${escapeHtml(ctaLabel)}
                               </a>
@@ -172,6 +169,9 @@ export function buildNewsletterHtml(params: {
                         <p style="margin: 0 0 6px 0; font-size: 15px; font-weight: 700; color: #0f172a;">Warm regards,</p>
                         <p style="margin: 0; font-size: 15px; color: #334155;">
                           The <strong style="color: #059669;">${escapeHtml(appName)}</strong> Team
+                        </p>
+                        <p style="margin: 10px 0 0 0; font-size: 12px; color: #94a3b8; line-height: 1.6;">
+                          tevextra.com &middot; Empowering investors worldwide
                         </p>
                       </div>
                     </td>
@@ -189,10 +189,10 @@ export function buildNewsletterHtml(params: {
                         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                           <tr>
                             <td class="stack-column mobile-center" style="padding: 0; vertical-align: top;">
-                              <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #64748b;">Quick Links</div>
+                              <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #64748b;">QUICK LINKS</div>
                               <div style="margin-top: 10px; font-size: 13px; line-height: 1.7;">
-                                ${appUrl ? `<a href="${escapeHtml(appUrl)}" style="color: #059669; text-decoration: none; font-weight: 600;">Visit Dashboard</a>  ·  ` : ""}
-                                <a href="${escapeHtml(appUrl ? appUrl + "/investment-plans" : "#")}" style="color: #334155; text-decoration: none; font-weight: 500;">Plans</a>  ·  <a href="${escapeHtml(appUrl ? appUrl + "/faqs" : "#")}" style="color: #334155; text-decoration: none; font-weight: 500;">FAQs</a>  ·  <a href="${escapeHtml(appUrl ? appUrl + "/contact" : "#")}" style="color: #334155; text-decoration: none; font-weight: 500;">Contact</a>
+                                <a href="${escapeHtml(safeAppUrl)}" style="color: #059669; text-decoration: none; font-weight: 600;">Visit Dashboard</a>  &middot;
+                                <a href="${escapeHtml(safeAppUrl + "/investment-plans")}" style="color: #334155; text-decoration: none; font-weight: 500;">Plans</a>  &middot; <a href="${escapeHtml(safeAppUrl + "/faqs")}" style="color: #334155; text-decoration: none; font-weight: 500;">FAQs</a>  &middot; <a href="${escapeHtml(safeAppUrl + "/contact")}" style="color: #334155; text-decoration: none; font-weight: 500;">Contact</a>
                               </div>
                             </td>
                           </tr>
@@ -206,13 +206,16 @@ export function buildNewsletterHtml(params: {
 
             <tr>
               <td style="padding: 28px 24px 0 24px;" class="padding-x mobile-center">
-                <p style="margin: 0; font-size: 12px; line-height: 1.7; color: #94a3b8;">
+                <p style="margin: 0; font-size: 12px; line-height: 1.7; color: #94a3b8; text-align: center;">
                   This email was sent to <a href="mailto:${escapeHtml(subscriberEmail)}" style="color: #64748b; text-decoration: underline; font-weight: 500;">${escapeHtml(subscriberEmail)}</a>.
-                  ${appUrl ? ` © ${year} <a href="${escapeHtml(appUrl)}" style="color: #64748b; text-decoration: none; font-weight: 500;">${escapeHtml(appDomain || appName)}</a>.` : ` © ${year} ${escapeHtml(appName)}.`}
+                   &copy; ${year} <a href="${escapeHtml(safeAppUrl)}" style="color: #64748b; text-decoration: none; font-weight: 500;">${escapeHtml(appDomain || appName)}</a>.
                   All rights reserved.
                 </p>
-                <p style="margin: 10px 0 0 0; font-size: 11px; line-height: 1.6; color: #cbd5e1;">
-                  ${escapeHtml(appName)} · ${appDomain || "New York, NY"}
+                <p style="margin: 10px 0 0 0; font-size: 11px; line-height: 1.6; color: #cbd5e1; text-align: center;">
+                  ${escapeHtml(appName)} &middot; tevextra.com &middot; Global Investment Platform
+                </p>
+                <p style="margin: 10px 0 0 0; font-size: 11px; line-height: 1.65; color: #cbd5e1; text-align: center;">
+                  If you no longer wish to receive these emails, please contact <a href="mailto:support@tevextra.com" style="color: #94a3b8; text-decoration: underline;">support@tevextra.com</a>.
                 </p>
               </td>
             </tr>
@@ -235,6 +238,7 @@ export function buildNewsletterText(params: {
   ctaUrl?: string;
   outro?: string;
   appName: string;
+  appUrl: string;
   subscriberEmail: string;
   year: number;
 }) {
@@ -247,9 +251,16 @@ export function buildNewsletterText(params: {
     ctaUrl,
     outro,
     appName,
+    appUrl,
     subscriberEmail,
     year,
   } = params;
+
+  const PRODUCTION_URL = "https://tevextra.com";
+  let safeAppUrl = (appUrl || "").trim().replace(/\/$/, "");
+  if (!safeAppUrl || /localhost|127\.0\.0\.1|^http:\/\/[^\/]*:3000/.test(safeAppUrl)) {
+    safeAppUrl = PRODUCTION_URL;
+  }
 
   return `
 ${subject}
@@ -266,10 +277,13 @@ ${ctaLabel}: ${ctaUrl}
 
 ` : ""}${outro ? outro + "\n\n" : ""}Warm regards,
 The ${appName} Team
+tevextra.com · Empowering investors worldwide
 
 ---
 You are receiving this email because you are a registered member of ${appName}.
 Email: ${subscriberEmail}
-© ${year} ${appName}. All rights reserved.
+© ${year} ${appName} (tevextra.com). All rights reserved.
+
+If you no longer wish to receive these emails, please contact support@tevextra.com.
 `.trim();
 }

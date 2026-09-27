@@ -11,7 +11,12 @@ export async function POST(request: Request) {
     const decoded = await requireUserFromRequest(request);
 
     const appName = process.env.APP_NAME || "TeveXtra";
-    const appUrl = process.env.APP_URL || "";
+    const rawAppUrl = process.env.APP_URL || "";
+    const PRODUCTION_URL = "https://tevextra.com";
+    let appUrl = rawAppUrl.trim().replace(/\/$/, "");
+    if (!appUrl || /localhost|127\.0\.0\.1|^http:\/\/[^\/]*:3000/.test(appUrl)) {
+      appUrl = PRODUCTION_URL;
+    }
     const supportEmail = process.env.SUPPORT_EMAIL || "support@tevextra.com";
     const email = decoded.email || "";
 

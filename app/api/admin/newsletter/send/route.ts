@@ -170,13 +170,23 @@ export async function POST(request: Request) {
     }
 
     const appName = process.env.APP_NAME || "TeveXtra";
-    const appUrl = (
-      process.env.APP_URL ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      ""
-    )
+    const PRODUCTION_URL = "https://tevextra.com";
+    let appUrl = (process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "")
       .replace(/\/$/, "")
       .toString();
+    if (
+      !appUrl ||
+      /localhost|127\.0\.0\.1|^http:\/\/[^\/]*:3000/.test(appUrl)
+    ) {
+      appUrl = PRODUCTION_URL;
+    }
+    const supportEmail = process.env.SUPPORT_EMAIL || "support@tevextra.com";
+    const DEFAULT_NEWSLETTER_FROM = "TeveXtra Updates <updates@tevextra.com>";
+    const newsletterFrom =
+      process.env.NEWSLETTER_FROM ||
+      process.env.RESEND_FROM ||
+      process.env.FALLBACK_RESEND_FROM ||
+      DEFAULT_NEWSLETTER_FROM;
     const year = new Date().getFullYear();
 
     let recipients: { email: string; name?: string; uid?: string }[] = [];
@@ -233,11 +243,14 @@ export async function POST(request: Request) {
             ctaUrl,
             outro,
             appName,
+            appUrl,
             subscriberEmail: r.email,
             year,
           });
 
           await sendEmail({
+            from: newsletterFrom,
+            replyTo: supportEmail,
             to: r.email,
             subject,
             html,
@@ -264,6 +277,12 @@ export async function POST(request: Request) {
 
     try {
       const db = getAdminDb();
+      const rawAdminEmail =
+        typeof admin.email === "string" ? admin.email.trim() : "";
+      const isGmailAdmin = /@gmail\.com$/i.test(rawAdminEmail);
+      const displaySentBy =
+        isGmailAdmin || !rawAdminEmail ? "TeveXtra Admin" : rawAdminEmail;
+
       await db
         .collection("newsletters")
         .doc(newsletterId)
@@ -284,7 +303,9 @@ export async function POST(request: Request) {
           failedCount: failed.length,
           sentEmails: sent,
           failedEmails: failed,
-          sentBy: admin.email || admin.uid,
+          sentFrom: newsletterFrom,
+          sentBy: displaySentBy,
+          sentByRaw: isGmailAdmin ? "" : rawAdminEmail,
           sentByUid: admin.uid,
           createdAt: new Date(),
         });
