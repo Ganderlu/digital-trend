@@ -35,11 +35,11 @@ export function SiteFooter() {
   }
 
   return (
-    <footer className="border-t border-white/10 bg-slate-950 pt-16 pb-8 transition-colors duration-300">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-4">
+    <footer className="border-t border-white/10 bg-slate-950 pt-12 sm:pt-16 pb-8 transition-colors duration-300 overflow-x-hidden">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 sm:gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand Info */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-slate-900 ring-1 ring-emerald-500/30 shadow-lg shadow-emerald-500/10">
                 <Image
@@ -212,12 +212,12 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 border-t border-white/10 pt-8 flex flex-col items-center justify-between gap-6 sm:flex-row">
-          <p className="text-xs text-slate-500 font-medium">
+        <div className="mt-12 sm:mt-16 border-t border-white/10 pt-6 sm:pt-8 flex flex-col items-center justify-between gap-5 sm:gap-6 sm:flex-row">
+          <p className="text-xs text-slate-500 font-medium text-center">
             &copy; {new Date().getFullYear()} TeveXtra Investment. All rights
             reserved.
           </p>
-          <div className="flex gap-8">
+          <div className="flex gap-4 sm:gap-8 flex-wrap justify-center">
             <Link
               href="/privacy"
               className="text-xs font-semibold text-slate-500 hover:text-emerald-400 transition-colors"

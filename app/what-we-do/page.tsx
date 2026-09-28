@@ -57,7 +57,7 @@ export default function WhatWeDoPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 antialiased overflow-x-hidden transition-colors duration-300">
       {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[520px] w-full overflow-hidden group">
+      <section className="relative min-h-[480px] sm:min-h-[520px] md:h-[60vh] w-full overflow-hidden group">
         <Image
           src="/images/julios.webp"
           alt="Investment Strategy"
@@ -75,31 +75,31 @@ export default function WhatWeDoPage() {
             backgroundSize: "44px 44px",
           }}
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-          <div className="mb-6 inline-flex items-center rounded-full bg-emerald-500/10 px-4 py-1.5 backdrop-blur-md border border-emerald-500/20">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-6 text-center">
+          <div className="mb-5 sm:mb-6 inline-flex items-center rounded-full bg-emerald-500/10 px-3 sm:px-4 py-1.5 backdrop-blur-md border border-emerald-500/20">
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] sm:tracking-[0.3em] text-emerald-400">
               Our Expertise
             </span>
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-white sm:text-7xl max-w-5xl leading-[1.1]">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white sm:text-7xl max-w-5xl leading-[1.1]">
             Tailored Investment
             <br className="hidden md:block" /> Ecosystem
           </h1>
-          <p className="mt-8 max-w-2xl text-lg text-slate-300 leading-relaxed font-medium">
+          <p className="mt-5 sm:mt-8 max-w-2xl text-base sm:text-lg text-slate-300 leading-relaxed font-medium">
             We design diversified portfolios across global equities, fixed
             income, and alternative assets, precisely calibrated to your risk
             profile and aspirations.
           </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0">
             <Link
               href="/register"
-              className="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 hover:-translate-y-1"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 sm:px-8 py-3.5 sm:py-4 text-sm font-bold text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 hover:-translate-y-1"
             >
               Start Your Journey
             </Link>
             <Link
               href="#services"
-              className="rounded-full border border-white/10 bg-white/5 backdrop-blur px-8 py-4 text-sm font-bold text-white transition-all hover:bg-white/10 hover:border-white/20 hover:-translate-y-1"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 backdrop-blur px-6 sm:px-8 py-3.5 sm:py-4 text-sm font-bold text-white transition-all hover:bg-white/10 hover:border-white/20 hover:-translate-y-1"
             >
               Our Solutions
             </Link>
@@ -108,8 +108,11 @@ export default function WhatWeDoPage() {
       </section>
 
       {/* Core Services Section */}
-      <div id="services" className="mx-auto max-w-7xl px-6 py-24 md:py-32">
-        <div className="mb-20 flex flex-col justify-between gap-8 md:flex-row md:items-end">
+      <div
+        id="services"
+        className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20 md:py-24 md:py-32"
+      >
+        <div className="mb-12 sm:mb-16 md:mb-20 flex flex-col justify-between gap-6 sm:gap-8 md:flex-row md:items-end">
           <div className="max-w-3xl">
             <div className="mb-4 flex items-center gap-2">
               <div className="h-px w-8 bg-emerald-500" />
@@ -284,9 +287,7 @@ export default function WhatWeDoPage() {
                     {t.l}
                   </div>
                 </div>
-                <p className="text-sm leading-relaxed text-slate-400">
-                  {t.p}
-                </p>
+                <p className="text-sm leading-relaxed text-slate-400">{t.p}</p>
               </div>
             ))}
           </div>

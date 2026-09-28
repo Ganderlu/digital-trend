@@ -111,29 +111,29 @@ export default function ContactPage() {
           />
         </div>
 
-        <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20 md:py-28">
+          <div className="grid gap-10 sm:gap-12 lg:grid-cols-2 lg:items-center">
             <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-5">
+              <p className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.25em] sm:tracking-[0.3em] text-emerald-400 mb-4 sm:mb-5">
                 Customer Support
               </p>
-              <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl leading-[1.1]">
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl leading-[1.1]">
                 We&apos;re here
                 <span className="block mt-2 bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">
                   when you need us.
                 </span>
               </h1>
-              <p className="mt-6 text-base leading-relaxed text-slate-400 sm:text-lg max-w-xl">
+              <p className="mt-5 sm:mt-6 text-sm sm:text-base leading-relaxed text-slate-400 sm:text-lg max-w-xl">
                 From account questions to investment strategy sessions, the
                 TeveXtra team is a quick call or email away. Reach out anytime —
                 we&apos;re happy to help.
               </p>
-              <div className="mt-10 flex flex-wrap gap-4">
+              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-stretch sm:items-start">
                 <a
                   href={GMAIL_COMPOSE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 hover:-translate-y-0.5"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 sm:px-7 py-3.5 sm:py-4 text-sm font-bold text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 hover:-translate-y-0.5"
                 >
                   <Mail className="h-4 w-4" />
                   Email Us

@@ -52,8 +52,8 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-[99999] border-b border-white/10 bg-slate-950">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+    <header className="sticky top-0 z-[99999] border-b border-white/10 bg-slate-950 overflow-x-hidden">
+      <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-slate-900 ring-1 ring-emerald-500/30">

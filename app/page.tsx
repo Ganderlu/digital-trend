@@ -59,50 +59,50 @@ export default function Home() {
           />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-6 pt-20 pb-24 lg:pt-28 lg:pb-32">
-          <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-14 items-center">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16 sm:pt-20 pb-16 sm:pb-20 md:pb-24 lg:pt-28 lg:pb-32">
+          <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-8 sm:gap-10 lg:gap-14 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-2 mb-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 sm:px-4 py-1.5 sm:py-2 mb-6 sm:mb-8">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                 </span>
-                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-400">
+                <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] sm:tracking-[0.18em] text-emerald-400">
                   Trusted by 50,000+ Investors Worldwide
                 </span>
               </div>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] text-white">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tight leading-[1.1] sm:leading-[1.05] text-white">
                 Build Wealth with
                 <span className="block mt-2 bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">
                   Institutional Precision.
                 </span>
               </h1>
 
-              <p className="mt-7 max-w-xl text-lg leading-relaxed text-slate-400">
+              <p className="mt-5 sm:mt-7 max-w-xl text-base sm:text-lg leading-relaxed text-slate-400">
                 A premium digital asset platform combining data-driven trading,
                 diversified investment plans, and a robust referral matrix. Grow
                 your capital with a fiduciary-standard partner built for serious
                 investors.
               </p>
 
-              <div className="mt-10 flex flex-wrap items-center gap-4">
+              <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
                 <Link
                   href="/register"
-                  className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-emerald-500/25 transition hover:brightness-110 hover:-translate-y-0.5"
+                  className="group inline-flex items-center justify-center w-full sm:w-auto gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 sm:px-8 py-3.5 sm:py-4 text-sm font-bold text-white shadow-xl shadow-emerald-500/25 transition hover:brightness-110 hover:-translate-y-0.5"
                 >
                   Create Free Account
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   href="/plans"
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 backdrop-blur px-8 py-4 text-sm font-bold text-slate-200 transition hover:bg-white/10 hover:text-white"
+                  className="inline-flex items-center justify-center w-full sm:w-auto gap-2 rounded-xl border border-white/10 bg-white/5 backdrop-blur px-6 sm:px-8 py-3.5 sm:py-4 text-sm font-bold text-slate-200 transition hover:bg-white/10 hover:text-white"
                 >
                   View Investment Plans
                 </Link>
               </div>
 
-              <div className="mt-12 flex items-center gap-6">
+              <div className="mt-10 sm:mt-12 flex flex-wrap items-center gap-5 sm:gap-6">
                 <div className="flex -space-x-3">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <div
@@ -138,8 +138,8 @@ export default function Home() {
             {/* Hero Preview Card (Dashboard teaser) */}
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500/20 via-sky-500/10 to-indigo-500/20 rounded-3xl blur-2xl" />
-              <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-900/95 shadow-[0_40px_100px_-30px_rgba(0,0,0,0.6)] overflow-hidden">
-                <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
+              <div className="relative rounded-2xl sm:rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-900/95 shadow-[0_40px_100px_-30px_rgba(0,0,0,0.6)] overflow-hidden">
+                <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-white/5 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                       <Wallet className="h-4 w-4 text-emerald-400" />
@@ -159,13 +159,13 @@ export default function Home() {
                   </span>
                 </div>
 
-                <div className="p-5 space-y-4">
-                  <div className="rounded-xl bg-gradient-to-br from-emerald-500/10 via-slate-900 to-slate-900 border border-emerald-500/10 p-5">
+                <div className="p-4 sm:p-5 space-y-4">
+                  <div className="rounded-xl bg-gradient-to-br from-emerald-500/10 via-slate-900 to-slate-900 border border-emerald-500/10 p-4 sm:p-5">
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">
                       Total Account Balance
                     </p>
                     <div className="flex items-end gap-3">
-                      <span className="text-4xl font-black text-white tabular-nums">
+                      <span className="text-3xl sm:text-4xl font-black text-white tabular-nums">
                         $74,528.40
                       </span>
                       <span className="flex items-center gap-1 text-emerald-400 font-bold text-xs mb-1.5">
@@ -244,11 +244,11 @@ export default function Home() {
           </div>
 
           {/* Trusted By Bar */}
-          <div className="mt-24 pt-10 border-t border-white/5">
-            <p className="text-center text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500 mb-8">
+          <div className="mt-16 sm:mt-20 md:mt-24 pt-6 sm:pt-10 border-t border-white/5">
+            <p className="text-center text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] sm:tracking-[0.3em] text-slate-500 mb-6 sm:mb-8">
               Regulated &amp; Secured By Industry Leaders
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center opacity-70">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-6 md:gap-8 items-center opacity-70">
               {[
                 "McAfee SECURE",
                 "SSL Encrypted",
@@ -258,7 +258,7 @@ export default function Home() {
               ].map((b) => (
                 <div
                   key={b}
-                  className="flex items-center justify-center h-8 text-sm font-bold text-slate-400 tracking-wider"
+                  className="flex items-center justify-center h-8 text-xs sm:text-sm font-bold text-slate-400 tracking-wider text-center px-2"
                 >
                   {b}
                 </div>
@@ -272,8 +272,8 @@ export default function Home() {
 
       {/* ============================= STATS ROW ============================= */}
       <section className="relative border-y border-white/5 bg-slate-900/40">
-        <div className="mx-auto max-w-7xl px-6 py-14">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-12 md:py-14">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-10">
             {[
               {
                 label: "Assets Under Management",
@@ -314,10 +314,10 @@ export default function Home() {
                 >
                   <s.icon className={`h-5 w-5 ${s.color}`} />
                 </div>
-                <p className="text-3xl md:text-4xl font-black text-white tabular-nums tracking-tight">
+                <p className="text-2xl sm:text-3xl md:text-4xl font-black text-white tabular-nums tracking-tight">
                   {s.value}
                 </p>
-                <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <p className="mt-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 leading-tight">
                   {s.label}
                 </p>
               </div>
@@ -340,18 +340,18 @@ export default function Home() {
           />
         </div>
 
-        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
-          <div className="mx-auto max-w-3xl text-center mb-16">
-            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-sky-400 mb-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-20 sm:py-24 lg:py-32">
+          <div className="mx-auto max-w-3xl text-center mb-12 sm:mb-16">
+            <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] sm:tracking-[0.35em] text-sky-400 mb-3 sm:mb-4">
               About TeveXtra Investments
             </p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.1] sm:leading-tight">
               Experience the{" "}
               <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
                 Future of Investing
               </span>
             </h2>
-            <p className="mt-6 text-base md:text-lg text-slate-400 leading-relaxed">
+            <p className="mt-5 sm:mt-6 text-sm sm:text-base md:text-lg text-slate-400 leading-relaxed">
               See how{" "}
               <span className="font-semibold text-slate-200">
                 TeveXtra Investments
@@ -362,9 +362,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="relative mx-auto max-w-6xl">
-            <div className="absolute -inset-4 bg-gradient-to-r from-sky-500/25 via-indigo-500/15 to-blue-500/25 rounded-[2rem] blur-3xl" />
-            <div className="relative rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-900 shadow-[0_50px_120px_-40px_rgba(56,189,248,0.3)] overflow-hidden ring-1 ring-white/5">
+          <div className="relative mx-auto max-w-6xl px-0">
+            <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-sky-500/25 via-indigo-500/15 to-blue-500/25 rounded-2xl sm:rounded-[2rem] blur-2xl sm:blur-3xl" />
+            <div className="relative rounded-[1.25rem] sm:rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-900 shadow-[0_50px_120px_-40px_rgba(56,189,248,0.3)] overflow-hidden ring-1 ring-white/5">
               <div className="relative w-full aspect-video bg-slate-950">
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pointer-events-none" />
                 <iframe
@@ -380,7 +380,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-20 grid md:grid-cols-3 gap-6">
+          <div className="mt-12 sm:mt-16 md:mt-20 grid gap-5 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {[
               {
                 icon: Building2,
@@ -447,23 +447,23 @@ export default function Home() {
 
       {/* ============================= CORE FEATURES ============================= */}
       <section id="features" className="relative">
-        <div className="mx-auto max-w-7xl px-6 py-24 lg:py-32">
-          <div className="mx-auto max-w-2xl text-center mb-16">
-            <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-emerald-400 mb-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-20 sm:py-24 lg:py-32">
+          <div className="mx-auto max-w-2xl text-center mb-12 sm:mb-16">
+            <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] sm:tracking-[0.35em] text-emerald-400 mb-3 sm:mb-4">
               Why Investors Choose Us
             </p>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-[1.1] sm:leading-tight">
               Everything You Need to
               <span className="text-emerald-400"> Grow Confidently</span>
             </h2>
-            <p className="mt-5 text-base md:text-lg text-slate-400 leading-relaxed">
+            <p className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg text-slate-400 leading-relaxed">
               From institutional-grade trading tools to tiered investment plans
               and a rewarding referral program — our platform is engineered to
               multiply your opportunity at every step.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 icon: LineChart,
