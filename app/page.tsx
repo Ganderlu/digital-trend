@@ -112,7 +112,7 @@ export default function Home() {
                       <Image
                         fill
                         src={`https://i.pravatar.cc/80?u=${i + 12}`}
-                        alt="investor"
+                        alt="TeveXtra community member"
                         className="object-cover"
                       />
                     </div>

@@ -141,6 +141,18 @@ export function SiteFooter() {
                   Common FAQs
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-sm text-slate-400 transition-colors hover:text-emerald-400 flex items-center gap-2 group"
+                >
+                  <ArrowRight
+                    size={14}
+                    className="opacity-0 -ml-4 transition-all group-hover:opacity-100 group-hover:ml-0"
+                  />
+                  Contact Us
+                </Link>
+              </li>
             </ul>
           </div>
 

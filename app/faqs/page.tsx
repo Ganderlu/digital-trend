@@ -69,12 +69,12 @@ export default function FaqsPage() {
           />
         </div>
         <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-24 text-center">
-          <h1 className="text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-4">
+          <p className="text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-4">
             Support Center
-          </h1>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">
+          </p>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">
             Frequently Asked Questions
-          </h2>
+          </h1>
           <p className="max-w-2xl mx-auto text-lg text-slate-400 leading-relaxed">
             Find answers to common questions about how TeveXtra works. If you
             don&apos;t find what you&apos;re looking for, our team is here to

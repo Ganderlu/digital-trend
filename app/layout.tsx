@@ -13,25 +13,26 @@ const poppins = Poppins({
   display: "swap",
 });
 
-const PRODUCTION_URL = "https://tevextra.com";
+const PRODUCTION_URL = "https://www.tevextra.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(PRODUCTION_URL),
   title: {
-    default: "TeveXtra · Premium Investment Platform",
-    template: "%s · TeveXtra",
+    default: "TeveXtra | Digital Asset & Investment Platform",
+    template: "%s | TeveXtra",
   },
   description:
-    "TeveXtra is a modern investment platform with transparent plans, a rewarding referral program, and secure account access — designed to help you grow and manage your wealth strategically.",
+    "Explore TeveXtra, a digital asset and investment platform providing tools and services for managing your investment experience online.",
   applicationName: "TeveXtra",
   keywords: [
     "TeveXtra",
+    "digital asset platform",
     "investment platform",
-    "passive income",
     "referral program",
     "wealth management",
     "secure investments",
-    "portfolio growth",
+    "portfolio management",
+    "financial services",
   ],
   authors: [{ name: "TeveXtra", url: PRODUCTION_URL }],
   creator: "TeveXtra",
@@ -62,25 +63,32 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: PRODUCTION_URL,
     siteName: "TeveXtra",
-    title: "TeveXtra · Premium Investment Platform",
+    title: "TeveXtra | Digital Asset & Investment Platform",
     description:
-      "Smart investing, transparent plans, and rewarding referrals. Grow and manage your wealth strategically with TeveXtra.",
+      "Explore TeveXtra, a digital asset and investment platform providing tools and services for managing your investment experience online.",
     images: [
       {
         url: "/images/tx.png",
         width: 1200,
         height: 630,
-        alt: "TeveXtra",
+        alt: "TeveXtra Digital Asset & Investment Platform",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "TeveXtra · Premium Investment Platform",
+    title: "TeveXtra | Digital Asset & Investment Platform",
     description:
-      "Smart investing, transparent plans, and rewarding referrals. Grow and manage your wealth strategically with TeveXtra.",
+      "Explore TeveXtra, a digital asset and investment platform providing tools and services for managing your investment experience online.",
     creator: "@tevextra",
-    images: ["/images/tx.png"],
+    images: [
+      {
+        url: "/images/tx.png",
+        width: 1200,
+        height: 630,
+        alt: "TeveXtra Digital Asset & Investment Platform",
+      },
+    ],
   },
   robots: {
     index: true,
@@ -166,6 +174,36 @@ export default function RootLayout({
           <PublicChrome>{children}</PublicChrome>
           <InvestmentNotification />
         </KeyedLanguageProvider>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  name: "TeveXtra",
+                  url: "https://www.tevextra.com",
+                  logo: {
+                    "@type": "ImageObject",
+                    url: "https://www.tevextra.com/images/tx.png",
+                  },
+                  sameAs: ["https://www.tevextra.com"],
+                },
+                {
+                  "@type": "WebSite",
+                  name: "TeveXtra",
+                  url: "https://www.tevextra.com",
+                  publisher: {
+                    "@type": "Organization",
+                    name: "TeveXtra",
+                  },
+                  inLanguage: "en-US",
+                },
+              ],
+            }),
+          }}
+        />
       </body>
     </html>
   );

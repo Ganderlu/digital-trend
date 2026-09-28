@@ -298,7 +298,7 @@ export default function WhatWeDoPage() {
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 p-12 md:p-20 shadow-[0_40px_100px_-40px_rgba(0,0,0,0.6)] group/cta">
           <Image
             src="/images/julios.webp"
-            alt="Contact Background"
+            alt="TeveXtra advisor consultation meeting"
             fill
             className="object-cover opacity-20 transition-transform duration-1000 group-hover/cta:scale-105"
           />
