@@ -7,6 +7,10 @@ function escapeHtml(input: string) {
     .replaceAll("'", "&#39;");
 }
 
+const LOGO_URL_PRIMARY = "https://www.tevextra.com/images/tx.png";
+const LOGO_URL_FALLBACK =
+  "https://res.cloudinary.com/demo/image/upload/tevextra-tx.png";
+
 export function buildWelcomeEmailHtml(params: {
   userName: string;
   userEmail: string;
@@ -74,13 +78,21 @@ export function buildWelcomeEmailHtml(params: {
                         <tr>
                           <td style="padding: 0; text-align: left;">
                             <div style="display: inline-flex; align-items: center; gap: 10px;">
-                              <div style="width: 44px; height: 44px; border-radius: 14px; background-color: #059669; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px -8px rgba(5,150,105,0.5);">
-                                <span style="color: #ffffff; font-size: 22px; font-weight: 800; line-height: 1;">T</span>
-                              </div>
-                              <div style="display: inline-block;">
-                                <div style="font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">${escapeHtml(displayName)}</div>
-                                <div style="font-size: 11px; color: #64748b; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;">tevextra.com</div>
-                              </div>
+                              <a href="${escapeHtml(safeAppUrl)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+                                <img
+                                  src="${escapeHtml(LOGO_URL_PRIMARY)}"
+                                  alt="${escapeHtml(displayName)}"
+                                  title="${escapeHtml(displayName)}"
+                                  width="44"
+                                  height="44"
+                                  style="display: block; width: 44px; height: 44px; max-width: 44px; max-height: 44px; min-width: 44px; min-height: 44px; border: 0; outline: none; text-decoration: none; border-radius: 14px; box-shadow: 0 10px 20px -8px rgba(5,150,105,0.5);"
+                                  onerror="this.onerror=null;this.src='${escapeHtml(LOGO_URL_FALLBACK)}';"
+                                />
+                                <div style="display: inline-block;">
+                                  <div style="font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">${escapeHtml(displayName)}</div>
+                                  <div style="font-size: 11px; color: #64748b; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;">tevextra.com</div>
+                                </div>
+                              </a>
                             </div>
                           </td>
                         </tr>

@@ -11,9 +11,85 @@ import {
   TrendingUp,
   Eye,
   EyeOff,
+  AlertCircle,
+  CheckCircle2,
+  X,
+  Info,
 } from "lucide-react";
 
 type ViewMode = "login" | "forgotPassword";
+
+function getFriendlyAuthError(error: unknown): string {
+  const err = error as { code?: string; message?: string } | null | undefined;
+  const code = (err?.code || "").toString().toLowerCase();
+  const rawMessage = (err?.message || "").toString();
+
+  switch (code) {
+    case "auth/invalid-email":
+      return "The email address you entered is not valid. Please check and try again.";
+    case "auth/user-disabled":
+      return "This account has been temporarily disabled. Please contact support@tevextra.com for assistance.";
+    case "auth/user-not-found":
+      return "We could not find an account with that email address. Please check the email or create a new account.";
+    case "auth/wrong-password":
+      return "The password you entered is incorrect. Please try again or use the forgot password option to reset it.";
+    case "auth/invalid-password":
+      return "The password you entered is not valid. Passwords must be at least 6 characters.";
+    case "auth/too-many-requests":
+      return "We have temporarily blocked sign-in attempts from this device due to too many failed requests. Please wait a few minutes and try again, or reset your password to regain access immediately.";
+    case "auth/operation-not-allowed":
+      return "Email sign-in is currently not enabled. Please contact support for assistance.";
+    case "auth/invalid-credential":
+      return "The sign-in credentials you provided are not valid. Please double-check your email and password, then try again.";
+    case "auth/invalid-login-credentials":
+      return "The sign-in credentials you provided are not valid. Please double-check your email and password, then try again.";
+    case "auth/network-request-failed":
+      return "We could not connect to our servers. Please check your internet connection and try again.";
+    case "auth/requires-recent-login":
+      return "For your security, this action requires you to sign in again. Please log out and sign back in.";
+    case "auth/user-token-expired":
+      return "Your session has expired. Please sign in again to continue.";
+    case "auth/web-storage-unsupported":
+      return "Your browser does not support storage required for sign-in. Please enable cookies and local storage, or try a different browser.";
+    default:
+      if (rawMessage && /firebase/i.test(rawMessage)) {
+        return "Something went wrong while signing you in. Please check your credentials and try again. If the problem persists, contact support.";
+      }
+      return (
+        rawMessage ||
+        "Something went wrong while signing you in. Please try again."
+      );
+  }
+}
+
+function getFriendlyResetError(error: unknown): string {
+  const message =
+    (error as { message?: string } | null | undefined)?.message?.toString() ||
+    "";
+
+  const lower = message.toLowerCase();
+
+  if (lower.includes("user-not-found") || lower.includes("user not found")) {
+    return "If an account exists with this email address, a password reset link has been sent. Please check your inbox and spam folder if you do not see it within a few minutes.";
+  }
+  if (lower.includes("invalid-email") || lower.includes("invalid email")) {
+    return "The email address you entered is not valid. Please check and try again.";
+  }
+  if (
+    lower.includes("network") ||
+    lower.includes("fetch") ||
+    lower.includes("connection")
+  ) {
+    return "We could not connect to our servers. Please check your internet connection and try again.";
+  }
+  if (lower.includes("firebase")) {
+    return "Something went wrong while sending the reset email. Please try again in a few moments.";
+  }
+  return (
+    message ||
+    "Something went wrong while sending the reset email. Please try again."
+  );
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,14 +101,18 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loginSuccess, setLoginSuccess] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setSuccess("");
+    setLoginSuccess("");
 
     if (!email || !password) {
-      setError("Email and password are required.");
+      setError(
+        "Email and password are required. Please enter both fields to continue.",
+      );
       return;
     }
 
@@ -40,23 +120,23 @@ export default function LoginPage() {
     try {
       const auth = getFirebaseAuth();
 
-      await signInWithEmailAndPassword(auth, email, password);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const userDisplayName =
+        cred.user?.displayName || email.split("@")[0] || "";
 
       try {
         sessionStorage.setItem("welcome_back:just_logged_in", "1");
       } catch {}
 
-      router.push("/dashboard");
+      setLoginSuccess(
+        `Welcome back${userDisplayName ? ", " + userDisplayName : ""}! Redirecting you to your dashboard...`,
+      );
+
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1200);
     } catch (loginError: unknown) {
-      if (
-        typeof loginError === "object" &&
-        loginError &&
-        "message" in loginError
-      ) {
-        setError(String((loginError as { message: unknown }).message));
-      } else {
-        setError("Something went wrong while signing in.");
-      }
+      setError(getFriendlyAuthError(loginError));
     } finally {
       setSubmitting(false);
     }
@@ -68,7 +148,9 @@ export default function LoginPage() {
     setSuccess("");
 
     if (!email) {
-      setError("Email address is required.");
+      setError(
+        "Email address is required. Please enter the email linked to your account.",
+      );
       return;
     }
 
@@ -92,18 +174,10 @@ export default function LoginPage() {
 
       setSuccess(
         data.message ||
-          "Password reset email sent! Check your inbox for further instructions.",
+          "Password reset email sent successfully! Please check your inbox (and spam folder if needed) for further instructions.",
       );
     } catch (resetError: unknown) {
-      if (
-        typeof resetError === "object" &&
-        resetError &&
-        "message" in resetError
-      ) {
-        setError(String((resetError as { message: unknown }).message));
-      } else {
-        setError("Something went wrong while sending the reset email.");
-      }
+      setError(getFriendlyResetError(resetError));
     } finally {
       setSubmitting(false);
     }
@@ -113,6 +187,7 @@ export default function LoginPage() {
     setViewMode("forgotPassword");
     setError("");
     setSuccess("");
+    setLoginSuccess("");
     setPassword("");
   }
 
@@ -120,6 +195,7 @@ export default function LoginPage() {
     setViewMode("login");
     setError("");
     setSuccess("");
+    setLoginSuccess("");
   }
 
   const isLoginMode = viewMode === "login";
@@ -209,6 +285,58 @@ export default function LoginPage() {
             {isLoginMode ? (
               <>
                 <form className="space-y-5" onSubmit={handleSubmit}>
+                  {loginSuccess && (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="relative rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 pr-10 shadow-[0_0_0_1px_rgba(16,185,129,0.05)] backdrop-blur animate-[fadeIn_0.3s_ease-out]"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-500/30">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-emerald-300 leading-relaxed">
+                            Sign in successful
+                          </p>
+                          <p className="mt-1 text-xs leading-relaxed text-emerald-400/90">
+                            {loginSuccess}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {error && (
+                    <div
+                      role="alert"
+                      aria-live="assertive"
+                      className="relative rounded-2xl border border-red-500/20 bg-red-500/10 p-4 pr-10 shadow-[0_0_0_1px_rgba(239,68,68,0.05)] backdrop-blur animate-[shake_0.4s_ease-in-out]"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setError("")}
+                        className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-lg text-red-400/60 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                        aria-label="Dismiss error"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 border border-red-500/30">
+                          <AlertCircle className="h-3.5 w-3.5 text-red-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-red-300 leading-relaxed">
+                            Unable to sign in
+                          </p>
+                          <p className="mt-1 text-xs leading-relaxed text-red-400/90">
+                            {error}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <label
                       htmlFor="login-email"
@@ -222,6 +350,7 @@ export default function LoginPage() {
                       placeholder="you@example.com"
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
+                      autoComplete="email"
                       className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-4 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-emerald-500/40 focus:bg-slate-950/80 focus:ring-2 focus:ring-emerald-500/10"
                     />
                   </div>
@@ -239,6 +368,7 @@ export default function LoginPage() {
                         placeholder="••••••••"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
+                        autoComplete="current-password"
                         className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-4 pr-12 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-emerald-500/40 focus:bg-slate-950/80 focus:ring-2 focus:ring-emerald-500/10"
                       />
                       <button
@@ -277,17 +407,16 @@ export default function LoginPage() {
                       Forgot Password?
                     </button>
                   </div>
-                  {error && (
-                    <p className="text-xs font-bold text-red-400 leading-relaxed">
-                      {error}
-                    </p>
-                  )}
                   <button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || !!loginSuccess}
                     className="w-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 py-5 text-sm font-black text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
                   >
-                    {submitting ? "Processing..." : "Sign In to Dashboard"}
+                    {submitting
+                      ? "Signing you in..."
+                      : loginSuccess
+                        ? "Redirecting..."
+                        : "Sign In to Dashboard"}
                   </button>
                 </form>
                 <div className="mt-8 border-t border-white/5 pt-6 text-center">
@@ -305,6 +434,66 @@ export default function LoginPage() {
             ) : (
               <>
                 <form className="space-y-5" onSubmit={handleForgotPassword}>
+                  {success && (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="relative rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 pr-10 shadow-[0_0_0_1px_rgba(16,185,129,0.05)] backdrop-blur animate-[fadeIn_0.3s_ease-out]"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setSuccess("")}
+                        className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-lg text-emerald-400/60 hover:text-emerald-300 hover:bg-emerald-500/10 transition-colors"
+                        aria-label="Dismiss message"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-500/30">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-emerald-300 leading-relaxed">
+                            Email sent successfully
+                          </p>
+                          <p className="mt-1 text-xs leading-relaxed text-emerald-400/90">
+                            {success}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {error && (
+                    <div
+                      role="alert"
+                      aria-live="assertive"
+                      className="relative rounded-2xl border border-red-500/20 bg-red-500/10 p-4 pr-10 shadow-[0_0_0_1px_rgba(239,68,68,0.05)] backdrop-blur animate-[shake_0.4s_ease-in-out]"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setError("")}
+                        className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-lg text-red-400/60 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                        aria-label="Dismiss error"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 border border-red-500/30">
+                          <AlertCircle className="h-3.5 w-3.5 text-red-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-red-300 leading-relaxed">
+                            Unable to process request
+                          </p>
+                          <p className="mt-1 text-xs leading-relaxed text-red-400/90">
+                            {error}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <label
                       htmlFor="reset-email"
@@ -318,51 +507,33 @@ export default function LoginPage() {
                       placeholder="you@example.com"
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
+                      autoComplete="email"
                       className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-4 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-emerald-500/40 focus:bg-slate-950/80 focus:ring-2 focus:ring-emerald-500/10"
                     />
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/25">
-                        <svg
-                          className="h-3 w-3 text-emerald-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={3}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
+                      <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-500/15 border border-sky-500/25">
+                        <Info className="h-3.5 w-3.5 text-sky-400" />
                       </div>
                       <p className="text-xs leading-relaxed text-slate-400">
                         If an account exists with this email, you will receive a
-                        password reset link. Please check your spam folder if
-                        you do not see it within a few minutes.
+                        secure password reset link. Please check your spam
+                        folder or promotions tab if you do not see it within a
+                        few minutes. The link expires after 1 hour.
                       </p>
                     </div>
                   </div>
-                  {error && (
-                    <p className="text-xs font-bold text-red-400 leading-relaxed">
-                      {error}
-                    </p>
-                  )}
-                  {success && (
-                    <p className="text-xs font-bold text-emerald-400 leading-relaxed">
-                      {success}
-                    </p>
-                  )}
                   <button
                     type="submit"
-                    disabled={submitting}
-                    className="w-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 py-5 text-sm font-black text-white shadow-xl shadow-emerald-500/30 transition-all hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
+                    disabled={submitting || !!success}
+                    className="w-full rounded-full bg-gradient-to-r from-sky-500 to-blue-600 py-5 text-sm font-black text-white shadow-xl shadow-sky-500/30 transition-all hover:brightness-110 disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
                   >
                     {submitting
                       ? "Sending Reset Email..."
-                      : "Send Password Reset Link"}
+                      : success
+                        ? "Email Sent"
+                        : "Send Password Reset Link"}
                   </button>
                 </form>
                 <div className="mt-8 border-t border-white/5 pt-6 text-center space-y-2">

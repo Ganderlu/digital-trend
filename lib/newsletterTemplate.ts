@@ -11,6 +11,10 @@ function nl2br(input: string) {
   return escapeHtml(input).replaceAll("\n", "<br/>");
 }
 
+const LOGO_URL_PRIMARY = "https://www.tevextra.com/images/tx.png";
+const LOGO_URL_FALLBACK =
+  "https://res.cloudinary.com/demo/image/upload/tevextra-tx.png";
+
 export function buildNewsletterHtml(params: {
   subject: string;
   preheader?: string;
@@ -42,7 +46,10 @@ export function buildNewsletterHtml(params: {
 
   const PRODUCTION_URL = "https://tevextra.com";
   let safeAppUrl = (appUrl || "").trim().replace(/\/$/, "");
-  if (!safeAppUrl || /localhost|127\.0\.0\.1|^http:\/\/[^\/]*:3000/.test(safeAppUrl)) {
+  if (
+    !safeAppUrl ||
+    /localhost|127\.0\.0\.1|^http:\/\/[^\/]*:3000/.test(safeAppUrl)
+  ) {
     safeAppUrl = PRODUCTION_URL;
   }
   const appDomain = safeAppUrl.replace(/^https?:\/\//, "");
@@ -91,13 +98,21 @@ export function buildNewsletterHtml(params: {
                         <tr>
                           <td style="padding: 0; text-align: left;">
                             <div style="display: inline-flex; align-items: center; gap: 10px;">
-                              <div style="width: 40px; height: 40px; border-radius: 12px; background-color: #059669; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px -8px rgba(5,150,105,0.5);">
-                                <span style="color: #ffffff; font-size: 18px; font-weight: 800; line-height: 1;">T</span>
-                              </div>
-                              <div style="display: inline-block;">
-                                <div style="font-size: 18px; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">${escapeHtml(appName)}</div>
-                                <div style="font-size: 11px; color: #64748b; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;">OFFICIAL NEWSLETTER</div>
-                              </div>
+                              <a href="${escapeHtml(safeAppUrl)}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+                                <img
+                                  src="${escapeHtml(LOGO_URL_PRIMARY)}"
+                                  alt="${escapeHtml(appName)}"
+                                  title="${escapeHtml(appName)}"
+                                  width="44"
+                                  height="44"
+                                  style="display: block; width: 44px; height: 44px; max-width: 44px; max-height: 44px; min-width: 44px; min-height: 44px; border: 0; outline: none; text-decoration: none; border-radius: 14px; box-shadow: 0 10px 20px -8px rgba(5,150,105,0.5);"
+                                  onerror="this.onerror=null;this.src='${escapeHtml(LOGO_URL_FALLBACK)}';"
+                                />
+                                <div style="display: inline-block;">
+                                  <div style="font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">${escapeHtml(appName)}</div>
+                                  <div style="font-size: 11px; color: #64748b; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;">OFFICIAL NEWSLETTER</div>
+                                </div>
+                              </a>
                             </div>
                           </td>
                         </tr>
@@ -149,7 +164,9 @@ export function buildNewsletterHtml(params: {
                         </div>
                       </div>
 
-                      ${ctaLabel && ctaUrl ? `
+                      ${
+                        ctaLabel && ctaUrl
+                          ? `
                       <div style="margin-top: 32px; text-align: center;" class="button">
                         <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
                           <tr>
@@ -161,7 +178,9 @@ export function buildNewsletterHtml(params: {
                           </tr>
                         </table>
                       </div>
-                      ` : ""}
+                      `
+                          : ""
+                      }
 
                       ${outro ? `<p style="margin: 32px 0 0 0; font-size: 15px; line-height: 1.75; color: #475569;">${nl2br(outro)}</p>` : ""}
 
@@ -258,7 +277,10 @@ export function buildNewsletterText(params: {
 
   const PRODUCTION_URL = "https://tevextra.com";
   let safeAppUrl = (appUrl || "").trim().replace(/\/$/, "");
-  if (!safeAppUrl || /localhost|127\.0\.0\.1|^http:\/\/[^\/]*:3000/.test(safeAppUrl)) {
+  if (
+    !safeAppUrl ||
+    /localhost|127\.0\.0\.1|^http:\/\/[^\/]*:3000/.test(safeAppUrl)
+  ) {
     safeAppUrl = PRODUCTION_URL;
   }
 
@@ -271,11 +293,15 @@ ${greeting}
 
 ${intro ? intro + "\n\n" : ""}${body}
 
-${ctaLabel && ctaUrl ? `---
+${
+  ctaLabel && ctaUrl
+    ? `---
 ${ctaLabel}: ${ctaUrl}
 ---
 
-` : ""}${outro ? outro + "\n\n" : ""}Warm regards,
+`
+    : ""
+}${outro ? outro + "\n\n" : ""}Warm regards,
 The ${appName} Team
 tevextra.com · Empowering investors worldwide
 
