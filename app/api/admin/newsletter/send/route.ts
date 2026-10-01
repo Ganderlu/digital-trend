@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebaseAdmin";
-import { sendEmail } from "@/lib/email";
+import { sendEmail, type SendEmailResult } from "@/lib/email";
 import { requireAdminFromRequest } from "@/lib/requestAuth";
 import {
   buildNewsletterHtml,
@@ -38,8 +38,19 @@ type NewsletterPayload = {
   testEmail?: string;
 };
 
-const EMAIL_BATCH_SIZE = 8;
-const MS_BETWEEN_SENDS = 140;
+type RecipientLog = {
+  email: string;
+  uid?: string;
+  name?: string;
+  status: "sent" | "failed";
+  resendId?: string | null;
+  from?: string;
+  error?: string;
+  sentAt?: Date;
+};
+
+const EMAIL_BATCH_SIZE = 6;
+const MS_BETWEEN_SENDS = 260;
 
 async function fetchSubscribers(
   audience: NewsletterPayload["audience"],
@@ -221,11 +232,28 @@ export async function POST(request: Request) {
     const newsletterId =
       Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
+    const unsubscribeMailto = `<mailto:support@tevextra.com?subject=Unsubscribe%20-%20Newsletter&body=Please%20unsubscribe%20me%20from%20TeveXtra%20newsletters.>`;
+    const listUnsubscribeValues = [unsubscribeMailto];
+    const listUnsubscribeOneClick = [
+      unsubscribeMailto,
+      `<https://www.tevextra.com/contact>`,
+    ];
+
+    console.log(
+      `[newsletter] === START CAMPAIGN ${newsletterId} === audience=${audience} recipients=${recipients.length} from=${newsletterFrom}`,
+    );
+
     const sent: string[] = [];
     const failed: { email: string; error: string }[] = [];
+    const recipientLogs: RecipientLog[] = [];
 
     for (let i = 0; i < recipients.length; i += EMAIL_BATCH_SIZE) {
       const batch = recipients.slice(i, i + EMAIL_BATCH_SIZE);
+      const batchIdx = i / EMAIL_BATCH_SIZE + 1;
+      const totalBatches = Math.ceil(recipients.length / EMAIL_BATCH_SIZE);
+      console.log(
+        `[newsletter] Processing batch ${batchIdx}/${totalBatches} — emails ${i + 1}-${Math.min(i + EMAIL_BATCH_SIZE, recipients.length)}/${recipients.length}`,
+      );
 
       for (let j = 0; j < batch.length; j++) {
         const r = batch[j];
@@ -264,12 +292,12 @@ export async function POST(request: Request) {
           year,
         });
 
-        let ok = false;
+        let delivered: SendEmailResult | null = null;
         let errorMsg: string = "";
-        const local429Retries = 3;
-        for (let attempt = 0; attempt <= local429Retries; attempt++) {
+        const localRetries = 2;
+        for (let attempt = 0; attempt <= localRetries; attempt++) {
           try {
-            await sendEmail(
+            delivered = await sendEmail(
               {
                 from: newsletterFrom,
                 replyTo: supportEmail,
@@ -277,10 +305,16 @@ export async function POST(request: Request) {
                 subject,
                 html,
                 text,
+                listUnsubscribe: listUnsubscribeOneClick,
+                headers: {
+                  "X-Precedence": "bulk",
+                  "Feedback-ID": "tevextra:newsletter:admin",
+                  "List-Id": `<tevextra-newsletter.${appUrl.replace(/^https?:\/\//, "")}>`,
+                },
               },
-              { max429Retries: 2 },
+              { max429Retries: 3 },
             );
-            ok = true;
+            errorMsg = "";
             break;
           } catch (err) {
             const msg =
@@ -288,32 +322,63 @@ export async function POST(request: Request) {
             errorMsg = msg;
             const is429 = isRateLimitError(msg);
             if (!is429) break;
-            if (attempt < local429Retries) {
+            if (attempt < localRetries) {
               const wait =
-                1200 * Math.pow(2, attempt) + Math.floor(Math.random() * 500);
+                2200 * Math.pow(2, attempt) + Math.floor(Math.random() * 600);
               console.warn(
-                `[newsletter] 429 for ${r.email} — local retry ${attempt + 1}/${local429Retries} after ${wait}ms.`,
+                `[newsletter] 429 rate-limit for ${r.email} — retry ${attempt + 1}/${localRetries} after ${wait}ms.`,
               );
               await sleep(wait);
             }
           }
         }
 
-        if (ok) {
+        if (delivered) {
           sent.push(r.email);
+          recipientLogs.push({
+            email: r.email,
+            uid: r.uid,
+            name: r.name,
+            status: "sent",
+            resendId: delivered.id,
+            from: delivered.fromUsed,
+            sentAt: new Date(),
+          });
+          console.log(
+            `[newsletter] ✓ SENT ${r.email} (resend=${delivered.id || "n/a"} via ${delivered.fromUsed}) — ${sent.length}/${recipients.length}`,
+          );
         } else {
           failed.push({ email: r.email, error: errorMsg });
+          recipientLogs.push({
+            email: r.email,
+            uid: r.uid,
+            name: r.name,
+            status: "failed",
+            error: errorMsg,
+            sentAt: new Date(),
+          });
+          console.error(
+            `[newsletter] ✗ FAILED ${r.email}: ${errorMsg || "no error detail"}`,
+          );
         }
 
         if (j < batch.length - 1 && MS_BETWEEN_SENDS > 0) {
-          await sleep(MS_BETWEEN_SENDS + Math.floor(Math.random() * 40));
+          await sleep(MS_BETWEEN_SENDS + Math.floor(Math.random() * 120));
         }
       }
 
       if (i + EMAIL_BATCH_SIZE < recipients.length) {
-        await sleep(3500);
+        const cooldown = 4200 + Math.floor(Math.random() * 1200);
+        console.log(
+          `[newsletter] Batch ${batchIdx}/${totalBatches} complete. Sent=${sent.length} Failed=${failed.length}. Cooling ${cooldown}ms before next batch.`,
+        );
+        await sleep(cooldown);
       }
     }
+
+    console.log(
+      `[newsletter] === FINISHED CAMPAIGN ${newsletterId} === total=${recipients.length} sent=${sent.length} failed=${failed.length}`,
+    );
 
     try {
       const db = getAdminDb();
@@ -323,34 +388,42 @@ export async function POST(request: Request) {
       const displaySentBy =
         isGmailAdmin || !rawAdminEmail ? "TeveXtra Admin" : rawAdminEmail;
 
-      await db
-        .collection("newsletters")
-        .doc(newsletterId)
-        .set({
-          newsletterId,
-          subject,
-          preheader: preheader || "",
-          greeting: greeting || "",
-          intro: intro || "",
-          body: bodyText,
-          ctaLabel: ctaLabel || "",
-          ctaUrl: ctaUrl || "",
-          outro: outro || "",
-          audience,
-          testEmail: testEmail || "",
-          totalRecipients: recipients.length,
-          sentCount: sent.length,
-          failedCount: failed.length,
-          sentEmails: sent,
-          failedEmails: failed,
-          sentFrom: newsletterFrom,
-          sentBy: displaySentBy,
-          sentByRaw: isGmailAdmin ? "" : rawAdminEmail,
-          sentByUid: admin.uid,
-          createdAt: new Date(),
-        });
+      const logPayload = {
+        newsletterId,
+        subject,
+        preheader: preheader || "",
+        greeting: greeting || "",
+        intro: intro || "",
+        body: bodyText,
+        ctaLabel: ctaLabel || "",
+        ctaUrl: ctaUrl || "",
+        outro: outro || "",
+        audience,
+        testEmail: testEmail || "",
+        totalRecipients: recipients.length,
+        sentCount: sent.length,
+        failedCount: failed.length,
+        sentEmails: sent,
+        failedEmails: failed,
+        recipientLogs,
+        sentFrom: newsletterFrom,
+        listUnsubscribe: listUnsubscribeValues,
+        sentBy: displaySentBy,
+        sentByRaw: isGmailAdmin ? "" : rawAdminEmail,
+        sentByUid: admin.uid,
+        createdAt: new Date(),
+        completedAt: new Date(),
+      };
+
+      await db.collection("newsletters").doc(newsletterId).set(logPayload);
+      console.log(
+        `[newsletter] Campaign log written to Firestore newsletters/${newsletterId} with ${recipientLogs.length} per-recipient logs.`,
+      );
     } catch (logErr) {
-      console.error("Newsletter log write failed:", logErr);
+      console.error(
+        "[newsletter] ⚠ Newsletters Firestore log write FAILED (emails were already sent above):",
+        logErr,
+      );
     }
 
     return NextResponse.json({
@@ -362,6 +435,11 @@ export async function POST(request: Request) {
         failed: failed.length,
       },
       failedSample: failed.slice(0, 10),
+      sentSample: sent.slice(0, 5),
+      resendIds: recipientLogs
+        .filter((r) => r.status === "sent")
+        .slice(0, 10)
+        .map((r) => ({ email: r.email, resendId: r.resendId, from: r.from })),
     });
   } catch (err) {
     console.error("Newsletter send error:", err);

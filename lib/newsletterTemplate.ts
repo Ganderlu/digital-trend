@@ -225,16 +225,43 @@ export function buildNewsletterHtml(params: {
 
             <tr>
               <td style="padding: 28px 24px 0 24px;" class="padding-x mobile-center">
+                <div style="padding: 18px 22px; border-radius: 16px; background-color: #f1f5f9; border: 1px solid #e2e8f0;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                      <td class="stack-column mobile-center" style="padding: 0; text-align: left; vertical-align: middle;">
+                        <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: #475569;">
+                          Email Preferences
+                        </p>
+                        <p style="margin: 0; font-size: 11.5px; line-height: 1.65; color: #64748b;">
+                          We only send occasional updates &amp; member notices. You can update your preferences any time.
+                        </p>
+                      </td>
+                      <td class="stack-column" style="padding: 14px 0 0 0; text-align: right; vertical-align: middle;" align="right">
+                        <a
+                          href="mailto:support@tevextra.com?subject=Unsubscribe%20-%20${encodeURIComponent(subscriberEmail)}&body=Please%20unsubscribe%20${encodeURIComponent(subscriberEmail)}%20from%20TeveXtra%20newsletters.%0AThank%20you."
+                          style="display: inline-block; padding: 10px 18px; border-radius: 999px; background-color: #0f172a; color: #ffffff !important; font-size: 12px; font-weight: 700; letter-spacing: 0.01em; text-decoration: none; box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.25);"
+                        >
+                          Unsubscribe
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 22px 24px 32px 24px;" class="padding-x mobile-center">
                 <p style="margin: 0; font-size: 12px; line-height: 1.7; color: #94a3b8; text-align: center;">
                   This email was sent to <a href="mailto:${escapeHtml(subscriberEmail)}" style="color: #64748b; text-decoration: underline; font-weight: 500;">${escapeHtml(subscriberEmail)}</a>.
                    &copy; ${year} <a href="${escapeHtml(safeAppUrl)}" style="color: #64748b; text-decoration: none; font-weight: 500;">${escapeHtml(appDomain || appName)}</a>.
                   All rights reserved.
                 </p>
-                <p style="margin: 10px 0 0 0; font-size: 11px; line-height: 1.6; color: #cbd5e1; text-align: center;">
-                  ${escapeHtml(appName)} &middot; tevextra.com &middot; Global Investment Platform
-                </p>
-                <p style="margin: 10px 0 0 0; font-size: 11px; line-height: 1.65; color: #cbd5e1; text-align: center;">
-                  If you no longer wish to receive these emails, please contact <a href="mailto:support@tevextra.com" style="color: #94a3b8; text-decoration: underline;">support@tevextra.com</a>.
+                <p style="margin: 10px 0 0 0; font-size: 11px; line-height: 1.6; color: #94a3b8; text-align: center;">
+                  ${escapeHtml(appName)} &middot; tevextra.com &middot; Global Investment Platform &middot;
+                  <a href="mailto:support@tevextra.com?subject=Help%20with%20TeveXtra%20Newsletter" style="color: #64748b; text-decoration: underline; font-weight: 500;">Get help</a>
+                  &nbsp;·&nbsp;
+                  <a href="${escapeHtml(safeAppUrl)}/contact" style="color: #64748b; text-decoration: underline; font-weight: 500;">Contact us</a>
                 </p>
               </td>
             </tr>
