@@ -20,6 +20,9 @@ import {
   Clock,
   ChevronDown,
   ChevronUp,
+  RefreshCw,
+  LogOut,
+  ShieldAlert,
 } from "lucide-react";
 
 type NewsletterHistoryItem = {
@@ -145,11 +148,33 @@ const AUDIENCE_OPTIONS: {
   },
 ];
 
+function isSessionExpiredMessage(message: unknown): boolean {
+  const s = typeof message === "string" ? message : "";
+  return (
+    s.toLowerCase().includes("session has expired") ||
+    s.toLowerCase().includes("sign in again") ||
+    s.toLowerCase().includes("sign out and sign back") ||
+    s.toLowerCase().includes("not signed in")
+  );
+}
+
+function isPermissionMessage(message: unknown): boolean {
+  const s = typeof message === "string" ? message : "";
+  return (
+    s.toLowerCase().includes("permission") ||
+    s.toLowerCase().includes("don't have access") ||
+    s.toLowerCase().includes("forbidden") ||
+    s.toLowerCase().includes("admin area")
+  );
+}
+
 export default function AdminNewsletterPage() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
   const [idToken, setIdToken] = useState<string | null>(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const [refreshingToken, setRefreshingToken] = useState(false);
 
   const [subject, setSubject] = useState("");
   const [preheader, setPreheader] = useState("");
@@ -188,17 +213,40 @@ export default function AdminNewsletterPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const app = getFirebaseApp();
     const auth = getAuth(app);
 
+    async function refreshToken(user: any): Promise<string | null> {
+      try {
+        const t = await getIdToken(user, true);
+        if (!cancelled) {
+          setIdToken(t);
+          setSessionExpired(false);
+        }
+        return t;
+      } catch (tokenErr) {
+        console.error("Failed to refresh Firebase ID token:", tokenErr);
+        if (!cancelled) {
+          setSessionExpired(true);
+        }
+        return null;
+      }
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
-        router.replace("/login");
+        if (!cancelled) {
+          router.replace("/login");
+        }
         return;
       }
       try {
-        const token = await getIdToken(currentUser, true);
-        setIdToken(token);
+        const token = await refreshToken(currentUser);
+        if (!token) {
+          if (!cancelled) setLoading(false);
+          return;
+        }
 
         const res = await fetch("/api/admin/newsletter/stats", {
           headers: {
@@ -206,7 +254,7 @@ export default function AdminNewsletterPage() {
           },
         });
         const data = await res.json();
-        if (data.success) {
+        if (res.ok && data.success) {
           const rawStats = data.stats;
           setStats({
             totalUsers: rawStats.totalUsers || 0,
@@ -224,17 +272,51 @@ export default function AdminNewsletterPage() {
             })),
           );
         } else {
-          console.error("Failed to fetch newsletter stats:", data.error);
+          const msg = data.error || "Failed to load newsletter data.";
+          if (isSessionExpiredMessage(msg)) {
+            if (!cancelled) setSessionExpired(true);
+          }
+          console.error("Failed to fetch newsletter stats:", msg);
         }
       } catch (err) {
         console.error("Newsletter page init error:", err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, [router]);
+
+  async function forceRefreshToken(): Promise<string | null> {
+    const app = getFirebaseApp();
+    const auth = getAuth(app);
+    const user = auth.currentUser;
+    if (!user) {
+      router.replace("/login");
+      return null;
+    }
+    setRefreshingToken(true);
+    try {
+      const token = await getIdToken(user, true);
+      setIdToken(token);
+      setSessionExpired(false);
+      setError("");
+      return token;
+    } catch (err) {
+      console.error("Failed to refresh token manually:", err);
+      setSessionExpired(true);
+      setError(
+        "We couldn't refresh your session automatically. Please sign out and sign in again.",
+      );
+      return null;
+    } finally {
+      setRefreshingToken(false);
+    }
+  }
 
   const applyTemplate = (t: (typeof TEMPLATES)[number]) => {
     setSubject(t.subject);
@@ -277,18 +359,21 @@ export default function AdminNewsletterPage() {
       setError("Please enter a valid test email address.");
       return;
     }
-    if (!idToken) {
-      setError("Authentication unavailable. Please refresh and try again.");
-      return;
-    }
 
     setSubmitting(true);
     try {
+      const freshToken = await forceRefreshToken();
+      if (!freshToken) {
+        throw new Error(
+          "Your session has expired. Please sign in again to send this newsletter.",
+        );
+      }
+
       const res = await fetch("/api/admin/newsletter/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
+          Authorization: `Bearer ${freshToken}`,
         },
         body: JSON.stringify({
           subject: subject.trim(),
@@ -305,9 +390,12 @@ export default function AdminNewsletterPage() {
 
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        throw new Error(
-          data.error || "Failed to send newsletter. Please try again.",
-        );
+        const msg =
+          data.error || "Failed to send newsletter. Please try again.";
+        if (isSessionExpiredMessage(msg)) {
+          setSessionExpired(true);
+        }
+        throw new Error(msg);
       }
 
       setResult({
@@ -326,6 +414,9 @@ export default function AdminNewsletterPage() {
     } catch (err: unknown) {
       const msg =
         err instanceof Error ? err.message : "An unexpected error occurred.";
+      if (isSessionExpiredMessage(msg)) {
+        setSessionExpired(true);
+      }
       setError(msg);
     } finally {
       setSubmitting(false);
@@ -828,10 +919,158 @@ export default function AdminNewsletterPage() {
               </div>
             </div>
 
-            {error && (
-              <div className="flex items-start gap-3 rounded-2xl border border-red-500/20 bg-red-500/5 p-5 text-sm text-red-300">
-                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
-                <span className="leading-relaxed">{error}</span>
+            {sessionExpired && (
+              <div className="rounded-2xl border border-amber-500/25 bg-amber-500/10 p-5 shadow-[0_0_0_1px_rgba(245,158,11,0.08)] backdrop-blur animate-[fadeIn_0.3s_ease-out]">
+                <div className="flex items-start gap-4">
+                  <div className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400">
+                    <Clock className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-amber-200 leading-tight">
+                      Your admin session has expired
+                    </p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-amber-200/80">
+                      For your security, admin sessions time out after a period
+                      of inactivity. Refresh your session to keep sending
+                      newsletters without losing any of the content you've
+                      written.
+                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={forceRefreshToken}
+                        disabled={submitting || refreshingToken}
+                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-amber-500/20 transition-all hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {refreshingToken ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            Refreshing session...
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="h-3.5 w-3.5" />
+                            Refresh Session
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const app = getFirebaseApp();
+                          const auth = getAuth(app);
+                          auth.signOut().finally(() => {
+                            router.replace("/login");
+                          });
+                        }}
+                        className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold text-slate-200 transition hover:bg-white/10"
+                      >
+                        <LogOut className="h-3.5 w-3.5" />
+                        Sign out & sign in again
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {error && !sessionExpired && (
+              <div
+                className={`rounded-2xl border p-5 animate-[fadeIn_0.3s_ease-out] ${
+                  isPermissionMessage(error)
+                    ? "border-violet-500/25 bg-violet-500/10 shadow-[0_0_0_1px_rgba(139,92,246,0.08)] backdrop-blur"
+                    : "border-red-500/20 bg-red-500/5"
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <div
+                    className={`mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border ${
+                      isPermissionMessage(error)
+                        ? "bg-violet-500/15 border-violet-500/30 text-violet-300"
+                        : "bg-red-500/15 border-red-500/30 text-red-400"
+                    }`}
+                  >
+                    {isPermissionMessage(error) ? (
+                      <ShieldAlert className="h-5 w-5" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className={`text-sm font-bold leading-tight ${
+                        isPermissionMessage(error)
+                          ? "text-violet-200"
+                          : "text-red-300"
+                      }`}
+                    >
+                      {isPermissionMessage(error)
+                        ? "Admin access required"
+                        : "Unable to send newsletter"}
+                    </p>
+                    <p
+                      className={`mt-1.5 text-xs leading-relaxed ${
+                        isPermissionMessage(error)
+                          ? "text-violet-200/80"
+                          : "text-red-300/80"
+                      }`}
+                    >
+                      {error}
+                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      {isSessionExpiredMessage(error) ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={forceRefreshToken}
+                            disabled={submitting || refreshingToken}
+                            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-emerald-500/20 transition-all hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            <RefreshCw className="h-3.5 w-3.5" />
+                            Refresh session & retry
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => router.replace("/login")}
+                            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold text-slate-200 transition hover:bg-white/10"
+                          >
+                            Go to sign in
+                          </button>
+                        </>
+                      ) : isPermissionMessage(error) ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={forceRefreshToken}
+                            disabled={submitting || refreshingToken}
+                            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-violet-500/20 transition-all hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            <RefreshCw className="h-3.5 w-3.5" />
+                            Re-verify permissions
+                          </button>
+                          <a
+                            href="mailto:support@tevextra.com?subject=Admin%20Permission%20Assistance"
+                            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold text-slate-200 transition hover:bg-white/10"
+                          >
+                            Contact TeveXtra support
+                          </a>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleSubmit({ preventDefault: () => {} } as any)
+                          }
+                          disabled={submitting || refreshingToken}
+                          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-red-500 to-rose-500 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-red-500/20 transition-all hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                          <RefreshCw className="h-3.5 w-3.5" />
+                          Try sending again
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
