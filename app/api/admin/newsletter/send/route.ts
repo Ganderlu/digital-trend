@@ -11,6 +11,20 @@ function isValidEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 }
 
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
+function isRateLimitError(message: unknown): boolean {
+  const s = typeof message === "string" ? message : "";
+  return (
+    s.includes("HTTP 429") ||
+    s.includes("Too many requests") ||
+    s.includes("429") ||
+    s.includes("rate limit")
+  );
+}
+
 type NewsletterPayload = {
   subject: string;
   preheader?: string;
@@ -24,7 +38,8 @@ type NewsletterPayload = {
   testEmail?: string;
 };
 
-const EMAIL_BATCH_SIZE = 40;
+const EMAIL_BATCH_SIZE = 8;
+const MS_BETWEEN_SENDS = 140;
 
 async function fetchSubscribers(
   audience: NewsletterPayload["audience"],
@@ -211,67 +226,92 @@ export async function POST(request: Request) {
 
     for (let i = 0; i < recipients.length; i += EMAIL_BATCH_SIZE) {
       const batch = recipients.slice(i, i + EMAIL_BATCH_SIZE);
-      const promises = batch.map(async (r) => {
-        try {
-          const firstName =
-            r.name?.split(" ")[0]?.trim() ||
-            r.email.split("@")[0]?.trim() ||
-            "there";
-          const personalizedGreeting = greeting || `Hi ${firstName},`;
 
-          const html = buildNewsletterHtml({
-            subject,
-            preheader,
-            greeting: personalizedGreeting,
-            intro,
-            body: bodyText,
-            ctaLabel,
-            ctaUrl,
-            outro,
-            appName,
-            appUrl,
-            subscriberEmail: r.email,
-            year,
-          });
+      for (let j = 0; j < batch.length; j++) {
+        const r = batch[j];
+        const firstName =
+          r.name?.split(" ")[0]?.trim() ||
+          r.email.split("@")[0]?.trim() ||
+          "there";
+        const personalizedGreeting = greeting || `Hi ${firstName},`;
 
-          const text = buildNewsletterText({
-            subject,
-            greeting: personalizedGreeting,
-            intro,
-            body: bodyText,
-            ctaLabel,
-            ctaUrl,
-            outro,
-            appName,
-            appUrl,
-            subscriberEmail: r.email,
-            year,
-          });
+        const html = buildNewsletterHtml({
+          subject,
+          preheader,
+          greeting: personalizedGreeting,
+          intro,
+          body: bodyText,
+          ctaLabel,
+          ctaUrl,
+          outro,
+          appName,
+          appUrl,
+          subscriberEmail: r.email,
+          year,
+        });
 
-          await sendEmail({
-            from: newsletterFrom,
-            replyTo: supportEmail,
-            to: r.email,
-            subject,
-            html,
-            text,
-          });
+        const text = buildNewsletterText({
+          subject,
+          greeting: personalizedGreeting,
+          intro,
+          body: bodyText,
+          ctaLabel,
+          ctaUrl,
+          outro,
+          appName,
+          appUrl,
+          subscriberEmail: r.email,
+          year,
+        });
 
-          return { ok: true as const, email: r.email };
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : "Unknown send error";
-          return { ok: false as const, email: r.email, error: msg };
+        let ok = false;
+        let errorMsg: string = "";
+        const local429Retries = 3;
+        for (let attempt = 0; attempt <= local429Retries; attempt++) {
+          try {
+            await sendEmail(
+              {
+                from: newsletterFrom,
+                replyTo: supportEmail,
+                to: r.email,
+                subject,
+                html,
+                text,
+              },
+              { max429Retries: 2 },
+            );
+            ok = true;
+            break;
+          } catch (err) {
+            const msg =
+              err instanceof Error ? err.message : "Unknown send error";
+            errorMsg = msg;
+            const is429 = isRateLimitError(msg);
+            if (!is429) break;
+            if (attempt < local429Retries) {
+              const wait =
+                1200 * Math.pow(2, attempt) + Math.floor(Math.random() * 500);
+              console.warn(
+                `[newsletter] 429 for ${r.email} — local retry ${attempt + 1}/${local429Retries} after ${wait}ms.`,
+              );
+              await sleep(wait);
+            }
+          }
         }
-      });
 
-      const results = await Promise.all(promises);
-      for (const res of results) {
-        if (res.ok) sent.push(res.email);
-        else failed.push({ email: res.email, error: res.error });
+        if (ok) {
+          sent.push(r.email);
+        } else {
+          failed.push({ email: r.email, error: errorMsg });
+        }
+
+        if (j < batch.length - 1 && MS_BETWEEN_SENDS > 0) {
+          await sleep(MS_BETWEEN_SENDS + Math.floor(Math.random() * 40));
+        }
       }
 
       if (i + EMAIL_BATCH_SIZE < recipients.length) {
-        await new Promise((r) => setTimeout(r, 1500));
+        await sleep(3500);
       }
     }
 
